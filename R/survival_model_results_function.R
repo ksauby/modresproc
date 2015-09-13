@@ -1,0 +1,27 @@
+survival_model_results_function <- function(convergence.status, parameter.estimates, fit.statistics, replace_list, select_list) {
+	# filter out models that didn't converge
+	y = merge(convergence.status, parameter.estimates) %>%
+		filter(Reason=="Algorithm converged.") %>%
+		# change effects to columns
+		dcast(modelVars~Parameter)
+		# fit statistics
+	z = fit.statistics %>%
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%
+		dcast(modelVars~Criterion, value.var="Value") %>%
+		setnames("AIC (smaller is better)", "AIC") 
+	y %<>% merge(z, by="modelVars") %>% 
+		arrange(modelVars) %>%
+		mutate(`Link Function` = c(
+			rep("Logit", dim(convergence.status)[1]/2), 
+			rep("C-Log-Log", dim(convergence.status)[1]/2))
+		) %>%
+		arrange(`Link Function`, `Scaled Deviance`) %>% 
+		dplyr::select(-c(modelVars, Scale))
+	Logit = y %>% filter(`Link Function`=="Logit")
+	CLogLog = y %>% filter(`Link Function`=="C-Log-Log")
+	Logit 	%<>% AIC_function
+	CLogLog %<>% AIC_function		
+	Logit 	%<>% model_results_processing_function(select_list)
+	CLogLog %<>% model_results_processing_function(select_list)
+	return(list(Logit,CLogLog))
+}

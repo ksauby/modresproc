@@ -1,4 +1,21 @@
-modelselection_humifusa_model_results_function <- function(models.dimensions, convergence.status, parameter.estimates, conditional.fit.statistics, replace_list, select_list) {
+#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX
+#' 
+#' @param models.dimensions
+#' @param convergence.status
+#' @param parameter.estimates
+#' @param conditional.fit.statistics
+#' @param replace_list
+#' @param select_list
+
+modelselection_humifusa_model_results_function <- function(
+	models.dimensions, 
+	convergence.status, 
+	parameter.estimates, 
+	conditional.fit.statistics, 
+	replace_list, 
+	select_list
+)
+{
 	# model dimensions
 	x = models.dimensions %>% 
 		dcast(modelVars~Descr, value.var="Value")

@@ -1,5 +1,19 @@
-randeffects_model_results_function <- function(covariance.parms.test, convergence.status, 
-	covariance.parms.estimates, conditional.fit.statistics, fit.statistics) {
+#' Merge summary statistics from SAS GLIMMIX models to compare random effects models.
+#' 
+#' @param covariance.parms.test
+#' @param convergence.status
+#' @param covariance.parms.estimates
+#' @param conditional.fit.statistics
+#' @param fit.statistics
+
+randeffects_model_results_function <- function(
+	covariance.parms.test, 
+	convergence.status, 
+	covariance.parms.estimates, 
+	conditional.fit.statistics, 
+	fit.statistics
+)
+{
 	conditional.fit.statistics %<>% 
 		dcast(modelVars~Descr, value.var="Value") %>%
 		.[, -(2:3)]

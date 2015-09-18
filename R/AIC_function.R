@@ -1,3 +1,7 @@
+#' Return table comparing AIC values for multiple models produced using SAS GLIMMIX.
+#' 
+#' @param y
+
 AIC_function <- function(y) {
 	`min(AIC)` = min(y$AIC)
 	y %<>%

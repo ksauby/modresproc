@@ -1,3 +1,7 @@
+#' Create table with the covariance parameter estimates from multiple SAS GLIMMIX models
+#' 
+#' @param modelresults
+
 randeffects_covar_parms_estimates_function <- function(modelresults){
 	modelresults %>%
 		filter(`Positive Definite G-Matrix?`=="Yes") %>%

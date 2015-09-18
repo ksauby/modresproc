@@ -1,3 +1,7 @@
+#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX
+#' 
+#' @param y
+
 modelselection_format_parameter_estimates_function <- function(y) {	
 	y %<>% 
 	dplyr::select(

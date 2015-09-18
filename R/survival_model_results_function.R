@@ -1,4 +1,19 @@
-survival_model_results_function <- function(convergence.status, parameter.estimates, fit.statistics, replace_list, select_list) {
+#' Create table of survival model results
+#' 
+#' @param convergence.status
+#' @param parameter.estimates
+#' @param fit.statistics
+#' @param replace_list
+#' @param select_list
+
+survival_model_results_function <- function(
+	convergence.status, 
+	parameter.estimates, 
+	fit.statistics, 
+	replace_list, 
+	select_list
+)
+{
 	# filter out models that didn't converge
 	y = merge(convergence.status, parameter.estimates) %>%
 		filter(Reason=="Algorithm converged.") %>%

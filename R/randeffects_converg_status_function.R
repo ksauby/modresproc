@@ -1,3 +1,7 @@
+#' Create table with the convergence status of multiple SAS GLIMMIX models
+#' 
+#' @param modelresults
+
 randeffects_converg_status_function <- function(modelresults) {
 	modelresults %>% as.data.frame %>%
 		group_by(`Random Effects`) %>%

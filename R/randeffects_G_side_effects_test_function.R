@@ -1,3 +1,7 @@
+#' Create table with G-side effects test results of multiple SAS GLIMMIX models
+#' 
+#' @param modelresults
+
 randeffects_G_side_effects_test_function <- function(modelresults) {
 	modelresults %>%
 		filter(`Positive Definite G-Matrix?`=="Yes") %>%

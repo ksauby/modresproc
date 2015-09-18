@@ -1,3 +1,8 @@
+#' Process model results for a model selection table using data from SAS GLIMMIX models
+#' 
+#' @param y
+#' @param select_list
+
 model_results_processing_function <- function(y, select_list) {
 	y[, replace_list][y[, replace_list] > 0] <- "X"
 	y[, replace_list][y[, replace_list] == 0] <- "."

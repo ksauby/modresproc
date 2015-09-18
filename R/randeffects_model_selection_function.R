@@ -1,3 +1,7 @@
+#' Return table comparing SAS GLIMMIX random effects models.
+#' 
+#' @param modelresults
+
 randeffects_model_selection_function <- function(modelresults){
 	x = modelresults %>%
 		filter(`Positive Definite G-Matrix?`=="Yes") %>%

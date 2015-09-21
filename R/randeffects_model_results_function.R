@@ -11,17 +11,21 @@ randeffects_model_results_function <- function(
 	convergence.status, 
 	covariance.parms.estimates, 
 	conditional.fit.statistics, 
-	fit.statistics
+	fit.statistics,
+	parms.estimates
 )
-{
+{	
 	conditional.fit.statistics %<>% 
 		dcast(modelVars~Descr, value.var="Value") %>%
 		.[, -(2:3)]
 	fit.statistics %<>% 
 		dcast(modelVars~Descr, value.var="Value") %>%
 		.[, -(4:7)]
-	modelresults = merge(covariance.parms.test, convergence.status,
+	parms.estimates %<>% 
+		dcast(modelVars~Effect, value.var="Estimate", fun=X_function)
+	modelresults = merge(parms.estimates, covariance.parms.test,
 		by="modelVars") %>%
+		merge(convergence.status) %>%
 		merge(covariance.parms.estimates) %>%
 		merge(conditional.fit.statistics) %>%
 		merge(filter(fit.statistics)) %>%

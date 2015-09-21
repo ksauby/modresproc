@@ -12,7 +12,7 @@ modelselection_stricta_model_results_function <- function(
 	convergence.status, 
 	parameter.estimates, 
 	conditional.fit.statistics, 
-	replace_list,
+	# replace_list,
 	select_list
 )
 {
@@ -25,7 +25,7 @@ modelselection_stricta_model_results_function <- function(
 	y = merge(convergence.status, parameter.estimates) %>%
 		filter(pdG==1) %>%
 		# change effects to columns
-		dcast(modelVars~Effect, value.var="Estimate") %>%
+		dcast(modelVars~Effect, value.var="Estimate", fun=X_function) %>%
 		# fit statistics
 		merge(conditional.fit.statistics) %>%
 		filter(Descr=="-2 log L(y | r. effects)") %>%
@@ -42,30 +42,35 @@ modelselection_stricta_model_results_function <- function(
 	y %<>%
 	mutate(
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`>0 & 	`T1*P2`==0 & 	`T2*P1`==0 & 	`T2*P2`==0),
+			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),
 			"T1 x P1"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`==0 & 	`T1*P2`>0 & 	`T2*P1`==0 & 	`T2*P2`==0),
+			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),
 			"T1 x P2"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`==0 & 	`T1*P2`==0 & 	`T2*P1`>0 & 	`T2*P2`==0),
+			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),
 			"T2 x P1"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`>0 & 	`T1*P2`==0 & 	`T2*P1`==0 & 	`T2*P2`>0),
+			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),
 			"T2 x P2"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`>0 & 	`T1*P2`>0 & 	`T2*P1`>0 & 	`T2*P2`>0),
+			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),
 			"Full")
 	)
 	# insect/weather interactions
-	y[, "P1*CA_t_1"][y[, "P1*CA_t_1*CH_t"] > 0] <- 1
-	y[, "P1*CH_t_1"][y[, "P1*CA_t_1*CH_t"] > 0] <- 1
-	y[, "T1*CA_t_1"][y[, "T1*CA_t_1*CH_t"] > 0] <- 1
-	y[, "T1*CH_t_1"][y[, "T1*CA_t_1*CH_t"] > 0] <- 1
+	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"
+	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"
+	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == 
+		"X"),]$`CA_t_1*CH_t_1`<-"X"
+	
+	
+	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"
+	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"
+	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==
+		"X"),]$`CA_t_1*CH_t_1`<-"X"
 	# create 
 	# select columns
 	y <- y[, select_list]
-	# y %<>% dplyr::select(select_list)	
 	# cAIC	
 	y %<>% cAIC_function
 	# change column names
@@ -73,6 +78,8 @@ modelselection_stricta_model_results_function <- function(
 		{setnames(y, "Ln_Size_t_1_st", "Standardized Ln(Size [t-1])")}
 	if ("Ln_Cone_t_1_st" %in% names(y)) 
 		{setnames(y, "Ln_Cone_t_1_st", "Standardized Ln(Cone Volume [t-1])")}
+	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) 
+		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], "Standardized Ln(Cylinder Volume [t-1])")}
 	if ("CA_t_1" %in% names(y)) 
 		{setnames(y, "CA_t_1", "Invasive Moth [t-1]")}
 	if ("CH_t_1" %in% names(y)) 
@@ -81,8 +88,8 @@ modelselection_stricta_model_results_function <- function(
 		{setnames(y, "NatInsect_t_1", "Native Insects [t-1]")}
 	if ("CA_t_1*CH_t_1" %in% names(y)) 
 		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}
-	if ("CA_t_1*NatInse" %in% names(y)) 
-		{setnames(y, "CA_t_1*NatInse", 
+	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) 
+		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], 
 			"Invasive Moth [t-1] x Native Insects [t-1]")}
 	if ("P1*CA_t_1" %in% names(y)) 
 		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}
@@ -99,8 +106,8 @@ modelselection_stricta_model_results_function <- function(
 	if ("ColumnsX" %in% names(y)) 
 		{setnames(y, "ColumnsX", "Number of Parameters")}
 	# replace values
-	y[, replace_list][y[, replace_list] > 0] <- "X"
-	y[, replace_list][y[, replace_list] == 0] <- "."
+	# y[, replace_list][y[, replace_list] > 0] <- "X"
+	# y[, replace_list][y[, replace_list] == 0] <- "."
 	y[, "Temperature x Precipitation"][y[, "Temperature x Precipitation"] == "NA"] <- "."
 	return(y)
 }

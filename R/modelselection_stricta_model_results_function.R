@@ -25,7 +25,7 @@ modelselection_stricta_model_results_function <- function(
 	y = merge(convergence.status, parameter.estimates) %>%
 		filter(pdG==1) %>%
 		# change effects to columns
-		dcast(modelVars~Effect) %>%
+		dcast(modelVars~Effect, value.var="Estimate") %>%
 		# fit statistics
 		merge(conditional.fit.statistics) %>%
 		filter(Descr=="-2 log L(y | r. effects)") %>%
@@ -42,15 +42,20 @@ modelselection_stricta_model_results_function <- function(
 	y %<>%
 	mutate(
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`>0 & 	`T1*P2`==0 & 	`T2*P1`==0 & 	`T2*P2`==0), 	"T1 x P1"),
+			which(`T1*P1`>0 & 	`T1*P2`==0 & 	`T2*P1`==0 & 	`T2*P2`==0),
+			"T1 x P1"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`==0 & 	`T1*P2`>0 & 	`T2*P1`==0 & 	`T2*P2`==0), 	"T1 x P2"),
+			which(`T1*P1`==0 & 	`T1*P2`>0 & 	`T2*P1`==0 & 	`T2*P2`==0),
+			"T1 x P2"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`==0 & 	`T1*P2`==0 & 	`T2*P1`>0 & 	`T2*P2`==0), 	"T2 x P1"),
+			which(`T1*P1`==0 & 	`T1*P2`==0 & 	`T2*P1`>0 & 	`T2*P2`==0),
+			"T2 x P1"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`>0 & 	`T1*P2`==0 & 	`T2*P1`==0 & 	`T2*P2`>0), 	"T2 x P2"),
+			which(`T1*P1`>0 & 	`T1*P2`==0 & 	`T2*P1`==0 & 	`T2*P2`>0),
+			"T2 x P2"),
 		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, 
-			which(`T1*P1`>0 & 	`T1*P2`>0 & 	`T2*P1`>0 & 	`T2*P2`>0), 	"Full")
+			which(`T1*P1`>0 & 	`T1*P2`>0 & 	`T2*P1`>0 & 	`T2*P2`>0),
+			"Full")
 	)
 	# insect/weather interactions
 	y[, "P1*CA_t_1"][y[, "P1*CA_t_1*CH_t"] > 0] <- 1
@@ -68,19 +73,31 @@ modelselection_stricta_model_results_function <- function(
 		{setnames(y, "Ln_Size_t_1_st", "Standardized Ln(Size [t-1])")}
 	if ("Ln_Cone_t_1_st" %in% names(y)) 
 		{setnames(y, "Ln_Cone_t_1_st", "Standardized Ln(Cone Volume [t-1])")}
-	y %<>%
-	setnames("CA_t_1",			"Invasive Moth [t-1]") %>%
-	setnames("CH_t_1",			"Native Bug [t-1]") %>%
-	setnames("NatInsect_t_1",	"Native Insects [t-1]") %>%
-	setnames("CA_t_1*CH_t_1",	"Invasive Moth [t-1] x Native Bug [t-1]") %>%
-	setnames("CA_t_1*NatInse",	"Invasive Moth [t-1] x Native Insects [t-1]") %>%
-	setnames("P1*CA_t_1", 		"Invasive Moth [t-1] x Precipitation") %>%
-	setnames("T1*CA_t_1",		"Invasive Moth [t-1] x Temperature") %>%
-	setnames("P1*CH_t_1",		"Native Bug [t-1] x Precipitation") %>%
-	setnames("T1*CH_t_1",		"Native Bug [t-1] x Temperature") %>%
-	setnames("T1",				"Temperature") %>%
-	setnames("P1",				"Precipitation") %>%
-	setnames("ColumnsX", 		"Number of Parameters")
+	if ("CA_t_1" %in% names(y)) 
+		{setnames(y, "CA_t_1", "Invasive Moth [t-1]")}
+	if ("CH_t_1" %in% names(y)) 
+		{setnames(y, "CH_t_1", "Native Bug [t-1]")}
+	if ("NatInsect_t_1" %in% names(y)) 
+		{setnames(y, "NatInsect_t_1", "Native Insects [t-1]")}
+	if ("CA_t_1*CH_t_1" %in% names(y)) 
+		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}
+	if ("CA_t_1*NatInse" %in% names(y)) 
+		{setnames(y, "CA_t_1*NatInse", 
+			"Invasive Moth [t-1] x Native Insects [t-1]")}
+	if ("P1*CA_t_1" %in% names(y)) 
+		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}
+	if ("T1*CA_t_1" %in% names(y)) 
+		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}
+	if ("P1*CH_t_1" %in% names(y)) 
+		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}
+	if ("T1*CH_t_1" %in% names(y)) 
+		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}
+	if ("T1" %in% names(y)) 
+		{setnames(y, "T1", "Temperature")}
+	if ("P1" %in% names(y)) 
+		{setnames(y, "P1", "Precipitation")}
+	if ("ColumnsX" %in% names(y)) 
+		{setnames(y, "ColumnsX", "Number of Parameters")}
 	# replace values
 	y[, replace_list][y[, replace_list] > 0] <- "X"
 	y[, replace_list][y[, replace_list] == 0] <- "."

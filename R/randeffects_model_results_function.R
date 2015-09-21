@@ -20,20 +20,30 @@ randeffects_model_results_function <- function(
 	fit.statistics %<>% 
 		dcast(modelVars~Descr, value.var="Value") %>%
 		.[, -(4:7)]
-	modelresults = merge(covariance.parms.test, convergence.status, by="modelVars") %>%
+	modelresults = merge(covariance.parms.test, convergence.status,
+		by="modelVars") %>%
 		merge(covariance.parms.estimates) %>%
 		merge(conditional.fit.statistics) %>%
 		merge(filter(fit.statistics)) %>%
 		as.data.table %>%
-		.[modelVars == "YEARPLANTID", 			modelVars := "Year, Plant ID (Intercept)"] %>%
-		.[modelVars == "LOCATIONWITHINYEAR", 	modelVars := "Location (Year)"] %>%
-		.[modelVars == "PLANTID", 				modelVars := "Plant ID (Intercept)"] %>%
-		.[modelVars == "LOCATIONYEARPLANTID", 	modelVars := "Location, Year, Plant ID (Intercept)"] %>%
-		.[modelVars == "LOCATIONYEAR", 			modelVars := "Location, Year"] %>%
-		.[modelVars == "LOCATION", 				modelVars := "Location"] %>%
-		.[modelVars == "LOCATIONPLANTID", 		modelVars := "Location, Plant ID (Intercept)"] %>%
-		.[modelVars == "LOCATIONWYEARPLANTID", 	modelVars := "Location (Year), Plant ID (Intercept)"] %>%
-		.[modelVars == "YEAR", 					modelVars := "Year"]
+		.[modelVars == "YEARPLANTID", 			
+			modelVars := "Year, Plant ID (Intercept)"] %>%
+		.[modelVars == "LOCATIONWITHINYEAR", 	
+			modelVars := "Location (Year)"] %>%
+		.[modelVars == "PLANTID", 				
+			modelVars := "Plant ID (Intercept)"] %>%
+		.[modelVars == "LOCATIONYEARPLANTID", 	
+			modelVars := "Location, Year, Plant ID (Intercept)"] %>%
+		.[modelVars == "LOCATIONYEAR", 			
+			modelVars := "Location, Year"] %>%
+		.[modelVars == "LOCATION", 				
+			modelVars := "Location"] %>%
+		.[modelVars == "LOCATIONPLANTID", 		
+			modelVars := "Location, Plant ID (Intercept)"] %>%
+		.[modelVars == "LOCATIONWYEARPLANTID", 	
+			modelVars := "Location (Year), Plant ID (Intercept)"] %>%
+		.[modelVars == "YEAR", 					
+			modelVars := "Year"]
 	modelresults$pdG %<>% as.character
 	modelresults %<>% as.data.table %>%
 		.[pdG == 0, pdG := "No"] %>%
@@ -50,6 +60,6 @@ randeffects_model_results_function <- function(
 		setnames("UpperWaldCL", 			"Upper Wald CL") %>%
 		setnames("AIC  (smaller is better)","AIC") %>%
 		setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%
-		setnames("-2 Log Likelihood",	"-2 Log Lik")
+		setnames("-2 Log Likelihood",		"-2 Log Lik")
 	return(modelresults)
 }

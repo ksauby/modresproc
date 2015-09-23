@@ -58,10 +58,12 @@ randeffects_model_results_function <- function(
 		setnames("ProbChiSq", 				"Prob(Chi-Squared)") %>%
 		setnames("CovParm", 				"Covariance Parameter") %>%
 		setnames("StdErr", 					"Standard Error") %>%
-		setnames("ZValue", 					"Z-Value") %>%
-		setnames("ProbZ", 					"Prob(Z)") %>%
-		setnames("LowerWaldCL", 			"Lower Wald CL") %>%
-		setnames("UpperWaldCL", 			"Upper Wald CL") %>%
+	#	setnames("tValue", 					"t-Value") %>%
+	#	setnames("Probt", 					"Prob(t)") %>%
+		setnames("LowerLRCL", 				"Lower LR CL") %>%
+		setnames("probLRLower", 			"Prob(Lower LR)") %>%
+		setnames("UpperLRCL", 				"Upper LR CL") %>%
+		setnames("probLRUpper", 			"Prob(Upper LR)") %>%
 		setnames("AIC  (smaller is better)","AIC") %>%
 		setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%
 		setnames("-2 Log Likelihood",		"-2 Log Lik")

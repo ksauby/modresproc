@@ -7,13 +7,14 @@ randeffects_covar_parms_estimates_function <- function(modelresults){
 		filter(`Positive Definite G-Matrix?`=="Yes") %>%
 		dplyr::select(
 			`Random Effects`, 
-			`Covariance Parameter`, 
-			Estimate, 
-			`Standard Error`, 
-			`Z-Value`, 
-			`Prob(Z)`, 
-			`Lower Wald CL`, 
-			`Upper Wald CL`
+			`Covariance Parameter`,
+			Estimate,
+			`Standard Error`,
+			Alpha,
+			`Lower LR CL`,
+			`Prob(Lower LR)`,
+			`Upper LR CL`,
+			`Prob(Upper LR)` 			
 		) %>%
 		as.data.frame
 }

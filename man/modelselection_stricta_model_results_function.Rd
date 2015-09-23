@@ -6,7 +6,7 @@
 \usage{
 modelselection_stricta_model_results_function(models.dimensions,
   convergence.status, parameter.estimates, conditional.fit.statistics,
-  replace_list, select_list)
+  select_list)
 }
 \arguments{
 \item{models.dimensions}{}
@@ -17,9 +17,9 @@ modelselection_stricta_model_results_function(models.dimensions,
 
 \item{conditional.fit.statistics}{}
 
-\item{replace_list}{}
-
 \item{select_list}{}
+
+\item{replace_list}{}
 }
 \description{
 Format parameters and their estimates for a model selection table using data from SAS GLIMMIX

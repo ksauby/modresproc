@@ -74,47 +74,22 @@ library(ProjectTemplate)#
 # load project#
 load.project()
 setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate size and fruit production variables at the previous time step#
+#' Calculate lag dates: Previous_Survey_Date, DaysSincePrevSurvey, DaysSinceStart#
 #' @param x#
-#' @description calculate lag size and fruit.#
-#
-lag_size_fruit_function <- function(x=x){#
-	x %>% #
+#' @description calculate lag dates.#
+lag_dates_function <- function(x=x){#
+	x %<>% #
 		arrange(Date) %>%#
 		group_by(PlantID) %>%#
 		mutate(#
-			# size#
-			Size_t_1 			= c(NA, head(Size_t, -1)),#
-			Height_t_1 			= c(NA, head(Height_t, -1)),#
-			Cone_t_1 			= c(NA, head(Cone_t, -1)),#
-			Cylinder_Tall_t_1 	= c(NA, head(Cylinder_Tall_t, -1)),#
-			# fruit#
-			Fruit_t_1 			= c(NA, head(Fruit_t, -1)),#
-			FruitPres_t_1 		= c(NA, head(FruitPres_t, -1))#
+			# previous dates#
+			Previous_Survey_Date 	= as.Date(c(NA, head(Date, -1))),#
+			DaysSincePrevSurvey 	= Date - Previous_Survey_Date,#
+			DaysSinceStart 			= Date - Date[1]#
 		)#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate insect presence during the previous year#
-#' @param x#
-#' @description calculate lag insects during the previous year.#
-#
-lag_insects_yr_function <- function(x=x){#
-	x %>% #
-		arrange(Date) %>%#
-		group_by(PlantID) %>%#
-		mutate(#
-			# new insect variables#
-			Insectyr_t 		= ifelse(sum(DAyr_t, CAyr_t, CHyr_t, MEyr_t, na.rm=T)>0, 1, 0),#
-			NatInsectyr_t 	= ifelse(sum(DAyr_t, CHyr_t, MEyr_t, na.rm=T)>0, 1, 0),#
-			# lagged insects#
-			CAyr_t_1 		= c(NA, head(CAyr_t, -1)),#
-			MEyr_t_1 		= c(NA, head(MEyr_t, -1)),#
-			CHyr_t_1 		= c(NA, head(CHyr_t, -1)),#
-			DAyr_t_1 		= c(NA, head(DAyr_t, -1)),#
-			Insectyr_t_1 		= c(NA, head(Insectyr_t, -1)),#
-			NatInsectyr_t_1 	= c(NA, head(NatInsectyr_t, -1))#
-		) %>%#
-		as.data.frame#
+	x$DaysSincePrevSurvey 	%<>% as.numeric#
+	x$DaysSinceStart 		%<>% as.numeric#
+	return(x)#
 }
 setwd('/Users/KSauby/Documents/Projects/dataproc/R')
 #' Calculate insect presence at previous time step#
@@ -140,22 +115,47 @@ lag_insects_function <- function(x=x){#
 		as.data.frame#
 }
 setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate lag dates: Previous_Survey_Date, DaysSincePrevSurvey, DaysSinceStart#
+#' Calculate insect presence during the previous year#
 #' @param x#
-#' @description calculate lag dates.#
-lag_dates_function <- function(x=x){#
-	x %<>% #
+#' @description calculate lag insects during the previous year.#
+#
+lag_insects_yr_function <- function(x=x){#
+	x %>% #
 		arrange(Date) %>%#
 		group_by(PlantID) %>%#
 		mutate(#
-			# previous dates#
-			Previous_Survey_Date 	= as.Date(c(NA, head(Date, -1))),#
-			DaysSincePrevSurvey 	= Date - Previous_Survey_Date,#
-			DaysSinceStart 			= Date - Date[1]#
+			# new insect variables#
+			Insectyr_t 		= ifelse(sum(DAyr_t, CAyr_t, CHyr_t, MEyr_t, na.rm=T)>0, 1, 0),#
+			NatInsectyr_t 	= ifelse(sum(DAyr_t, CHyr_t, MEyr_t, na.rm=T)>0, 1, 0),#
+			# lagged insects#
+			CAyr_t_1 		= c(NA, head(CAyr_t, -1)),#
+			MEyr_t_1 		= c(NA, head(MEyr_t, -1)),#
+			CHyr_t_1 		= c(NA, head(CHyr_t, -1)),#
+			DAyr_t_1 		= c(NA, head(DAyr_t, -1)),#
+			Insectyr_t_1 		= c(NA, head(Insectyr_t, -1)),#
+			NatInsectyr_t_1 	= c(NA, head(NatInsectyr_t, -1))#
+		) %>%#
+		as.data.frame#
+}
+setwd('/Users/KSauby/Documents/Projects/dataproc/R')
+#' Calculate size and fruit production variables at the previous time step#
+#' @param x#
+#' @description calculate lag size and fruit.#
+#
+lag_size_fruit_function <- function(x=x){#
+	x %>% #
+		arrange(Date) %>%#
+		group_by(PlantID) %>%#
+		mutate(#
+			# size#
+			Size_t_1 			= c(NA, head(Size_t, -1)),#
+			Height_t_1 			= c(NA, head(Height_t, -1)),#
+			Cone_t_1 			= c(NA, head(Cone_t, -1)),#
+			Cylinder_Tall_t_1 	= c(NA, head(Cylinder_Tall_t, -1)),#
+			# fruit#
+			Fruit_t_1 			= c(NA, head(Fruit_t, -1)),#
+			FruitPres_t_1 		= c(NA, head(FruitPres_t, -1))#
 		)#
-	x$DaysSincePrevSurvey 	%<>% as.numeric#
-	x$DaysSinceStart 		%<>% as.numeric#
-	return(x)#
 }
 setwd('/Users/KSauby/Documents/Projects/dataproc/R')
 #' Calculate Relative Growth Rate#
@@ -215,36 +215,35 @@ library(ProjectTemplate)#
 #
 # load project#
 load.project()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-stricta.size.model.results = randeffects_model_results_function(#
-	SIZE.stricta.size.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.size.random.effects.models.convergence.status,#
-	SIZE.stricta.size.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.size.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.size.random.effects.models.fit.statistics#
-)#
-stricta.size.converg.status = randeffects_converg_status_function(stricta.size.model.results)#
-stricta.size.covar.results = randeffects_G_side_effects_test_function(stricta.size.model.results)#
-stricta.size.covar.parms = randeffects_covar_parms_estimates_function(stricta.size.model.results)#
-stricta.size.rand.model.selection = randeffects_model_selection_function(stricta.size.model.results)
-library(modresproc)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-stricta.size.model.results = randeffects_model_results_function(#
-	SIZE.stricta.size.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.size.random.effects.models.convergence.status,#
-	SIZE.stricta.size.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.size.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.size.random.effects.models.fit.statistics#
-)#
-stricta.size.converg.status = randeffects_converg_status_function(stricta.size.model.results)#
-stricta.size.covar.results = randeffects_G_side_effects_test_function(stricta.size.model.results)#
-stricta.size.covar.parms = randeffects_covar_parms_estimates_function(stricta.size.model.results)#
-stricta.size.rand.model.selection = randeffects_model_selection_function(stricta.size.model.results)
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
+#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
+#' #
+#' @param models.dimensions#
+#' @param convergence.status#
+#' @param parameter.estimates#
+#' @param conditional.fit.statistics#
+#' @param replace_list#
+#' @param select_list#
+#
+modelselection_stricta_model_results_function <- function(#
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics, #
+	# replace_list,#
+	select_list#
+)#
+{#
+	# model dimensions#
+	x = models.dimensions %>% #
+		dcast(modelVars~Descr, value.var="Value")#
+	names(x)[1:3] = c("modelVars", "ColumnsX", "ColumnsZ")#
+	x %<>% dplyr::select(modelVars, ColumnsX, ColumnsZ)#
+	# filter out models that didn't converge#
+	y = merge(convergence.status, parameter.estimates) %>%#
 		filter(pdG==1) %>%#
 		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
+		dcast(modelVars~Effect, value.var="Estimate", fun=X_function) %>%#
 		# fit statistics#
 		merge(conditional.fit.statistics) %>%#
 		filter(Descr=="-2 log L(y | r. effects)") %>%#
@@ -255,26 +254,78 @@ y = merge(convergence.status, parameter.estimates) %>%#
 			cAIC = `-2 log L(y | r. effects)` + 2*(ColumnsX + ColumnsZ)#
 		) %>%#
 		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Create table with the covariance parameter estimates from multiple SAS GLIMMIX models#
-#' #
-#' @param modelresults#
-#
-randeffects_covar_parms_estimates_function <- function(modelresults){#
-	modelresults %>%#
-		filter(`Positive Definite G-Matrix?`=="Yes") %>%#
-		dplyr::select(#
-			`Random Effects`, #
-			`Covariance Parameter`, #
-			Estimate, #
-			`Standard Error`, #
-			`Z-Value`, #
-			`Prob(Z)`, #
-			`Lower Wald CL`, #
-			`Upper Wald CL`#
-		) %>%#
-		as.data.frame#
+		dplyr::select(-(`-2 log L(y | r. effects)`))#
+	# temperature and precipitation interactions#
+	y$`Temperature x Precipitation` = "NA"#
+	y %<>%#
+	mutate(#
+		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, #
+			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
+			"T1 x P1"),#
+		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, #
+			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
+			"T1 x P2"),#
+		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, #
+			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
+			"T2 x P1"),#
+		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, #
+			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
+			"T2 x P2"),#
+		`Temperature x Precipitation` = replace(`Temperature x Precipitation`, #
+			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
+			"Full")#
+	)#
+	# insect/weather interactions#
+	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
+	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
+	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
+		"X"),]$`CA_t_1*CH_t_1`<-"X"#
+	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
+	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
+	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
+		"X"),]$`CA_t_1*CH_t_1`<-"X"#
+	# create #
+	# select columns#
+	y <- y[, select_list]#
+	# cAIC	#
+	y %<>% cAIC_function#
+	# change column names#
+	if ("Ln_Size_t_1_st" %in% names(y)) #
+		{setnames(y, "Ln_Size_t_1_st", "Standardized Ln(Size [t-1])")}#
+	if ("Ln_Cone_t_1_st" %in% names(y)) #
+		{setnames(y, "Ln_Cone_t_1_st", "Standardized Ln(Cone Volume [t-1])")}#
+	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
+		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], "Standardized Ln(Cylinder Volume [t-1])")}#
+	if ("CA_t_1" %in% names(y)) #
+		{setnames(y, "CA_t_1", "Invasive Moth [t-1]")}#
+	if ("CH_t_1" %in% names(y)) #
+		{setnames(y, "CH_t_1", "Native Bug [t-1]")}#
+	if ("NatInsect_t_1" %in% names(y)) #
+		{setnames(y, "NatInsect_t_1", "Native Insects [t-1]")}#
+	if ("CA_t_1*CH_t_1" %in% names(y)) #
+		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
+	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
+		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
+			"Invasive Moth [t-1] x Native Insects [t-1]")}#
+	if ("P1*CA_t_1" %in% names(y)) #
+		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
+	if ("T1*CA_t_1" %in% names(y)) #
+		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
+	if ("P1*CH_t_1" %in% names(y)) #
+		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
+	if ("T1*CH_t_1" %in% names(y)) #
+		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
+	if ("T1" %in% names(y)) #
+		{setnames(y, "T1", "Temperature")}#
+	if ("P1" %in% names(y)) #
+		{setnames(y, "P1", "Precipitation")}#
+	if ("ColumnsX" %in% names(y)) #
+		{setnames(y, "ColumnsX", "Number of Parameters")}#
+	# replace values#
+	# y[, replace_list][y[, replace_list] > 0] <- "X"#
+	# y[, replace_list][y[, replace_list] == 0] <- "."#
+	y[, "Temperature x Precipitation"][y[, "Temperature x Precipitation"] == "NA"] <- "."#
+	return(y)#
 }
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
 #' Create table with the convergence status of multiple SAS GLIMMIX models#
@@ -289,6 +340,27 @@ randeffects_converg_status_function <- function(modelresults) {#
 		) %>%#
 		as.data.frame %>%#
 		arrange(desc(`Positive Definite G-Matrix?`))#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Create table with the covariance parameter estimates from multiple SAS GLIMMIX models#
+#' #
+#' @param modelresults#
+#
+randeffects_covar_parms_estimates_function <- function(modelresults){#
+	modelresults %>%#
+		filter(`Positive Definite G-Matrix?`=="Yes") %>%#
+		dplyr::select(#
+			`Random Effects`, #
+			`Covariance Parameter`,#
+			Estimate,#
+			`Standard Error`,#
+			Alpha,#
+			`Lower LR CL`,#
+			`Prob(Lower LR)`,#
+			`Upper LR CL`,#
+			`Prob(Upper LR)` 			#
+		) %>%#
+		as.data.frame#
 }
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
 #' Create table with G-side effects test results of multiple SAS GLIMMIX models#
@@ -329,17 +401,21 @@ randeffects_model_results_function <- function(#
 	convergence.status, #
 	covariance.parms.estimates, #
 	conditional.fit.statistics, #
-	fit.statistics#
+	fit.statistics,#
+	parms.estimates#
 )#
-{#
+{	#
 	conditional.fit.statistics %<>% #
 		dcast(modelVars~Descr, value.var="Value") %>%#
 		.[, -(2:3)]#
 	fit.statistics %<>% #
 		dcast(modelVars~Descr, value.var="Value") %>%#
 		.[, -(4:7)]#
-	modelresults = merge(covariance.parms.test, convergence.status,#
+	parms.estimates %<>% #
+		dcast(modelVars~Effect, value.var="Estimate", fun=X_function)#
+	modelresults = merge(parms.estimates, covariance.parms.test,#
 		by="modelVars") %>%#
+		merge(convergence.status) %>%#
 		merge(covariance.parms.estimates) %>%#
 		merge(conditional.fit.statistics) %>%#
 		merge(filter(fit.statistics)) %>%#
@@ -372,10 +448,12 @@ randeffects_model_results_function <- function(#
 		setnames("ProbChiSq", 				"Prob(Chi-Squared)") %>%#
 		setnames("CovParm", 				"Covariance Parameter") %>%#
 		setnames("StdErr", 					"Standard Error") %>%#
-		setnames("ZValue", 					"Z-Value") %>%#
-		setnames("ProbZ", 					"Prob(Z)") %>%#
-		setnames("LowerWaldCL", 			"Lower Wald CL") %>%#
-		setnames("UpperWaldCL", 			"Upper Wald CL") %>%#
+	#	setnames("tValue", 					"t-Value") %>%#
+	#	setnames("Probt", 					"Prob(t)") %>%#
+		setnames("LowerLRCL", 				"Lower LR CL") %>%#
+		setnames("probLRLower", 			"Prob(Lower LR)") %>%#
+		setnames("UpperLRCL", 				"Upper LR CL") %>%#
+		setnames("probLRUpper", 			"Prob(Upper LR)") %>%#
 		setnames("AIC  (smaller is better)","AIC") %>%#
 		setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%#
 		setnames("-2 Log Likelihood",		"-2 Log Lik")#
@@ -389,282 +467,65 @@ setwd('/Users/KSauby/Documents/Projects/modresproc/R')
 randeffects_model_selection_function <- function(modelresults){#
 	x = modelresults %>%#
 		filter(`Positive Definite G-Matrix?`=="Yes") %>%#
-		dplyr::select(#
-			`Random Effects`, #
-			DF, #
-			`Pearson Chi-Square/DF`, #
-			`Chi-Squared`, #
-			`Prob(Chi-Squared)`, #
-			`-2 Log Lik`, #
-			AIC#
-		) %>%#
+		dplyr::select(-Label, -Objective) %>%#
+		dplyr::select(-(Note:Subject)) %>%#
 		group_by(`Random Effects`) %>%#
-		summarise(#
-			DF							= DF[1],#
-			`Chi-Squared`				= `Chi-Squared`[1],#
-			`Prob(Chi-Squared)`			= `Prob(Chi-Squared)`[1], #
-			`Pearson Chi-Square/DF` 	= `Pearson Chi-Square/DF`[1],#
-			`-2 Log Lik` 				= `-2 Log Lik`[1],#
-			AIC 						= AIC[1]#
-		) %>%#
-		as.data.frame %>% #
+		filter(row_number(DF)==1) %>%#
+		as.data.frame %>%#
 		arrange(AIC)#
 		x %<>% AIC_function		#
 	return(x)#
 }
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-stricta.size.model.results = randeffects_model_results_function(#
-	SIZE.stricta.size.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.size.random.effects.models.convergence.status,#
-	SIZE.stricta.size.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.size.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.size.random.effects.models.fit.statistics#
-)#
-stricta.size.converg.status = randeffects_converg_status_function(stricta.size.model.results)#
-stricta.size.covar.results = randeffects_G_side_effects_test_function(stricta.size.model.results)#
-stricta.size.covar.parms = randeffects_covar_parms_estimates_function(stricta.size.model.results)#
-stricta.size.rand.model.selection = randeffects_model_selection_function(stricta.size.model.results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-stricta.cone.model.results = randeffects_model_results_function(#
-	SIZE.stricta.cone.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.cone.random.effects.models.convergence.status,#
-	SIZE.stricta.cone.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.cone.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.cone.random.effects.models.fit.statistics#
-)#
-stricta.cone.converg.status = randeffects_converg_status_function(stricta.cone.model.results)#
-stricta.cone.covar.results = randeffects_G_side_effects_test_function(stricta.cone.model.results)#
-stricta.cone.covar.parms = randeffects_covar_parms_estimates_function(stricta.cone.model.results)#
-stricta.cone.rand.model.selection = randeffects_model_selection_function(stricta.cone.model.results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-stricta.cylinder.model.results = randeffects_model_results_function(#
-	SIZE.stricta.cylinder.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.cylinder.random.effects.models.convergence.status,#
-	SIZE.stricta.cylinder.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.cylinder.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.cylinder.random.effects.models.fit.statistics#
-)#
-stricta.cylinder.converg.status = randeffects_converg_status_function(stricta.cylinder.model.results)#
-stricta.cylinder.covar.results = randeffects_G_side_effects_test_function(stricta.cylinder.model.results)#
-stricta.cylinder.covar.parms = randeffects_covar_parms_estimates_function(stricta.cylinder.model.results)#
-stricta.cylinder.rand.model.selection = randeffects_model_selection_function(stricta.cylinder.model.results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-size_replace_list = c(#
-	"Standardized Ln(Size [t-1])",#
-	"Invasive Moth [t-1]",#
-	"Native Bug [t-1]",#
-	"Native Insects [t-1]",#
-	"Precipitation",#
-	"Temperature",#
-	"Invasive Moth [t-1] x Native Bug [t-1]",#
-	"Invasive Moth [t-1] x Native Insects [t-1]",#
-	"Invasive Moth [t-1] x Precipitation",#
-	"Invasive Moth [t-1] x Temperature",#
-	"Native Bug [t-1] x Precipitation",#
-	"Native Bug [t-1] x Temperature"#
-)#
-cone_replace_list = c(#
-	"Standardized Ln(Cone Volume [t-1])",#
-	"Invasive Moth [t-1]",#
-	"Native Bug [t-1]",#
-	"Native Insects [t-1]",#
-	"Precipitation",#
-	"Temperature",#
-	"Invasive Moth [t-1] x Native Bug [t-1]",#
-	"Invasive Moth [t-1] x Native Insects [t-1]",#
-	"Invasive Moth [t-1] x Precipitation",#
-	"Invasive Moth [t-1] x Temperature",#
-	"Native Bug [t-1] x Precipitation",#
-	"Native Bug [t-1] x Temperature"#
-)#
-cylinder_replace_list = c(#
-	"Standardized Ln(Cylinder Volume [t-1])",#
-	"Invasive Moth [t-1]",#
-	"Native Bug [t-1]",#
-	"Native Insects [t-1]",#
-	"Precipitation",#
-	"Temperature",#
-	"Invasive Moth [t-1] x Native Bug [t-1]",#
-	"Invasive Moth [t-1] x Native Insects [t-1]",#
-	"Invasive Moth [t-1] x Precipitation",#
-	"Invasive Moth [t-1] x Temperature",#
-	"Native Bug [t-1] x Precipitation",#
-	"Native Bug [t-1] x Temperature"#
-)#
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"ColumnsX",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"ColumnsX",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"ColumnsX",#
-	"cAIC"#
-)#
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Create table of survival model results#
+#' #
+#' @param convergence.status#
+#' @param parameter.estimates#
+#' @param fit.statistics#
+#' @param replace_list#
+#' @param select_list#
 #
-modelselection_size_results = modelselection_stricta_model_results_function(#
-	models.dimensions = SIZE.stricta.size.model.selection.models.dimensions,#
-	convergence.status = #
-		SIZE.stricta.size.model.selection.models.convergence.status,#
-	parameter.estimates = #
-		SIZE.stricta.size.model.selection.models.parameter.estimates,#
-	conditional.fit.statistics = #
-		SIZE.stricta.size.model.selection.models.conditional.fit.statistics,#
-	replace_list = size_replace_list,#
-	select_list = size_select_list#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = SIZE.stricta.size.model.selection.models.dimensions
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-convergence.status = #
-		SIZE.stricta.size.model.selection.models.convergence.status
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-parameter.estimates = #
-		SIZE.stricta.size.model.selection.models.parameter.estimates
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-conditional.fit.statistics = #
-		SIZE.stricta.size.model.selection.models.conditional.fit.statistics
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-replace_list = size_replace_list
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-select_list = size_select_list
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-x = models.dimensions %>% #
-		dcast(modelVars~Descr, value.var="Value")#
-	names(x)[1:3] = c("modelVars", "ColumnsX", "ColumnsZ")#
-	x %<>% dplyr::select(modelVars, ColumnsX, ColumnsZ)#
-	# filter out models that didn't converge
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		filter(Descr=="-2 log L(y | r. effects)") %>%#
-		setnames("Value", "-2 log L(y | r. effects)") %>%#
-		dplyr::select(-Descr) %>%#
-		merge(x) %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + 2*(ColumnsX + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))
-head(y)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-rmarkdown::render('stricta_SIZE_short.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-replace_list = size_replace_list#
-select_list = size_select_list
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1)
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate")
-str(y)
-head(y)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics)
-head(y)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		filter(Descr=="-2 log L(y | r. effects)") %>%#
-		setnames("Value", "-2 log L(y | r. effects)") %>%#
-		dplyr::select(-Descr) %>%#
-		merge(x) %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + 2*(ColumnsX + ColumnsZ)#
-		) %>%#
-		arrange(cAIC)
-head(y)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-# filter out models that didn't converge#
+survival_model_results_function <- function(#
+	convergence.status, #
+	parameter.estimates, #
+	fit.statistics, #
+	replace_list, #
+	select_list#
+)#
+{#
+	# filter out models that didn't converge#
 	y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
 		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
+		dcast(modelVars~Parameter)#
 		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		filter(Descr=="-2 log L(y | r. effects)") %>%#
-		setnames("Value", "-2 log L(y | r. effects)")
-head(y)
+	z = fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value") %>%#
+		setnames("AIC (smaller is better)", "AIC") #
+	y %<>% merge(z, by="modelVars") %>% #
+		arrange(modelVars) %>%#
+		mutate(`Link Function` = c(#
+			rep("Logit", dim(convergence.status)[1]/2), #
+			rep("C-Log-Log", dim(convergence.status)[1]/2))#
+		) %>%#
+		arrange(`Link Function`, `Scaled Deviance`) %>% #
+		dplyr::select(-c(modelVars, Scale))#
+	Logit = y %>% filter(`Link Function`=="Logit")#
+	CLogLog = y %>% filter(`Link Function`=="C-Log-Log")#
+	Logit 	%<>% AIC_function#
+	CLogLog %<>% AIC_function		#
+	Logit 	%<>% model_results_processing_function(select_list)#
+	CLogLog %<>% model_results_processing_function(select_list)#
+	return(list(Logit,CLogLog))#
+}
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
+convergence.status 		= SURVIVAL.humifusa.convergence.status#
+fit.statistics 			= SURVIVAL.humifusa.fit.statistics#
+parameter.estimates 	= SURVIVAL.humifusa.parameter.estimates
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		filter(Descr=="-2 log L(y | r. effects)")
-head(y)
+convergence.status
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		dcast(modelVars~Effect, value.var="Estimate") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics)
-head(y)
+parameter.estimates

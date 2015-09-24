@@ -73,6 +73,19 @@ library(ProjectTemplate)#
 #
 # load project#
 load.project()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
+convergence.status 		= SURVIVAL.humifusa.convergence.status#
+fit.statistics 			= SURVIVAL.humifusa.fit.statistics#
+parameter.estimates 	= SURVIVAL.humifusa.parameter.estimates
+SURVIVAL.humifusa.convergence.status
+SURVIVAL.humifusa.parameter.estimates
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./dataproc")#
+#setwd("./modresproc")#
+devtools::document()#
+devtools::install()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
+reload.project()
 setwd('/Users/KSauby/Documents/Projects/dataproc/R')
 #' Calculate lag dates: Previous_Survey_Date, DaysSincePrevSurvey, DaysSinceStart#
 #' @param x#
@@ -525,7 +538,111 @@ setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time
 convergence.status 		= SURVIVAL.humifusa.convergence.status#
 fit.statistics 			= SURVIVAL.humifusa.fit.statistics#
 parameter.estimates 	= SURVIVAL.humifusa.parameter.estimates
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
 convergence.status
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = merge(convergence.status, parameter.estimates) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
+		# change effects to columns#
+		dcast(modelVars~Parameter)#
+		# fit statistics#
+	z = fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value") %>%#
+		setnames("AIC (smaller is better)", "AIC") #
+	y %<>% merge(z, by="modelVars") %>% #
+		arrange(modelVars) %>%#
+		mutate(`Link Function` = c(#
+			rep("Logit", dim(convergence.status)[1]/2), #
+			rep("C-Log-Log", dim(convergence.status)[1]/2))#
+		) %>%#
+		arrange(`Link Function`, `Scaled Deviance`) %>% #
+		dplyr::select(-c(modelVars, Scale))
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+Logit = y %>% filter(`Link Function`=="Logit")#
+	CLogLog = y %>% filter(`Link Function`=="C-Log-Log")#
+	Logit 	%<>% AIC_function#
+	CLogLog %<>% AIC_function		#
+	Logit 	%<>% model_results_processing_function(select_list)#
+	CLogLog %<>% model_results_processing_function(select_list)
+CLogLog
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
+convergence.status
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
+fit.statistics
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
 parameter.estimates
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+z
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = merge(convergence.status, parameter.estimates) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
+		# change effects to columns#
+		dcast(modelVars~Parameter)#
+		# fit statistics
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = merge(convergence.status, parameter.estimates) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
+		# change effects to columns#
+		dcast(modelVars~Parameter)#
+		# fit statistics#
+	z = fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value", fun=X_function) %>%#
+		setnames("AIC (smaller is better)", "AIC")
+z
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+z = fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value", fun=X_function)
+z
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = merge(convergence.status, parameter.estimates) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
+		# change effects to columns#
+		dcast(modelVars~Parameter, fun=X_function)
+y
+parameter.estimates
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+merge(convergence.status, parameter.estimates) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
+		# change effects to columns#
+		dcast(modelVars~Parameter, value.var="Estimate", fun=X_function)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value") %>%#
+		setnames("AIC (smaller is better)", "AIC")
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+z = fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value") %>%#
+		setnames("AIC (smaller is better)", "AIC")
+z
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = merge(convergence.status, parameter.estimates) %>%#
+		filter(Reason=="Algorithm converged.") %>%#
+		# change effects to columns#
+		dcast(modelVars~Parameter, value.var="Estimate", fun=X_function)#
+		# fit statistics#
+	z = fit.statistics %>%#
+		filter(Criterion=="AIC (smaller is better)" | Criterion=="Scaled Deviance") %>%#
+		dcast(modelVars~Criterion, value.var="Value") %>%#
+		setnames("AIC (smaller is better)", "AIC") #
+	y %<>% merge(z, by="modelVars") %>% #
+		arrange(modelVars) %>%#
+		mutate(`Link Function` = c(#
+			rep("Logit", dim(convergence.status)[1]/2), #
+			rep("C-Log-Log", dim(convergence.status)[1]/2))#
+		) %>%#
+		arrange(`Link Function`, `Scaled Deviance`) %>% #
+		dplyr::select(-c(modelVars, Scale))
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y %>% #
+		filter(`Link Function`=="Logit") %>%#
+		AIC_function

@@ -9,8 +9,7 @@
 survival_model_results_function <- function(
 	convergence.status, 
 	parameter.estimates, 
-	fit.statistics, 
-	replace_list, 
+	fit.statistics,
 	select_list
 )
 {
@@ -32,13 +31,8 @@ survival_model_results_function <- function(
 		) %>%
 		arrange(`Link Function`, `Scaled Deviance`) %>% 
 		dplyr::select(-c(modelVars, Scale))
-	Logit = y %>% 
-		filter(`Link Function`=="Logit") %>%
-		AIC_function %>%
-		model_results_processing_function(select_list)
-	CLogLog = y %>% 
-		filter(`Link Function`=="C-Log-Log") %>%
-		AIC_function %>%
-		model_results_processing_function(select_list)
-	return(list(Logit,CLogLog))
+		# select columns
+	y <- y[, select_list]
+	y %<>% names_processing_function
+	return(y)
 }

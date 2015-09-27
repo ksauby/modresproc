@@ -57,20 +57,7 @@ modelselection_humifusa_model_results_function <- function(
 	# cAIC	
 	y %<>% cAIC_function
 	# change column names
-	y %<>%
-	setnames("CH_t_1",			"Native Bug [t-1]") %>%
-	setnames("DA_t_1",			"Native Scale [t-1]") %>%
-	setnames("ME_t_1",			"Native Moth [t-1]") %>%
-	setnames("NatInsect_t_1",	"Native Insects [t-1]") %>%
-	setnames("P1*CH_t_1",		"Native Bug [t-1] x Precipitation") %>%
-	setnames("T1*CH_t_1",		"Native Bug [t-1] x Temperature") %>%
-	setnames("P1*DA_t_1", 		"Native Scale [t-1] x Precipitation") %>%
-	setnames("T1*DA_t_1",		"Native Scale [t-1] x Temperature") %>%
-	setnames("P1*ME_t_1", 		"Native Moth [t-1] x Precipitation") %>%
-	setnames("T1*ME_t_1",		"Native Moth [t-1] x Temperature") %>%
-	setnames("T1",				"Temperature") %>%
-	setnames("P1",				"Precipitation") %>%
-	setnames("ColumnsX", 		"Number of Parameters")
+	y %<>% names_processing_function
 	y[, replace_list][y[, replace_list] > 0] <- "X"
 	y[, replace_list][y[, replace_list] == 0] <- "."
 	y[, "Temperature x Precipitation"][y[, "Temperature x Precipitation"] == "NA"] <- "."

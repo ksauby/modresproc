@@ -5,7 +5,7 @@
 \title{Create table of survival model results}
 \usage{
 survival_model_results_function(convergence.status, parameter.estimates,
-  fit.statistics, replace_list, select_list)
+  fit.statistics, select_list)
 }
 \arguments{
 \item{convergence.status}{}
@@ -14,9 +14,9 @@ survival_model_results_function(convergence.status, parameter.estimates,
 
 \item{fit.statistics}{}
 
-\item{replace_list}{}
-
 \item{select_list}{}
+
+\item{replace_list}{}
 }
 \description{
 Create table of survival model results

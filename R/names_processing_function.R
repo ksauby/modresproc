@@ -51,7 +51,5 @@ names_processing_function <- function(y) {
 		{setnames(y, "T1", "Temperature")}
 	if ("P1" %in% names(y)) 
 		{setnames(y, "P1", "Precipitation")}
-	if ("ColumnsX" %in% names(y)) 
-		{setnames(y, "ColumnsX", "Number of Parameters")}
 	return(y)			
 }

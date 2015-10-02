@@ -16,19 +16,19 @@ randeffects_model_results_function <- function(
 )
 {	
 	conditional.fit.statistics %<>% 
-		dcast(modelVars~Descr, value.var="Value") %>%
+		short_to_long_format_function %>%
 		.[, -(2:3)]
 	fit.statistics %<>% 
-		dcast(modelVars~Descr, value.var="Value") %>%
+		short_to_long_format_function %>%
 		.[, -(4:7)]
 	parms.estimates %<>% 
 		dcast(modelVars~Effect, value.var="Estimate", fun=X_function)
 	modelresults = merge(parms.estimates, covariance.parms.test,
-		by="modelVars") %>%
-		merge(convergence.status) %>%
-		merge(covariance.parms.estimates) %>%
-		merge(conditional.fit.statistics) %>%
-		merge(filter(fit.statistics)) %>%
+		by="modelVars", all=T) %>%
+		merge(convergence.status, all=T) %>%
+		merge(covariance.parms.estimates, all=T) %>%
+		merge(conditional.fit.statistics, all=T) %>%
+		merge(filter(fit.statistics), all=T) %>%
 		as.data.table %>%
 		.[modelVars == "YEARPLANTID", 			
 			modelVars := "Year, Plant ID (Intercept)"] %>%

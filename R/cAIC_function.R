@@ -13,5 +13,6 @@ cAIC_function <- function(y) {
 	y %<>% mutate(`Prob(Model)` = `Model Lik`/sum.L)
 	y$`Prob(Model)` %<>% round(digits=2)
 	y$`Model Lik` %<>% round(digits=2)
+	y %<>% dplyr::select(-c(cAIC, `Model Lik`))
 	return(y)
 }

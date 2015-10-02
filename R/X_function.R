@@ -2,5 +2,5 @@
 #' 
 #' @param modelresults
 X_function = function(x) {
-	ifelse(length(x)>0, "X", ".")
+	ifelse(length(x)>0, "X", "")
 }

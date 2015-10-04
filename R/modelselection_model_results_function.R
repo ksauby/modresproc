@@ -36,22 +36,22 @@ modelselection_model_results_function <- function(
 		arrange(cAIC) %>%
 		dplyr::select(-(`-2 log L(y | r. effects)`))
 	# temperature and precipitation interactions
-	y$`T x P` = "NA"
+	y$`P x T` = "NA"
 	y %<>%
 	mutate(
-		`T x P` = replace(`T x P`, 
+		`P x T` = replace(`P x T`, 
 			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),
 			"T1 x P1"),
-		`T x P` = replace(`T x P`, 
+		`P x T` = replace(`P x T`, 
 			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),
 			"T1 x P2"),
-		`T x P` = replace(`T x P`, 
+		`P x T` = replace(`P x T`, 
 			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),
 			"T2 x P1"),
-		`T x P` = replace(`T x P`, 
+		`P x T` = replace(`P x T`, 
 			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),
 			"T2 x P2"),
-		`T x P` = replace(`T x P`, 
+		`P x T` = replace(`P x T`, 
 			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),
 			"T1 x T2 x P1 x P2")
 	)
@@ -115,10 +115,79 @@ modelselection_model_results_function <- function(
 		y[which(select(y, 
 			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"
 		}
+		
+		# take modelVars from top of list
+		top.estimates = 
+parameter.estimates[which(parameter.estimates$modelVars==y[1, "modelVars"]),]
+
 	y <- y[, select_list]
 	y %<>% cAIC_function
 	y %<>% names_processing_function
-	y[, "T x P"][y[, "T x P"] == "NA"] <- ""
+
+	# how do I convert ln standardized back to regular numbers?
+		
+	if ("T1" %in% top.estimates$Effect & "T2" %in% top.estimates$Effect) {
+		y %<>%
+		mutate(
+			T = replace(T,
+				which(modelVars==top.estimates$modelVars[1]),
+				paste(
+					"T1=", 
+					round(top.estimates[which(top.estimates$Effect=="T1"),
+						]$Estimate, 2),
+					", T2=", 
+					round(top.estimates[which(top.estimates$Effect=="T2"), 
+						]$Estimate, 2),
+					sep="")
+			)
+		)
+	}
+	if ("P1" %in% top.estimates$Effect & "P2" %in% top.estimates$Effect) {
+		y %<>%
+		mutate(	
+			P = replace(P,
+				which(modelVars==top.estimates$modelVars[1]),
+				paste(
+					"P1=", 
+					round(top.estimates[which(top.estimates$Effect=="P1"),
+						]$Estimate, 2),
+					", P2=", 
+					round(top.estimates[which(top.estimates$Effect=="P2"), 
+						]$Estimate, 2),
+					sep="")
+			)
+		)
+	}
+	if ("ME_t_1" %in% top.estimates$Effect) {
+		y %<>%
+		mutate(	
+			`Native Moth` = replace(`Native Moth`,
+				which(modelVars==top.estimates$modelVars[1]),
+				round(top.estimates[which(top.estimates$Effect=="ME_t_1" & 
+					top.estimates$ME_t_1==0), ]$Estimate, 2)
+			)
+		)
+	}	
+	if ("CA_t_1" %in% top.estimates$Effect) {
+		y %<>%
+		mutate(	
+			`Invasive Moth` = replace(`Invasive Moth`,
+				which(modelVars==top.estimates$modelVars[1]),
+				round(top.estimates[which(top.estimates$Effect=="CA_t_1" & 
+					top.estimates$CA_t_1==0), ]$Estimate, 2)
+			)
+		)
+	}	
+	y %<>%
+	mutate(	
+		S_t = replace(S_t,
+			which(modelVars==top.estimates$modelVars[1]),
+			round(top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), 
+				]$Estimate, 2)
+		)
+	) 
+				
+	y[, "P x T"][y[, "P x T"] == "NA"] <- ""
 	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""
 	return(y)
 }

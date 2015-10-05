@@ -12,7 +12,7 @@ names_processing_function <- function(y) {
 	if ("Number of Parameters" %in% names(y)) 
 		{setnames(y, "Number of Parameters", "p")}
 	if ("Ln_Size_t_1_st" %in% names(y)) 
-		{setnames(y, "Ln_Size_t_1_st", "S_t")}
+		{setnames(y, "Ln_Size_t_1_st", "C_t")}
 	if ("Ln_Cone_t_1_st" %in% names(y)) 
 		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}
 	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) 

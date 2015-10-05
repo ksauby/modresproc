@@ -35,7 +35,7 @@ survival_model_results_function_stricta <- function(
 			"]",
 			sep=""
 		),
-		`S_t` = paste(
+		`C_t` = paste(
 			Ln_Size_t_1_st %>% round(2),
 			" [",
 			parameter.estimates[which(parameter.estimates$Parameter=="Ln_Size_t_1_st"), ]$LowerLRCL[1] %>% round(2),
@@ -47,7 +47,7 @@ survival_model_results_function_stricta <- function(
 	) %>%
 	dplyr::select(
 		Intercept, 
-		S_t,
+		C_t,
 		`Scaled Deviance`
 	)
 	return(y)

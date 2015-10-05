@@ -114,7 +114,7 @@ modelselection_model_results_function <- function(
 			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"
 		y[which(select(y, 
 			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"
-		}
+	}
 		
 		# take modelVars from top of list
 		top.estimates = 
@@ -127,66 +127,146 @@ parameter.estimates[which(parameter.estimates$modelVars==y[1, "modelVars"]),]
 	# how do I convert ln standardized back to regular numbers?
 		
 	if ("T1" %in% top.estimates$Effect & "T2" %in% top.estimates$Effect) {
-		y %<>%
+		y[1, ] %<>%
 		mutate(
-			T = replace(T,
-				which(modelVars==top.estimates$modelVars[1]),
-				paste(
-					"T1=", 
-					round(top.estimates[which(top.estimates$Effect=="T1"),
-						]$Estimate, 2),
-					", T2=", 
-					round(top.estimates[which(top.estimates$Effect=="T2"), 
-						]$Estimate, 2),
-					sep="")
-			)
+			T = paste(
+				# T1
+				"T1 = ", 
+				top.estimates[which(top.estimates$Effect=="T1"), ]$Estimate %>%
+					 round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="T1"), ]$Lower %>%
+					 round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="T1"), ]$Upper %>% 
+					round(2),
+				"]",
+				# T2
+				", T2 = ", 
+				top.estimates[which(top.estimates$Effect=="T2"), ]$Estimate %>%
+					 round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="T2"), ]$Lower %>%
+					 round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="T2"), ]$Upper %>% 
+					round(2),
+				"]",
+				sep=""
+			)	
 		)
 	}
 	if ("P1" %in% top.estimates$Effect & "P2" %in% top.estimates$Effect) {
-		y %<>%
+		y[1, ] %<>%
 		mutate(	
-			P = replace(P,
-				which(modelVars==top.estimates$modelVars[1]),
-				paste(
-					"P1=", 
-					round(top.estimates[which(top.estimates$Effect=="P1"),
-						]$Estimate, 2),
-					", P2=", 
-					round(top.estimates[which(top.estimates$Effect=="P2"), 
-						]$Estimate, 2),
-					sep="")
-			)
-		)
-	}
-	if ("ME_t_1" %in% top.estimates$Effect) {
-		y %<>%
-		mutate(	
-			`Native Moth` = replace(`Native Moth`,
-				which(modelVars==top.estimates$modelVars[1]),
-				round(top.estimates[which(top.estimates$Effect=="ME_t_1" & 
-					top.estimates$ME_t_1==0), ]$Estimate, 2)
-			)
+			P = paste(
+				# P1
+				"P1 = ", 
+				top.estimates[which(top.estimates$Effect=="P1"), ]$Estimate %>%
+					 round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="P1"), ]$Lower %>%
+					 round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="P1"), ]$Upper %>% 
+					round(2),
+				"]",
+				# P2
+				", P2 = ", 
+				top.estimates[which(top.estimates$Effect=="P2"), ]$Estimate %>%
+					 round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="P2"), ]$Lower %>%
+					 round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="P2"), ]$Upper %>% 
+					round(2),
+				"]",
+				sep=""
+			)	
 		)
 	}	
 	if ("CA_t_1" %in% top.estimates$Effect) {
-		y %<>%
+		y[1, ] %<>%
 		mutate(	
-			`Invasive Moth` = replace(`Invasive Moth`,
-				which(modelVars==top.estimates$modelVars[1]),
-				round(top.estimates[which(top.estimates$Effect=="CA_t_1" & 
-					top.estimates$CA_t_1==0), ]$Estimate, 2)
+			`Invasive Moth` = paste(
+				top.estimates[which(top.estimates$Effect=="CA_t_1" & 
+				top.estimates$CA_t_1==1), ]$Estimate %>% round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="CA_t_1" & 
+				top.estimates$CA_t_1==1), ]$Lower %>% round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="CA_t_1" & 
+				top.estimates$CA_t_1==1), ]$Upper %>% round(2),
+				"]",
+				sep=""
 			)
 		)
 	}	
-	y %<>%
-	mutate(	
-		S_t = replace(S_t,
-			which(modelVars==top.estimates$modelVars[1]),
-			round(top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), 
-				]$Estimate, 2)
+	if ("CH_t_1" %in% top.estimates$Effect) {
+		y[1, ] %<>%
+		mutate(	
+			`Native Bug` = paste(
+				top.estimates[which(top.estimates$Effect=="CH_t_1" & 
+				top.estimates$CH_t_1==1), ]$Estimate %>% round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="CH_t_1" & 
+				top.estimates$CH_t_1==1), ]$Lower %>% round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="CH_t_1" & 
+				top.estimates$CH_t_1==1), ]$Upper %>% round(2),
+				"]",
+				sep=""
+			)
 		)
-	) 
-				
+	}	
+	if ("DA_t_1" %in% top.estimates$Effect) {
+		y[1, ] %<>%
+		mutate(	
+			`Native Scale` = paste(
+				top.estimates[which(top.estimates$Effect=="DA_t_1" & 
+				top.estimates$DA_t_1==1), ]$Estimate %>% round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="DA_t_1" & 
+				top.estimates$DA_t_1==1), ]$Lower %>% round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="DA_t_1" & 
+				top.estimates$DA_t_1==1), ]$Upper %>% round(2),
+				"]",
+				sep=""
+			)
+		)
+	}	
+	if ("ME_t_1" %in% top.estimates$Effect) {
+		y[1, ] %<>%
+		mutate(	
+			`Native Moth` = paste(
+				top.estimates[which(top.estimates$Effect=="ME_t_1" & 
+				top.estimates$ME_t_1==1), ]$Estimate %>% round(2),
+				" [",
+				top.estimates[which(top.estimates$Effect=="ME_t_1" & 
+				top.estimates$ME_t_1==1), ]$Lower %>% round(2),
+				", ",
+				top.estimates[which(top.estimates$Effect=="ME_t_1" & 
+				top.estimates$ME_t_1==1), ]$Upper %>% round(2),
+				"]",
+				sep=""
+			)
+		)
+	}	
+	y[1, ] %<>%
+	mutate(	
+		C_t = paste(
+			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Estimate %>% round(2),
+			" [",
+			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Lower %>% round(2),
+			", ",
+			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Upper %>% round(2),
+			"]",
+			sep=""
+		)
+	)
+	y %<>% dplyr::select(-modelVars)
 	y[, "P x T"][y[, "P x T"] == "NA"] <- ""
 	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""
 	return(y)

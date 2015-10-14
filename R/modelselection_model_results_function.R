@@ -256,6 +256,15 @@ parameter.estimates[which(parameter.estimates$modelVars==y[1, "modelVars"]),]
 	}	
 	y[1, ] %<>%
 	mutate(	
+		Intercept = paste(
+			top.estimates[which(top.estimates$Effect=="Intercept"), ]$Estimate %>% round(2),
+			" [",
+			top.estimates[which(top.estimates$Effect=="Intercept"), ]$Lower %>% round(2),
+			", ",
+			top.estimates[which(top.estimates$Effect=="Intercept"), ]$Upper %>% round(2),
+			"]",
+			sep=""
+		),
 		C_t = paste(
 			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Estimate %>% round(2),
 			" [",
@@ -266,7 +275,7 @@ parameter.estimates[which(parameter.estimates$modelVars==y[1, "modelVars"]),]
 			sep=""
 		)
 	)
-	y %<>% dplyr::select(-modelVars)
+	#y %<>% dplyr::select(-modelVars)
 	y[, "P x T"][y[, "P x T"] == "NA"] <- ""
 	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""
 	return(y)

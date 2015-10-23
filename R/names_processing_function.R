@@ -9,8 +9,6 @@ names_processing_function <- function(y) {
 	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}
 	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}
 	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}
-	if ("Number of Parameters" %in% names(y)) 
-		{setnames(y, "Number of Parameters", "p")}
 	if ("Ln_Size_t_1_st" %in% names(y)) 
 		{setnames(y, "Ln_Size_t_1_st", "C_t")}
 	if ("Ln_Cone_t_1_st" %in% names(y)) 

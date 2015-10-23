@@ -11,7 +11,8 @@ modelselection_model_results_function <- function(
 	convergence.status, 
 	parameter.estimates, 
 	conditional.fit.statistics, 
-	select_list
+	select_list,
+	nmodels
 )
 {
 	conditional.fit.statistics %<>% 
@@ -28,33 +29,68 @@ modelselection_model_results_function <- function(
 		# fit statistics
 		merge(conditional.fit.statistics) %>%
 		merge(models.dimensions) %>%
-		model_dimensions_name_processing_function %>%
-		mutate(
-			cAIC = `-2 log L(y | r. effects)` + 
-				2*(`Number of Parameters` + ColumnsZ)
-		) %>%
-		arrange(cAIC) %>%
-		dplyr::select(-(`-2 log L(y | r. effects)`))
+		model_dimensions_name_processing_function
 	# temperature and precipitation interactions
 	y$`P x T` = "NA"
-	y %<>%
-	mutate(
-		`P x T` = replace(`P x T`, 
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),
-			"T1 x P1"),
-		`P x T` = replace(`P x T`, 
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),
-			"T1 x P2"),
-		`P x T` = replace(`P x T`, 
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),
-			"T2 x P1"),
-		`P x T` = replace(`P x T`, 
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),
-			"T2 x P2"),
-		`P x T` = replace(`P x T`, 
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),
-			"T1 x T2 x P1 x P2")
-	)
+	# if names contain P2 and T2
+	if (length(grep("P2", names(y), fixed=T)) > 0 & length(grep("T2", names(y), 
+	fixed=T)) > 0) {
+		y %<>%
+		mutate(
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & 
+				`T2*P2`!= "X"),
+				"T1 x P1"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & 
+				`T2*P2`!="X"),
+				"T1 x P2"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & 
+				`T2*P2`!="X"),
+				"T2 x P1"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & 
+				`T2*P2`=="X"),
+				"T2 x P2"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & 
+				`T2*P2`=="X"),
+				"T1 x T2 x P1 x P2")
+		)
+	}
+	# if names contain T2 but NOT P2
+	if (length(grep("P2", names(y), fixed=T)) == 0 & length(grep("T2", 
+	names(y), fixed=T)) > 0) {
+		y %<>%
+		mutate(
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`=="X" & `T2*P1`!="X"),
+				"T1 x P1"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`!="X" & `T2*P1`=="X"),
+				"T2 x P1"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`=="X" & `T2*P1`=="X"),
+				"T1 x T2 x P1")
+		)
+	}
+	# if names contain P2 but NOT T2
+	if (length(grep("P2", names(y), fixed=T)) > 0 & length(grep("T2", names(y), 
+	fixed=T)) == 0) {
+		y %<>%
+		mutate(
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`=="X" & `T1*P2`!="X"),
+				"T1 x P1"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`!="X" & `T1*P2`=="X"),
+				"T1 x P2"),
+			`P x T` = replace(`P x T`, 
+				which(`T1*P1`=="X" & `T1*P2`=="X"),
+				"T1 x P1 x P2")
+		)
+	}
 	y$`Insect x Weather` = "NA"
 	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {
 		y %<>%
@@ -115,168 +151,214 @@ modelselection_model_results_function <- function(
 		y[which(select(y, 
 			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"
 	}
-		
-		# take modelVars from top of list
-		top.estimates = 
-parameter.estimates[which(parameter.estimates$modelVars==y[1, "modelVars"]),]
-
 	y <- y[, select_list]
 	y %<>% cAIC_function
+	
+	
+	
+	
+	
 	y %<>% names_processing_function
-
+	
+	
+	# take modelVars from top of list
+	top.estimates = 
+		parameter.estimates[which(parameter.estimates$modelVars %in% 
+		y[1:nmodels, "modelVars"]),]	
+	modelVars = y[1:nmodels, "modelVars"]
+	
+	
 	# how do I convert ln standardized back to regular numbers?
-		
-	if ("T1" %in% top.estimates$Effect & "T2" %in% top.estimates$Effect) {
-		y[1, ] %<>%
-		mutate(
-			T = paste(
-				# T1
-				"T1 = ", 
-				top.estimates[which(top.estimates$Effect=="T1"), ]$Estimate %>%
-					 round(2),
+	for (i in 1:nmodels) {
+		Data = top.estimates[which(top.estimates$modelVars == y$modelVars[i]), ]
+		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(
+				T = paste(
+					# T1
+					"T1 = ", 
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),
+					"]",
+					# T2
+					", T2 = ", 
+					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)	
+			)
+		}
+		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {
+			y[i, ] %<>%
+			mutate(
+				T = paste(
+					# T1
+					"T1 = ", 
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)	
+			)
+		}
+		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				P = paste(
+					# P1
+					"P1 = ", 
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%
+						 round(2),
+					" [",
+					Data[which(Data$Effect=="P1"), ]$Lower %>%
+						 round(2),
+					", ",
+					Data[which(Data$Effect=="P1"), ]$Upper %>% 
+						round(2),
+					"]",
+					# P2
+					", P2 = ", 
+					Data[which(Data$Effect=="P2"), ]$Estimate %>%
+						 round(2),
+					" [",
+					Data[which(Data$Effect=="P2"), ]$Lower %>%
+						 round(2),
+					", ",
+					Data[which(Data$Effect=="P2"), ]$Upper %>% 
+						round(2),
+					"]",
+					sep=""
+				)	
+			)
+		}	
+		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {
+			y[i, ] %<>%
+			mutate(	
+				P = paste(
+					# P1
+					"P1 = ", 
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%
+						 round(2),
+					" [",
+					Data[which(Data$Effect=="P1"), ]$Lower %>%
+						 round(2),
+					", ",
+					Data[which(Data$Effect=="P1"), ]$Upper %>% 
+						round(2),
+					"]",
+					sep=""
+				)	
+			)
+		}	
+		if ("CA_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Invasive Moth` = paste(
+					Data[which(Data$Effect=="CA_t_1" & 
+					Data$CA_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="CA_t_1" & 
+					Data$CA_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="CA_t_1" & 
+					Data$CA_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
+		if ("CH_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Native Bug` = paste(
+					Data[which(Data$Effect=="CH_t_1" & 
+					Data$CH_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="CH_t_1" & 
+					Data$CH_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="CH_t_1" & 
+					Data$CH_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
+		if ("DA_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Native Scale` = paste(
+					Data[which(Data$Effect=="DA_t_1" & 
+					Data$DA_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="DA_t_1" & 
+					Data$DA_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="DA_t_1" & 
+					Data$DA_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
+		if ("ME_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Native Moth` = paste(
+					Data[which(Data$Effect=="ME_t_1" & 
+					Data$ME_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="ME_t_1" & 
+					Data$ME_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="ME_t_1" & 
+					Data$ME_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
+		y[i, ] %<>%
+		mutate(	
+			Intercept = paste( 
+				Data[which(Data$Effect=="Intercept"), 
+					]$Estimate %>% round(2),
 				" [",
-				top.estimates[which(top.estimates$Effect=="T1"), ]$Lower %>%
-					 round(2),
+				Data[which(Data$Effect=="Intercept"), ]$Lower 
+					%>% round(2),
 				", ",
-				top.estimates[which(top.estimates$Effect=="T1"), ]$Upper %>% 
-					round(2),
-				"]",
-				# T2
-				", T2 = ", 
-				top.estimates[which(top.estimates$Effect=="T2"), ]$Estimate %>%
-					 round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="T2"), ]$Lower %>%
-					 round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="T2"), ]$Upper %>% 
-					round(2),
+				Data[which(Data$Effect=="Intercept"), ]$Upper 
+					%>% round(2),
 				"]",
 				sep=""
-			)	
+			),
+			C_t = paste(
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
+					]$Estimate %>% round(2),
+				" [",
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
+					]$Lower %>% round(2),
+				", ",
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
+					]$Upper %>% round(2),
+				"]",
+				sep=""
+			)
 		)
 	}
-	if ("P1" %in% top.estimates$Effect & "P2" %in% top.estimates$Effect) {
-		y[1, ] %<>%
-		mutate(	
-			P = paste(
-				# P1
-				"P1 = ", 
-				top.estimates[which(top.estimates$Effect=="P1"), ]$Estimate %>%
-					 round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="P1"), ]$Lower %>%
-					 round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="P1"), ]$Upper %>% 
-					round(2),
-				"]",
-				# P2
-				", P2 = ", 
-				top.estimates[which(top.estimates$Effect=="P2"), ]$Estimate %>%
-					 round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="P2"), ]$Lower %>%
-					 round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="P2"), ]$Upper %>% 
-					round(2),
-				"]",
-				sep=""
-			)	
-		)
-	}	
-	if ("CA_t_1" %in% top.estimates$Effect) {
-		y[1, ] %<>%
-		mutate(	
-			`Invasive Moth` = paste(
-				top.estimates[which(top.estimates$Effect=="CA_t_1" & 
-				top.estimates$CA_t_1==1), ]$Estimate %>% round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="CA_t_1" & 
-				top.estimates$CA_t_1==1), ]$Lower %>% round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="CA_t_1" & 
-				top.estimates$CA_t_1==1), ]$Upper %>% round(2),
-				"]",
-				sep=""
-			)
-		)
-	}	
-	if ("CH_t_1" %in% top.estimates$Effect) {
-		y[1, ] %<>%
-		mutate(	
-			`Native Bug` = paste(
-				top.estimates[which(top.estimates$Effect=="CH_t_1" & 
-				top.estimates$CH_t_1==1), ]$Estimate %>% round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="CH_t_1" & 
-				top.estimates$CH_t_1==1), ]$Lower %>% round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="CH_t_1" & 
-				top.estimates$CH_t_1==1), ]$Upper %>% round(2),
-				"]",
-				sep=""
-			)
-		)
-	}	
-	if ("DA_t_1" %in% top.estimates$Effect) {
-		y[1, ] %<>%
-		mutate(	
-			`Native Scale` = paste(
-				top.estimates[which(top.estimates$Effect=="DA_t_1" & 
-				top.estimates$DA_t_1==1), ]$Estimate %>% round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="DA_t_1" & 
-				top.estimates$DA_t_1==1), ]$Lower %>% round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="DA_t_1" & 
-				top.estimates$DA_t_1==1), ]$Upper %>% round(2),
-				"]",
-				sep=""
-			)
-		)
-	}	
-	if ("ME_t_1" %in% top.estimates$Effect) {
-		y[1, ] %<>%
-		mutate(	
-			`Native Moth` = paste(
-				top.estimates[which(top.estimates$Effect=="ME_t_1" & 
-				top.estimates$ME_t_1==1), ]$Estimate %>% round(2),
-				" [",
-				top.estimates[which(top.estimates$Effect=="ME_t_1" & 
-				top.estimates$ME_t_1==1), ]$Lower %>% round(2),
-				", ",
-				top.estimates[which(top.estimates$Effect=="ME_t_1" & 
-				top.estimates$ME_t_1==1), ]$Upper %>% round(2),
-				"]",
-				sep=""
-			)
-		)
-	}	
-	y[1, ] %<>%
-	mutate(	
-		Intercept = paste(
-			top.estimates[which(top.estimates$Effect=="Intercept"), ]$Estimate %>% round(2),
-			" [",
-			top.estimates[which(top.estimates$Effect=="Intercept"), ]$Lower %>% round(2),
-			", ",
-			top.estimates[which(top.estimates$Effect=="Intercept"), ]$Upper %>% round(2),
-			"]",
-			sep=""
-		),
-		C_t = paste(
-			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Estimate %>% round(2),
-			" [",
-			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Lower %>% round(2),
-			", ",
-			top.estimates[which(top.estimates$Effect=="Ln_Size_t_1_st"), ]$Upper %>% round(2),
-			"]",
-			sep=""
-		)
-	)
 	#y %<>% dplyr::select(-modelVars)
 	y[, "P x T"][y[, "P x T"] == "NA"] <- ""
 	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""
+	y %<>% dplyr::select(-modelVars)
 	return(y)
 }

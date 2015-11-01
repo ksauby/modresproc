@@ -151,25 +151,21 @@ modelselection_model_results_function <- function(
 		y[which(select(y, 
 			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"
 	}
-	y <- y[, select_list]
 	y %<>% cAIC_function
-	
-	
-	
-	
-	
+	y <- y[, select_list]
 	y %<>% names_processing_function
-	
-	
 	# take modelVars from top of list
+	topmodels = y[which(y$`delta cAIC` <= 2), "modelVars"]
 	top.estimates = 
-		parameter.estimates[which(parameter.estimates$modelVars %in% 
-		y[1:nmodels, "modelVars"]),]	
-	modelVars = y[1:nmodels, "modelVars"]
+	parameter.estimates[which(parameter.estimates$modelVars %in% 
+		topmodels),]	
+	# top.estimates = 
+	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	
+	# modelVars = y[1:nmodels, "modelVars"]
 	
 	
 	# how do I convert ln standardized back to regular numbers?
-	for (i in 1:nmodels) {
+	for (i in 1:length(topmodels)) {
 		Data = top.estimates[which(top.estimates$modelVars == y$modelVars[i]), ]
 		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {
 			y[i, ] %<>%
@@ -330,18 +326,18 @@ modelselection_model_results_function <- function(
 		}	
 		y[i, ] %<>%
 		mutate(	
-			Intercept = paste( 
-				Data[which(Data$Effect=="Intercept"), 
-					]$Estimate %>% round(2),
-				" [",
-				Data[which(Data$Effect=="Intercept"), ]$Lower 
-					%>% round(2),
-				", ",
-				Data[which(Data$Effect=="Intercept"), ]$Upper 
-					%>% round(2),
-				"]",
-				sep=""
-			),
+			# Intercept = paste( 
+			# 	Data[which(Data$Effect=="Intercept"), 
+			# 		]$Estimate %>% round(2),
+			# 	" [",
+			# 	Data[which(Data$Effect=="Intercept"), ]$Lower 
+			# 		%>% round(2),
+			# 	", ",
+			# 	Data[which(Data$Effect=="Intercept"), ]$Upper 
+			# 		%>% round(2),
+			# 	"]",
+			# 	sep=""
+			# ),
 			C_t = paste(
 				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
 					]$Estimate %>% round(2),

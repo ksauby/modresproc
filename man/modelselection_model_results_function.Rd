@@ -5,7 +5,7 @@
 \title{Format parameters and their estimates for a model selection table using data from SAS GLIMMIX}
 \usage{
 modelselection_model_results_function(models.dimensions, convergence.status,
-  parameter.estimates, conditional.fit.statistics, select_list)
+  parameter.estimates, conditional.fit.statistics, select_list, nmodels)
 }
 \arguments{
 \item{models.dimensions}{}

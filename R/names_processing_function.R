@@ -18,12 +18,20 @@ names_processing_function <- function(y) {
 		"ln(Cylinder Volume [t-1]), Stand.")}
 	if ("CA_t_1" %in% names(y)) 
 		{setnames(y, "CA_t_1", "Invasive Moth")}
+	if ("CAyr_t_1" %in% names(y)) 
+		{setnames(y, "CAyr_t_1", "Invasive Moth")}
 	if ("CH_t_1" %in% names(y)) 
 		{setnames(y, "CH_t_1", "Native Bug")}
+	if ("CHyr_t_1" %in% names(y)) 
+		{setnames(y, "CHyr_t_1", "Native Bug")}
 	if ("DA_t_1" %in% names(y)) 
 		{setnames(y, "DA_t_1", "Native Scale")}
+	if ("DAyr_t_1" %in% names(y)) 
+		{setnames(y, "DAyr_t_1", "Native Scale")}
 	if ("ME_t_1" %in% names(y)) 
 		{setnames(y, "ME_t_1", "Native Moth")}
+	if ("MEyr_t_1" %in% names(y)) 
+		{setnames(y, "MEyr_t_1", "Native Moth")}
 	if ("NatInsect_t_1" %in% names(y)) 
 		{setnames(y, "NatInsect_t_1", "Native Insects")}
 	if ("CA_t_1*CH_t_1" %in% names(y)) 

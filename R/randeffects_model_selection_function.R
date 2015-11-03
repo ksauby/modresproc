@@ -4,13 +4,13 @@
 
 randeffects_model_selection_function <- function(modelresults){
 	x = modelresults %>%
-		filter(`Positive Definite G-Matrix?`=="Yes") %>%
+		dplyr::filter(`Positive Definite G-Matrix?`=="Yes") %>%
 		dplyr::select(-Label, -Objective) %>%
 		dplyr::select(-(Note:Subject)) %>%
-		group_by(`Random Effects`) %>%
-		filter(row_number(DF)==1) %>%
+		dplyr::group_by(`Random Effects`) %>%
+		dplyr::filter(row_number(DF)==1) %>%
 		as.data.frame %>%
-		arrange(AIC)
+		dplyr::arrange(AIC)
 		x %<>% AIC_function		
 	return(x)
 }

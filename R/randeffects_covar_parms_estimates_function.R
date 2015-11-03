@@ -4,7 +4,7 @@
 
 randeffects_covar_parms_estimates_function <- function(modelresults){
 	modelresults %>%
-		filter(`Positive Definite G-Matrix?`=="Yes") %>%
+		dplyr::filter(`Positive Definite G-Matrix?`=="Yes") %>%
 		dplyr::select(
 			`Random Effects`, 
 			`Covariance Parameter`,

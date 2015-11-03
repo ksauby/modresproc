@@ -4,7 +4,7 @@
 
 randeffects_G_side_effects_test_function <- function(modelresults) {
 	modelresults %>%
-		filter(`Positive Definite G-Matrix?`=="Yes") %>%
+		dplyr::filter(`Positive Definite G-Matrix?`=="Yes") %>%
 		dplyr::select(
 			`Random Effects`, 
 			Label, 
@@ -13,8 +13,8 @@ randeffects_G_side_effects_test_function <- function(modelresults) {
 			`Chi-Squared`, 
 			`Prob(Chi-Squared)`
 		) %>%
-		group_by(`Random Effects`) %>%
-		summarise(
+		dplyr::group_by(`Random Effects`) %>%
+		dplyr::summarise(
 			DF=DF[1],
 			Objective=Objective[1],
 			`Chi-Squared`=`Chi-Squared`[1],

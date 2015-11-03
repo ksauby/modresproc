@@ -324,6 +324,57 @@ modelselection_model_results_function <- function(
 				)
 			)
 		}	
+		if ("CHyr_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Native Bug` = paste(
+					Data[which(Data$Effect=="CHyr_t_1" & 
+					Data$CHyr_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="CHyr_t_1" & 
+					Data$CHyr_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="CHyr_t_1" & 
+					Data$CHyr_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
+		if ("DAyr_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Native Scale` = paste(
+					Data[which(Data$Effect=="DAyr_t_1" & 
+					Data$DAyr_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="DAyr_t_1" & 
+					Data$DAyr_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="DAyr_t_1" & 
+					Data$DAyr_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
+		if ("MEyr_t_1" %in% Data$Effect) {
+			y[i, ] %<>%
+			mutate(	
+				`Native Moth` = paste(
+					Data[which(Data$Effect=="MEyr_t_1" & 
+					Data$MEyr_t_1==1), ]$Estimate %>% round(2),
+					" [",
+					Data[which(Data$Effect=="MEyr_t_1" & 
+					Data$MEyr_t_1==1), ]$Lower %>% round(2),
+					", ",
+					Data[which(Data$Effect=="MEyr_t_1" & 
+					Data$MEyr_t_1==1), ]$Upper %>% round(2),
+					"]",
+					sep=""
+				)
+			)
+		}	
 		y[i, ] %<>%
 		mutate(	
 			# Intercept = paste( 

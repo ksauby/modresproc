@@ -34,6 +34,8 @@ names_processing_function <- function(y) {
 		{setnames(y, "MEyr_t_1", "Native Moth")}
 	if ("NatInsect_t_1" %in% names(y)) 
 		{setnames(y, "NatInsect_t_1", "Native Insects")}
+	if ("NatInsectyr_t_" %in% names(y)) 
+		{setnames(y, "NatInsectyr_t_", "Native Insects")}
 	if ("CA_t_1*CH_t_1" %in% names(y)) 
 		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}
 	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) 

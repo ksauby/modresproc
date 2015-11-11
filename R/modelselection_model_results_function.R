@@ -8,10 +8,11 @@
 
 model_selection_results_function <- function(
 	model_selection_table,
-	select_list
+	select_list,
+	round.n=2
 )
 {
-   model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
+  	model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
 	model_selection_table %<>% cAIC_function
 	model_selection_table <- model_selection_table[, select_list]
 	model_selection_table %<>% names_processing_function
@@ -34,19 +35,19 @@ model_selection_results_function <- function(
 				T = paste(
 					# T1
 					"T1 = ", 
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(round.n),
 					" [",
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(round.n),
 					", ",
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(round.n),
 					"]",
 					# T2
 					", T2 = ", 
-					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),
+					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(round.n),
 					" [",
-					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),
+					Data[which(Data$Effect=="T2"), ]$Lower %>% round(round.n),
 					", ",
-					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),
+					Data[which(Data$Effect=="T2"), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)	
@@ -58,11 +59,11 @@ model_selection_results_function <- function(
 				T = paste(
 					# T1
 					"T1 = ", 
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(round.n),
 					" [",
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(round.n),
 					", ",
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)	
@@ -75,24 +76,24 @@ model_selection_results_function <- function(
 					# P1
 					"P1 = ", 
 					Data[which(Data$Effect=="P1"), ]$Estimate %>%
-						 round(2),
+						 round(round.n),
 					" [",
 					Data[which(Data$Effect=="P1"), ]$Lower %>%
-						 round(2),
+						 round(round.n),
 					", ",
 					Data[which(Data$Effect=="P1"), ]$Upper %>% 
-						round(2),
+						round(round.n),
 					"]",
 					# P2
 					", P2 = ", 
 					Data[which(Data$Effect=="P2"), ]$Estimate %>%
-						 round(2),
+						 round(round.n),
 					" [",
 					Data[which(Data$Effect=="P2"), ]$Lower %>%
-						 round(2),
+						 round(round.n),
 					", ",
 					Data[which(Data$Effect=="P2"), ]$Upper %>% 
-						round(2),
+						round(round.n),
 					"]",
 					sep=""
 				)	
@@ -105,13 +106,13 @@ model_selection_results_function <- function(
 					# P1
 					"P1 = ", 
 					Data[which(Data$Effect=="P1"), ]$Estimate %>%
-						 round(2),
+						 round(round.n),
 					" [",
 					Data[which(Data$Effect=="P1"), ]$Lower %>%
-						 round(2),
+						 round(round.n),
 					", ",
 					Data[which(Data$Effect=="P1"), ]$Upper %>% 
-						round(2),
+						round(round.n),
 					"]",
 					sep=""
 				)	
@@ -122,13 +123,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Invasive Moth` = paste(
 					Data[which(Data$Effect=="CA_t_1" & 
-					Data$CA_t_1==1), ]$Estimate %>% round(2),
+					Data$CA_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="CA_t_1" & 
-					Data$CA_t_1==1), ]$Lower %>% round(2),
+					Data$CA_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="CA_t_1" & 
-					Data$CA_t_1==1), ]$Upper %>% round(2),
+					Data$CA_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -139,13 +140,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Native Bug` = paste(
 					Data[which(Data$Effect=="CH_t_1" & 
-					Data$CH_t_1==1), ]$Estimate %>% round(2),
+					Data$CH_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="CH_t_1" & 
-					Data$CH_t_1==1), ]$Lower %>% round(2),
+					Data$CH_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="CH_t_1" & 
-					Data$CH_t_1==1), ]$Upper %>% round(2),
+					Data$CH_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -156,13 +157,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Native Scale` = paste(
 					Data[which(Data$Effect=="DA_t_1" & 
-					Data$DA_t_1==1), ]$Estimate %>% round(2),
+					Data$DA_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="DA_t_1" & 
-					Data$DA_t_1==1), ]$Lower %>% round(2),
+					Data$DA_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="DA_t_1" & 
-					Data$DA_t_1==1), ]$Upper %>% round(2),
+					Data$DA_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -173,13 +174,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Native Moth` = paste(
 					Data[which(Data$Effect=="ME_t_1" & 
-					Data$ME_t_1==1), ]$Estimate %>% round(2),
+					Data$ME_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="ME_t_1" & 
-					Data$ME_t_1==1), ]$Lower %>% round(2),
+					Data$ME_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="ME_t_1" & 
-					Data$ME_t_1==1), ]$Upper %>% round(2),
+					Data$ME_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -190,13 +191,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Native Bug` = paste(
 					Data[which(Data$Effect=="CHyr_t_1" & 
-					Data$CHyr_t_1==1), ]$Estimate %>% round(2),
+					Data$CHyr_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="CHyr_t_1" & 
-					Data$CHyr_t_1==1), ]$Lower %>% round(2),
+					Data$CHyr_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="CHyr_t_1" & 
-					Data$CHyr_t_1==1), ]$Upper %>% round(2),
+					Data$CHyr_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -207,13 +208,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Native Scale` = paste(
 					Data[which(Data$Effect=="DAyr_t_1" & 
-					Data$DAyr_t_1==1), ]$Estimate %>% round(2),
+					Data$DAyr_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="DAyr_t_1" & 
-					Data$DAyr_t_1==1), ]$Lower %>% round(2),
+					Data$DAyr_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="DAyr_t_1" & 
-					Data$DAyr_t_1==1), ]$Upper %>% round(2),
+					Data$DAyr_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -224,13 +225,13 @@ model_selection_results_function <- function(
 			mutate(	
 				`Native Moth` = paste(
 					Data[which(Data$Effect=="MEyr_t_1" & 
-					Data$MEyr_t_1==1), ]$Estimate %>% round(2),
+					Data$MEyr_t_1==1), ]$Estimate %>% round(round.n),
 					" [",
 					Data[which(Data$Effect=="MEyr_t_1" & 
-					Data$MEyr_t_1==1), ]$Lower %>% round(2),
+					Data$MEyr_t_1==1), ]$Lower %>% round(round.n),
 					", ",
 					Data[which(Data$Effect=="MEyr_t_1" & 
-					Data$MEyr_t_1==1), ]$Upper %>% round(2),
+					Data$MEyr_t_1==1), ]$Upper %>% round(round.n),
 					"]",
 					sep=""
 				)
@@ -240,25 +241,25 @@ model_selection_results_function <- function(
 		mutate(	
 			# Intercept = paste( 
 			# 	Data[which(Data$Effect=="Intercept"), 
-			# 		]$Estimate %>% round(2),
+			# 		]$Estimate %>% round(round.n),
 			# 	" [",
 			# 	Data[which(Data$Effect=="Intercept"), ]$Lower 
-			# 		%>% round(2),
+			# 		%>% round(round.n),
 			# 	", ",
 			# 	Data[which(Data$Effect=="Intercept"), ]$Upper 
-			# 		%>% round(2),
+			# 		%>% round(round.n),
 			# 	"]",
 			# 	sep=""
 			# ),
 			C_t = paste(
 				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
-					]$Estimate %>% round(2),
+					]$Estimate %>% round(round.n),
 				" [",
 				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
-					]$Lower %>% round(2),
+					]$Lower %>% round(round.n),
 				", ",
 				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
-					]$Upper %>% round(2),
+					]$Upper %>% round(round.n),
 				"]",
 				sep=""
 			)

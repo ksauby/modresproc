@@ -1,3354 +1,736 @@
+21.4*.813
+21.4 -21.4*.813
+library(lubridaste)
+library(lubrida=te)
+library(lubridate)
+-v
+install.packages("rgeos", repos="http://R-Forge.R-project.org")#
+require(rgeos)
+library(rgeos)
+require(rgeos)
+library(rgeos)
+install.packages("rgdal", repos="http://R-Forge.R-project.org")#
+require(rgdal)
+R CMD INSTALL ~/Downloads/rgdal_0.9-1.tar.gz --configure-args='--with-gdal-config=/Library/Frameworks/GDAL.framework/Programs/gdal-config#
+ --with-proj-include=/Library/Frameworks/PROJ.framework/Headers#
+ --with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib'
+R CMD INSTALL ~/Downloads/rgdal_0.9-1.tar.gz --configure-args='--with-gdal-config=/Library/Frameworks/GDAL.framework/Programs/gdal-config--with-proj-include=/Library/Frameworks/PROJ.framework/Headers--with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib'
+library(lme3)
+library(lme4)
+300/241
+.244*30
+1.25*300
+1.25*240
+7*12
+7849-7527
+322/1353
+8028-7527
+501/1353
+8028-7957
+1353-501
+852/71
+7956-7878
+8176-8029
+8176-8092
+250*.75
+250*.25
+42*2 + 17*2
+118/19
+21/6.2
+59.5*.75
+59.5*.5 + 59.5
+71/12
+597/80
+597/8
+432/8
+15*8 + 9*3
+?seq_len
+7.25/3
+7.25/4
+for(i in 0:9){x=cos(2*pi/10*i);y=x+1;z=(y-2)*22;pie(c(y,8-y),col=c(0,7),init.angl=135-z,bo=F,la=NA)}
+install.packages("ProjectTemplate")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("data.table")
+install.packages("corrgram")
+install.packages("survival")
+install.packages("shapefiles")
+install.packages("rgdal")
+install.packages("PBSmapping")
+install.packages("sp")
+install.packages("gdistance")
+install.packages("chron")
+install.packages("unmarked")
+install.packages("lme4")
+install.packages("rgeos", repos="http://R-Forge.R-project.org", type="source")#
+require(rgeos)
+install.packages('rgdal',repos="http://www.stats.ox.ac.uk/pub/RWin")
+library(rgdal)
+install.packages("http://cran.r-project.org/src/contrib/rgdal_0.9-1.tar.gz", repos = NULL, type="source", configure.args = "--with-gdal-config=/Library/Frameworks/GDAL.framework/Versions/1.10/unix/bin/gdal-config --with-proj-include=/Library/Frameworks/PROJ.framework/unix/include --with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib")
+18/1.618
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
+library(ProjectTemplate)#
+setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
+# load project#
+load.project()
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y %<>% dplyr::select(-(cAIC, `Model Lik`))
-y
+#' Process model results for a model selection table using data from SAS GLIMMIX models#
+#' #
+#' @param y#
+#' @param select_list#
+#
+model_results_processing_function <- function(y, select_list) {#
+	#y[, replace_list][y[, replace_list] > 0] <- "X"#
+	#y[, replace_list][y[, replace_list] == 0] <- "."#
+	# change column names#
+	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
+	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
+	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
+	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
+	if ("Ln_Size_min_st" %in% names(y)) #
+		{setnames(y, "Ln_Size_min_st", "Ln(Minimum Plant Size), standardized")}#
+	#y = y[, select_list]#
+	return(y)			#
+}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y %<>% dplyr::select(-c(cAIC, `Model Lik`))
-y
+# build table of candidate models#
+#
+model_selection_table_function <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics) {#
+	# to verify that all models have the same covariance parameters included#
+	covariance.parameter.estimates %<>% #
+		mutate(CovParm = paste(CovParm, Subject)) %>%#
+		dcast(modelVars~CovParm, value.var="Estimate")#
+	names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
+	conditional.fit.statistics %<>% #
+		short_to_long_format_function %>%#
+		.[, -3]#
+	models.dimensions %<>%#
+		short_to_long_format_function %>%#
+		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
+	y = parameter.estimates %>%#
+		# filter out models that didn't converge#
+	#	filter(pdG==1) %>%#
+		# change effects to columns#
+		short_to_long_format_X_function %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates) %>%#
+		model_dimensions_name_processing_function %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, pdG))#
+	# temperature and precipitation interactions#
+	y$`P x T` = "NA"#
+	# if names contain P2 and T2#
+	if (length(grep("P2", names(y), fixed=T)) > 0 & length(grep("T2", names(y), #
+	fixed=T)) > 0) {#
+		y %<>%#
+		mutate(#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & #
+				`T2*P2`!= "X"),#
+				"T1 x P1"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & #
+				`T2*P2`!="X"),#
+				"T1 x P2"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & #
+				`T2*P2`!="X"),#
+				"T2 x P1"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & #
+				`T2*P2`=="X"),#
+				"T2 x P2"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & #
+				`T2*P2`=="X"),#
+				"T1 x T2 x P1 x P2")#
+		)#
+	}#
+	# if names contain T2 but NOT P2#
+	if (length(grep("P2", names(y), fixed=T)) == 0 & length(grep("T2", #
+	names(y), fixed=T)) > 0) {#
+		y %<>%#
+		mutate(#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`=="X" & `T2*P1`!="X"),#
+				"T1 x P1"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`!="X" & `T2*P1`=="X"),#
+				"T2 x P1"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`=="X" & `T2*P1`=="X"),#
+				"T1 x T2 x P1")#
+		)#
+	}#
+	# if names contain P2 but NOT T2#
+	if (length(grep("P2", names(y), fixed=T)) > 0 & length(grep("T2", names(y), #
+	fixed=T)) == 0) {#
+		y %<>%#
+		mutate(#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`=="X" & `T1*P2`!="X"),#
+				"T1 x P1"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`!="X" & `T1*P2`=="X"),#
+				"T1 x P2"),#
+			`P x T` = replace(`P x T`, #
+				which(`T1*P1`=="X" & `T1*P2`=="X"),#
+				"T1 x P1 x P2")#
+		)#
+	}#
+	y$`Insect x Weather` = "NA"#
+	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
+		y %<>%#
+		mutate(#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*CA_t_1`=="X"),#
+				"Invasive Moth x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*CA_t_1`=="X"),#
+				"Invasive Moth x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*CH_t_1`=="X"),#
+				"Native Bug x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*CH_t_1`=="X"),#
+				"Native Bug x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
+					"Invasive Moth x Native Bug x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
+				"Invasive Moth x Native Bug x T")#
+		)#
+	}#
+	if (length(grep("CAyr_t_1", names(y), fixed=T)) > 0) {#
+		y %<>%#
+		mutate(#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*CAyr_t_1`=="X"),#
+				"Invasive Moth x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*CAyr_t_1`=="X"),#
+				"Invasive Moth x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*CHyr_t_1`=="X"),#
+				"Native Bug x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*CHyr_t_1`=="X"),#
+				"Native Bug x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CAyr_t_1*CHyr_t`=="X"),#
+					"Invasive Moth x Native Bug x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CAyr_t_1*CHyr_t`=="X"),#
+				"Invasive Moth x Native Bug x T")#
+		)#
+	}#
+	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
+		y %<>%#
+		mutate(#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*CH_t_1`=="X"),#
+				"Native Bug x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*CH_t_1`=="X"),#
+				"Native Bug x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*DA_t_1`=="X"),#
+				"Native Scale x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*DA_t_1`=="X"),#
+				"Native Scale x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*ME_t_1`=="X"),#
+				"Native Moth x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*ME_t_1`=="X"),#
+				"Native Moth x T")#
+		)#
+	}#
+	if (length(grep("DAyr_t_1", names(y), fixed=T)) > 0) {#
+		y %<>%#
+		mutate(#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*CHyr_t_1`=="X"),#
+				"Native Bug x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*CHyr_t_1`=="X"),#
+				"Native Bug x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*DAyr_t_1`=="X"),#
+				"Native Scale x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*DAyr_t_1`=="X"),#
+				"Native Scale x T"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`P1*MEyr_t_1`=="X"),#
+				"Native Moth x P"),#
+			`Insect x Weather` = replace(`Insect x Weather`, #
+				which(`T1*MEyr_t_1`=="X"),#
+				"Native Moth x T")#
+		)#
+	}#
+	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
+		# insect/weather interactions#
+		y[which(select(y, #
+			starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
+		y[which(select(y, #
+			starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
+		y[which(select(y, #
+			starts_with("P1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"#
+		y[which(select(y, #
+			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
+		y[which(select(y, #
+			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
+		y[which(select(y, #
+			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"#
+	}#
+	return(y)#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Create table with the convergence status of multiple SAS GLIMMIX models#
+#' #
+#' @param modelresults#
+#
+randeffects_converg_status_function <- function(modelresults) {#
+	modelresults %>% as.data.frame %>%#
+		dplyr::group_by(`Random Effects`) %>%#
+		dplyr::summarise(#
+			`Positive Definite G-Matrix?` = `Positive Definite G-Matrix?`[1]#
+		) %>%#
+		as.data.frame %>%#
+		dplyr::arrange(desc(`Positive Definite G-Matrix?`))#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
+#' #
+#' @param y#
+#
+modelselection_format_parameter_estimates_function <- function(y) {	#
+	y %<>% #
+	dplyr::select(#
+		Effect,#
+		Estimate,#
+		StdErr,#
+		DF,#
+		tValue,#
+		Probt#
+	) %>%#
+	as.data.table %>%   #
+	# rename column names#
+	setnames("StdErr",	"Standard Error") %>%#
+	setnames("tValue",	"t-Value") %>%#
+	setnames("Probt",	"Prob(t)")#
+	# change effect names#
+	y[y$"Effect" == "Ln_Cone_t_1_st"]$Effect 	<- "Standardized Cone Volume [t-1]"#
+	y[y$"Effect" == "Ln_Size_t_1_st"]$Effect 	<- "Standardized Size [t-1]"#
+	y[y$"Effect" == "CA_t_1"]$Effect 			<- "Invasive Moth [t-1]"#
+	y[y$"Effect" == "CH_t_1"]$Effect 			<- "Native Bug [t-1]"#
+	y[y$"Effect" == "T1"]$Effect 				<- "Temp. PCA Axis 1"#
+	y[y$"Effect" == "T2"]$Effect 				<- "Temp. PCA Axis 2"#
+	y[y$"Effect" == "P1"]$Effect 				<- "Precip. PCA Axis 1"#
+	y[y$"Effect" == "P2"]$Effect 				<- "Precip. PCA Axis 2"#
+	y[y$"Effect" == "T1*P1"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 1"#
+	y[y$"Effect" == "T2*P1"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 1"#
+	y[y$"Effect" == "T1*P2"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 2"#
+	y[y$"Effect" == "T2*P2"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 2"#
+	return(y)#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+names_processing_function
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
+#' #
+#' @param models.dimensions#
+#' @param convergence.status#
+#' @param parameter.estimates#
+#' @param conditional.fit.statistics#
+#' @param select_list#
+#
+model_selection_results_function <- function(#
+	model_selection_table,#
+	select_list#
+)#
+{#
+   model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)#
+	model_selection_table %<>% cAIC_function#
+	model_selection_table <- model_selection_table[, select_list]#
+	model_selection_table %<>% names_processing_function#
+	# take modelVars from top of list#
+	topmodels = model_selection_table[which(model_selection_table$`delta cAIC` <= 2), "modelVars"]#
+	top.estimates = #
+	parameter.estimates[which(parameter.estimates$modelVars %in% #
+		topmodels),]	#
+	# top.estimates = #
+	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	#
+	# modelVars = model_selection_table[1:nmodels, "modelVars"]#
+	# how do I convert ln standardized back to regular numbers?#
+	for (i in 1:length(topmodels)) {#
+		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]#
+		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					# T2#
+					", T2 = ", #
+					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					# P2#
+					", P2 = ", #
+					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P2"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P2"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("CA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Invasive Moth` = paste(#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CH_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("ME_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CHyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DAyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("MEyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		model_selection_table[i, ] %<>%#
+		mutate(	#
+			# Intercept = paste( #
+			# 	Data[which(Data$Effect=="Intercept"), #
+			# 		]$Estimate %>% round(2),#
+			# 	" [",#
+			# 	Data[which(Data$Effect=="Intercept"), ]$Lower #
+			# 		%>% round(2),#
+			# 	", ",#
+			# 	Data[which(Data$Effect=="Intercept"), ]$Upper #
+			# 		%>% round(2),#
+			# 	"]",#
+			# 	sep=""#
+			# ),#
+			C_t = paste(#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Estimate %>% round(2),#
+				" [",#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Lower %>% round(2),#
+				", ",#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Upper %>% round(2),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	#model_selection_table %<>% dplyr::select(-modelVars)#
+	model_selection_table[, "P x T"][model_selection_table[, "P x T"] == "NA"] <- ""#
+	model_selection_table[, "Insect x Weather"][model_selection_table[, "Insect x Weather"] == "NA"] <- ""#
+	model_selection_table %<>% dplyr::select(-modelVars)#
+	return(model_selection_table)#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
+#' #
+#' @param y#
+#
+modelselection_format_parameter_estimates_function <- function(y) {	#
+	y %<>% #
+	dplyr::select(#
+		Effect,#
+		Estimate,#
+		StdErr,#
+		DF,#
+		tValue,#
+		Probt#
+	) %>%#
+	as.data.table %>%   #
+	# rename column names#
+	setnames("StdErr",	"Standard Error") %>%#
+	setnames("tValue",	"t-Value") %>%#
+	setnames("Probt",	"Prob(t)")#
+	# change effect names#
+	y[y$"Effect" == "Ln_Cone_t_1_st"]$Effect 	<- "Standardized Cone Volume [t-1]"#
+	y[y$"Effect" == "Ln_Size_t_1_st"]$Effect 	<- "Standardized Size [t-1]"#
+	y[y$"Effect" == "CA_t_1"]$Effect 			<- "Invasive Moth [t-1]"#
+	y[y$"Effect" == "CH_t_1"]$Effect 			<- "Native Bug [t-1]"#
+	y[y$"Effect" == "T1"]$Effect 				<- "Temp. PCA Axis 1"#
+	y[y$"Effect" == "T2"]$Effect 				<- "Temp. PCA Axis 2"#
+	y[y$"Effect" == "P1"]$Effect 				<- "Precip. PCA Axis 1"#
+	y[y$"Effect" == "P2"]$Effect 				<- "Precip. PCA Axis 2"#
+	y[y$"Effect" == "T1*P1"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 1"#
+	y[y$"Effect" == "T2*P1"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 1"#
+	y[y$"Effect" == "T1*P2"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 2"#
+	y[y$"Effect" == "T2*P2"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 2"#
+	return(y)#
+}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
 #' Return table comparing conditional AIC (cAIC) values for multiple models produced using SAS GLIMMIX.#
 #' @param y#
 #
 cAIC_function <- function(y) {#
+   y %<>%#
+   mutate(#
+   	cAIC = `-2 log L(FruitPres_t | r. effects)` + #
+   		2*(`Upper Bound, Number of Parameters` + ColumnsZ)#
+   )#
 	`min(cAIC)` = min(y$cAIC)#
 	y %<>%#
 		mutate(#
 			`delta cAIC` = cAIC - `min(cAIC)`,#
 			`Model Lik` = exp((-1/2)*`delta cAIC`)#
-		) %>%#
-		arrange(desc(`Model Lik`))#
+		)#
 	sum.L = sum(y$`Model Lik`)#
 	y %<>% mutate(`Prob(Model)` = `Model Lik`/sum.L)#
 	y$`Prob(Model)` %<>% round(digits=2)#
 	y$`Model Lik` %<>% round(digits=2)#
-	y %<>% dplyr::select(-c(cAIC, `Model Lik`))#
+	y %<>% dplyr::select(-c(#
+		cAIC, #
+		`Model Lik`, #
+		`-2 log L(FruitPres_t | r. effects)`, #
+		ColumnsZ#
+	)) %>%#
+ 	arrange(`delta cAIC`)#
 	return(y)#
 }
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-# MODEL SELECTION#
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-modelselection_size_results
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
-#' #
-#' @param y#
-#' @param select_list#
-#
-names_processing_function <- function(y) {#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Ln_Size_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_t_1_st", "ln(Size), Stand.")}#
-	if ("Ln_Cone_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
-	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
-		"ln(Cylinder Volume [t-1]), Stand.")}#
-	if ("CA_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1", "Invasive Moth")}#
-	if ("CH_t_1" %in% names(y)) #
-		{setnames(y, "CH_t_1", "Native Bug")}#
-	if ("DA_t_1" %in% names(y)) #
-		{setnames(y, "DA_t_1", "Native Scale")}#
-	if ("ME_t_1" %in% names(y)) #
-		{setnames(y, "ME_t_1", "Native Moth")}#
-	if ("NatInsect_t_1" %in% names(y)) #
-		{setnames(y, "NatInsect_t_1", "Native Insects")}#
-	if ("CA_t_1*CH_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
-	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
-		"Invasive Moth [t-1] x Native Insects [t-1]")}#
-	if ("P1*CA_t_1" %in% names(y)) #
-		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
-	if ("T1*CA_t_1" %in% names(y)) #
-		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
-	if ("P1*CH_t_1" %in% names(y)) #
-		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
-	if ("P1*DA_t_1" %in% names(y)) #
-		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
-	if ("T1*DA_t_1" %in% names(y)) #
-		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
-	if ("P1*ME_t_1" %in% names(y)) #
-		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
-	if ("T1" %in% names(y)) #
-		{setnames(y, "T1", "Temp.")}#
-	if ("P1" %in% names(y)) #
-		{setnames(y, "P1", "Precip.")}#
-	return(y)			#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
-	select_list#
-)#
-{#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`Temp. x Precip.` = "NA"#
-	y %<>%#
-	mutate(#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"Full")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "Temp. x Precip."][y[, "Temp. x Precip."] == "NA"] <- "."#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- "."#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-# MODEL SELECTION#
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"Temp. x Precip.",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-modelselection_size_results
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
-	select_list#
-)#
-{#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`Temp. x Precip.` = "NA"#
-	y %<>%#
-	mutate(#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"Full")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "Temp. x Precip."][y[, "Temp. x Precip."] == "NA"] <- ""#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"Temp. x Precip.",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)#
-models.dimensions = #
-	SIZE.stricta.cone.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.cone.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.cone.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.cone.model.selection.models.conditional.fit.statistics#
-select_list = #
-	cone_select_list#
-#
-modelselection_cone_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Return table comparing SAS GLIMMIX random effects models.#
-#' #
-#' @param modelresults#
-X_function = function(x) {#
-	ifelse(length(x)>0, "X", "")#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-modelselection_size_results
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
-#' #
-#' @param y#
-#' @param select_list#
-#
-names_processing_function <- function(y) {#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Number of Parameters" %in% names(y)) #
-		{setnames(y, "Number of Parameters", "p")}#
-	if ("Ln_Size_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_t_1_st", "ln(Size), Stand.")}#
-	if ("Ln_Cone_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
-	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
-		"ln(Cylinder Volume [t-1]), Stand.")}#
-	if ("CA_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1", "Invasive Moth")}#
-	if ("CH_t_1" %in% names(y)) #
-		{setnames(y, "CH_t_1", "Native Bug")}#
-	if ("DA_t_1" %in% names(y)) #
-		{setnames(y, "DA_t_1", "Native Scale")}#
-	if ("ME_t_1" %in% names(y)) #
-		{setnames(y, "ME_t_1", "Native Moth")}#
-	if ("NatInsect_t_1" %in% names(y)) #
-		{setnames(y, "NatInsect_t_1", "Native Insects")}#
-	if ("CA_t_1*CH_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
-	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
-		"Invasive Moth [t-1] x Native Insects [t-1]")}#
-	if ("P1*CA_t_1" %in% names(y)) #
-		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
-	if ("T1*CA_t_1" %in% names(y)) #
-		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
-	if ("P1*CH_t_1" %in% names(y)) #
-		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
-	if ("P1*DA_t_1" %in% names(y)) #
-		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
-	if ("T1*DA_t_1" %in% names(y)) #
-		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
-	if ("P1*ME_t_1" %in% names(y)) #
-		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
-	if ("T1" %in% names(y)) #
-		{setnames(y, "T1", "Temp.")}#
-	if ("P1" %in% names(y)) #
-		{setnames(y, "P1", "Precip.")}#
-	return(y)			#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-modelselection_size_results
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-SIZE.stricta.size.model.selection.models.parameter.estimates
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
-	select_list#
-)#
-{#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`Temp. x Precip.` = "NA"#
-	y %<>%#
-	mutate(#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`Temp. x Precip.` = replace(`Temp. x Precip.`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "Temp. x Precip."][y[, "Temp. x Precip."] == "NA"] <- ""#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
-#' #
-#' @param y#
-#' @param select_list#
-#
-names_processing_function <- function(y) {#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Number of Parameters" %in% names(y)) #
-		{setnames(y, "Number of Parameters", "p")}#
-	if ("Ln_Size_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_t_1_st", "S_t")}#
-	if ("Ln_Cone_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
-	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
-		"ln(Cylinder Volume [t-1]), Stand.")}#
-	if ("CA_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1", "Invasive Moth")}#
-	if ("CH_t_1" %in% names(y)) #
-		{setnames(y, "CH_t_1", "Native Bug")}#
-	if ("DA_t_1" %in% names(y)) #
-		{setnames(y, "DA_t_1", "Native Scale")}#
-	if ("ME_t_1" %in% names(y)) #
-		{setnames(y, "ME_t_1", "Native Moth")}#
-	if ("NatInsect_t_1" %in% names(y)) #
-		{setnames(y, "NatInsect_t_1", "Native Insects")}#
-	if ("CA_t_1*CH_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
-	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
-		"Invasive Moth [t-1] x Native Insects [t-1]")}#
-	if ("P1*CA_t_1" %in% names(y)) #
-		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
-	if ("T1*CA_t_1" %in% names(y)) #
-		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
-	if ("P1*CH_t_1" %in% names(y)) #
-		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
-	if ("P1*DA_t_1" %in% names(y)) #
-		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
-	if ("T1*DA_t_1" %in% names(y)) #
-		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
-	if ("P1*ME_t_1" %in% names(y)) #
-		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
-	if ("T1" %in% names(y)) #
-		{setnames(y, "T1", "Temp.")}#
-	if ("P1" %in% names(y)) #
-		{setnames(y, "P1", "Precip.")}#
-	return(y)			#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-modelselection_size_results
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
-	select_list#
-)#
-{#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`Temp. x P` = "NA"#
-	y %<>%#
-	mutate(#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "T x P"][y[, "T x P"] == "NA"] <- ""#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
-	select_list#
-)#
-{#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`Temp. x P` = "NA"#
-	y %<>%#
-	mutate(#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "T x P"][y[, "T x P"] == "NA"] <- ""#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
-	select_list#
-)#
-{#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`T x P` = "NA"#
-	y %<>%#
-	mutate(#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "T x P"][y[, "T x P"] == "NA"] <- ""#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
----  #
-title: Selection of Models Predicting Size#
-output: #
- html_document:#
-   toc: true#
-   number_sections: true#
----#
-#
-<!-- #
-knitr::knit2html('stricta_SIZE_short.Rmd')#
-setwd("C:/Users/KSauby/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize")#
-#
-rmarkdown::render('stricta_SIZE_short.Rmd')#
--->#
-```{r setup, include=FALSE}#
-opts_chunk$set(fig.path='figures/stricta-SIZE-')#
-theme_set(theme_bw(base_size = 30))#
-options(width=200)#
-```#
-cor(PlantSize_t ~ DaysSinceStart, data=timeseries_all_surveys_humifusa)#
-#
-```{r include=FALSE}#
-# RANDOM EFFECTS SELECTION#
-#
-# Size#
-#
 covariance.parms.test = #
-	SIZE.stricta.size.random.effects.models.covariance.parameters.test#
+	FruitPres.spring.humifusa.size.randeffmodels.covariance.parameters.test#
 convergence.status = #
-	SIZE.stricta.size.random.effects.models.convergence.status#
+	FruitPres.spring.humifusa.size.randeffmodels.convergence.status#
 covariance.parms.estimates = #
-	SIZE.stricta.size.random.effects.models.covariance.parameter.estimates#
+	FruitPres.spring.humifusa.size.randeffmodels.covariance.parameter.estimates#
 conditional.fit.statistics = #
-	SIZE.stricta.size.random.effects.models.conditional.fit.statistics#
+	FruitPres.spring.humifusa.size.randeffmodels.conditional.fit.statistics#
 fit.statistics = #
-	SIZE.stricta.size.random.effects.models.fit.statistics#
+	FruitPres.spring.humifusa.size.randeffmodels.fit.statistics#
 parms.estimates = #
-	SIZE.stricta.size.random.effects.models.parameter.estimates#
+	FruitPres.spring.humifusa.size.randeffmodels.parameter.estimates#
 #
-stricta.size.model.results = randeffects_model_results_function(#
+humifusa.size.model.results = randeffects_model_results_function(#
 	covariance.parms.test, #
 	convergence.status, #
 	covariance.parms.estimates, #
 	conditional.fit.statistics, #
 	fit.statistics,#
 	parms.estimates#
-)#
-stricta.size.converg.status = #
-	randeffects_converg_status_function(modelresults=stricta.size.model.results)#
-stricta.size.covar.results = #
-	randeffects_G_side_effects_test_function(stricta.size.model.results)#
-stricta.size.covar.parms = #
-	randeffects_covar_parms_estimates_function(stricta.size.model.results)#
-stricta.size.rand.model.selection = #
-	randeffects_model_selection_function(stricta.size.model.results)#
-# Size#
-#
-covariance.parms.test = #
-	SIZE.stricta.size.random.effects.models.negbin.covariance.parameters.test#
-convergence.status = #
-	SIZE.stricta.size.random.effects.models.negbin.convergence.status#
-covariance.parms.estimates = #
-	SIZE.stricta.size.random.effects.models.negbin.covariance.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.random.effects.models.negbin.conditional.fit.statistics#
-fit.statistics = #
-	SIZE.stricta.size.random.effects.models.negbin.fit.statistics#
-parms.estimates = #
-	SIZE.stricta.size.random.effects.models.negbin.parameter.estimates#
-#
-stricta.size.model.results.negbin = randeffects_model_results_function(#
-	covariance.parms.test, #
-	convergence.status, #
-	covariance.parms.estimates, #
-	conditional.fit.statistics, #
-	fit.statistics,#
-	parms.estimates#
-)#
-stricta.size.negbin.converg.status = #
-	randeffects_converg_status_function(modelresults=stricta.size.model.results.negbin)#
-stricta.size.negbin.covar.results = #
-	randeffects_G_side_effects_test_function(stricta.size.model.results.negbin)#
-stricta.size.negbin.covar.parms = #
-	randeffects_covar_parms_estimates_function(stricta.size.model.results.negbin)#
-stricta.size.negbin.rand.model.selection = #
-	randeffects_model_selection_function(stricta.size.model.results.negbin)#
-# Cone#
-stricta.cone.model.results = randeffects_model_results_function(#
-	SIZE.stricta.cone.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.cone.random.effects.models.convergence.status,#
-	SIZE.stricta.cone.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.cone.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.cone.random.effects.models.fit.statistics,#
-	SIZE.stricta.cone.random.effects.models.parameter.estimates#
-)#
-stricta.cone.converg.status = randeffects_converg_status_function(stricta.cone.model.results)#
-stricta.cone.covar.results = randeffects_G_side_effects_test_function(stricta.cone.model.results)#
-stricta.cone.covar.parms = randeffects_covar_parms_estimates_function(stricta.cone.model.results)#
-stricta.cone.rand.model.selection = randeffects_model_selection_function(stricta.cone.model.results)#
-#
-# Cylinder#
-stricta.cylinder.model.results = randeffects_model_results_function(#
-	SIZE.stricta.cylinder.random.effects.models.covariance.parameters.test, #
-	SIZE.stricta.cylinder.random.effects.models.convergence.status,#
-	SIZE.stricta.cylinder.random.effects.models.covariance.parameter.estimates,#
-	SIZE.stricta.cylinder.random.effects.models.conditional.fit.statistics,#
-	SIZE.stricta.cylinder.random.effects.models.fit.statistics,#
-	SIZE.stricta.cylinder.random.effects.models.parameter.estimates#
-)#
-stricta.cylinder.converg.status = randeffects_converg_status_function(stricta.cylinder.model.results)#
-stricta.cylinder.covar.results = randeffects_G_side_effects_test_function(stricta.cylinder.model.results)#
-stricta.cylinder.covar.parms = randeffects_covar_parms_estimates_function(stricta.cylinder.model.results)#
-stricta.cylinder.rand.model.selection = randeffects_model_selection_function(stricta.cylinder.model.results)#
-```#
-```{r include=FALSE}#
-#
-# MODEL SELECTION#
-size_select_list = c(#
-	"S_t",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"T x P",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)#
-models.dimensions = #
-	SIZE.stricta.cone.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.cone.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.cone.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.cone.model.selection.models.conditional.fit.statistics#
-select_list = #
-	cone_select_list#
-#
-modelselection_cone_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)#
-models.dimensions = #
-	SIZE.stricta.cylinder.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.cylinder.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.cylinder.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.cylinder.model.selection.models.conditional.fit.statistics#
-select_list = #
-	cylinder_select_list#
-modelselection_cylinder_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)#
-```#
-#
-# Positive Definite G matrix?#
-#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-#
-x = stricta.size.converg.status %>%#
-	merge(stricta.size.negbin.converg.status, by="Random Effects") %>% #
-  merge(stricta.cone.converg.status, by="Random Effects") %>% #
-	merge(stricta.cylinder.converg.status, by="Random Effects")#
-names(x)[2:5] <- c("Size", "Size (Neg. Bin.)", "Cone", "Cylinder")#
-x %<>% arrange(#
-		desc(Size), #
-		desc(`Size (Neg. Bin.)`),#
-		desc(`Cone`))#
-print(xtable(x), type="html", include.rownames=F)#
-```#
-#
-# Model Fit#
-#
-Based on the "Pearson Chi-Square/DF" statistic, the Negative Binomial mixed model best fits the data (where plant size is modeled as the number of segments). Among the negative binomial mixed models, "Location (Year)" is the random effect that fits the data best.#
-#
-## Size (Poisson):#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-print(xtable(stricta.size.rand.model.selection, align=rep("c",19)), type="html", include.rownames=F)#
-```#
-#
-## Size (Neg. Bin.):#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-print(xtable(stricta.size.negbin.rand.model.selection, align=rep("c",19)), type="html", include.rownames=F)#
-```#
-#
-## Cone:#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-print(xtable(stricta.cone.rand.model.selection, align=rep("c",19)), type="html", include.rownames=F)#
-```#
-#
-## Cylinder:#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-print(xtable(stricta.cylinder.rand.model.selection, align=rep("c",19)), type="html", include.rownames=F)#
-```#
-#
-# Covariance Parameter Estimates#
-#
-The confidence interval bounds are very high. How do I interpret this information?#
-#
-## Size (Poisson)#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-stricta.size.covar.parms.restricted <- stricta.size.covar.parms %>%#
-	filter(stricta.size.covar.parms$`Random Effects` == #
-		stricta.size.rand.model.selection$`Random Effects`[1])#
-print(xtable(stricta.size.covar.parms.restricted, align=rep("c",10)), type="html", include.rownames=F)#
-```#
-## Size (Neg. Bin.)#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-stricta.size.covar.parms.restricted <- stricta.size.negbin.covar.parms %>%#
-	filter(stricta.size.negbin.covar.parms$`Random Effects` == #
-		stricta.size.negbin.rand.model.selection$`Random Effects`[1])#
-print(xtable(stricta.size.covar.parms.restricted, align=rep("c",10)), type="html", include.rownames=F)#
-```#
-## Cone#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-stricta.cone.covar.parms.restricted <- stricta.cone.covar.parms %>%#
-	filter(stricta.cone.covar.parms$`Random Effects` == #
-		stricta.cone.rand.model.selection$`Random Effects`[1])#
-print(xtable(stricta.cone.covar.parms.restricted, align=rep("c",10)), type="html", include.rownames=F)#
-```#
-#
-## Cylinder#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-stricta.cylinder.covar.parms.restricted <- stricta.cylinder.covar.parms %>%#
-	filter(stricta.cylinder.covar.parms$`Random Effects` == #
-		stricta.cylinder.rand.model.selection$`Random Effects`[1])#
-print(xtable(stricta.cylinder.covar.parms.restricted, align=rep("c",10)), type="html", include.rownames=F)#
-```#
-# Candidate Models#
-#
-Next, I included Location (Year) as random effects and performed model selection, generating models that varied in their fixed effects. I consider 2 and 3 way interactions.#
-#
-## Size#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-print(xtable(modelselection_size_results, align=rep("c",19)), type="html")#
-```	#
-### Best Model Parameter Estimates:#
-#### Size#
-```{r message=FALSE, warning=FALSE, echo=FALSE, results="asis"}#
-bestmodel = SIZE.stricta.size.model.selection.models.parameter.estimates %>%#
-	filter(modelVars=="FULLINSECTSXPRECIPPCAS") %>%#
-	dplyr::select(-modelVars)#
-print(xtable(bestmodel, align=rep("c",10)), type="html", include.rownames=F)#
-```
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"T x P",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-modelselection_size_results
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
-#' #
-#' @param y#
-#' @param select_list#
-#
-names_processing_function <- function(y) {#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Number of Parameters" %in% names(y)) #
-		{setnames(y, "Number of Parameters", "p")}#
-	if ("Ln_Size_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_t_1_st", "S_t")}#
-	if ("Ln_Cone_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
-	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
-		"ln(Cylinder Volume [t-1]), Stand.")}#
-	if ("CA_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1", "Invasive Moth")}#
-	if ("CH_t_1" %in% names(y)) #
-		{setnames(y, "CH_t_1", "Native Bug")}#
-	if ("DA_t_1" %in% names(y)) #
-		{setnames(y, "DA_t_1", "Native Scale")}#
-	if ("ME_t_1" %in% names(y)) #
-		{setnames(y, "ME_t_1", "Native Moth")}#
-	if ("NatInsect_t_1" %in% names(y)) #
-		{setnames(y, "NatInsect_t_1", "Native Insects")}#
-	if ("CA_t_1*CH_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
-	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
-		"Invasive Moth [t-1] x Native Insects [t-1]")}#
-	if ("P1*CA_t_1" %in% names(y)) #
-		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
-	if ("T1*CA_t_1" %in% names(y)) #
-		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
-	if ("P1*CH_t_1" %in% names(y)) #
-		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
-	if ("P1*DA_t_1" %in% names(y)) #
-		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
-	if ("T1*DA_t_1" %in% names(y)) #
-		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
-	if ("P1*ME_t_1" %in% names(y)) #
-		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
-	if ("T1" %in% names(y)) #
-		{setnames(y, "T1", "T")}#
-	if ("P1" %in% names(y)) #
-		{setnames(y, "P1", "P")}#
-	return(y)			#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis/PlantSize')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"T x P",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-cone_select_list = c(#
-	"Ln_Cone_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-cylinder_select_list = c(#
-	"Ln_Cylinder_Tall_t_1",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInsect_t_1",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"Temperature x Precipitation",#
-	"Number of Parameters",#
-	"Pearson Chi-Square / DF",#
-	"cAIC"#
-)#
-#
-models.dimensions = #
-	SIZE.stricta.size.model.selection.models.dimensions#
-convergence.status = #
-	SIZE.stricta.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	SIZE.stricta.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics#
-select_list = size_select_list#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T) +#
-  	scale_shape_manual(values=c(0,15)) +
-scale_size_manual(values=c(6,3))
-library(ggmap)
-install.packages("ggmap")
-library(ggmap)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3))
-ls()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
-reload.project()
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate lag dates: Previous_Survey_Date, DaysSincePrevSurvey, DaysSinceStart#
-#' @param x#
-#' @description calculate lag dates.#
-lag_dates_function <- function(x=x){#
-	x %<>% #
-		arrange(Date) %>%#
-		group_by(PlantID) %>%#
-		mutate(#
-			# previous dates#
-			Previous_Survey_Date 	= as.Date(c(NA, head(Date, -1))),#
-			DaysSincePrevSurvey 	= Date - Previous_Survey_Date,#
-			DaysSinceStart 			= Date - Date[1]#
-		)#
-	x$DaysSincePrevSurvey 	%<>% as.numeric#
-	x$DaysSinceStart 		%<>% as.numeric#
-	return(x)#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate insect presence at previous time step#
-#' @param x#
-#' @description calculate lag insects.#
-#
-lag_insects_function <- function(x=x){#
-	x %>% #
-		arrange(Date) %>%#
-		group_by(PlantID) %>%#
-		mutate(#
-			# new insect variables#
-			Insect_t 		= ifelse(sum(DA_t, CA_t, CH_t, ME_t, na.rm=T)>0, 1, 0),#
-			NatInsect_t 	= ifelse(sum(DA_t, CH_t, ME_t, na.rm=T)>0, 1, 0),#
-			# lagged insects#
-			CA_t_1 		= c(NA, head(CA_t, -1)),#
-			ME_t_1 		= c(NA, head(ME_t, -1)),#
-			CH_t_1 		= c(NA, head(CH_t, -1)),#
-			DA_t_1 		= c(NA, head(DA_t, -1)),#
-			Insect_t_1 		= c(NA, head(Insect_t, -1)),#
-			NatInsect_t_1 	= c(NA, head(NatInsect_t, -1))#
-		) %>%#
-		as.data.frame#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate insect presence during the previous year#
-#' @param x#
-#' @description calculate lag insects during the previous year.#
-#
-lag_insects_yr_function <- function(x=x){#
-	x %>% #
-		arrange(Date) %>%#
-		group_by(PlantID) %>%#
-		mutate(#
-			# new insect variables#
-			Insectyr_t 		= ifelse(sum(DAyr_t, CAyr_t, CHyr_t, MEyr_t, na.rm=T)>0, 1, 0),#
-			NatInsectyr_t 	= ifelse(sum(DAyr_t, CHyr_t, MEyr_t, na.rm=T)>0, 1, 0),#
-			# lagged insects#
-			CAyr_t_1 		= c(NA, head(CAyr_t, -1)),#
-			MEyr_t_1 		= c(NA, head(MEyr_t, -1)),#
-			CHyr_t_1 		= c(NA, head(CHyr_t, -1)),#
-			DAyr_t_1 		= c(NA, head(DAyr_t, -1)),#
-			Insectyr_t_1 		= c(NA, head(Insectyr_t, -1)),#
-			NatInsectyr_t_1 	= c(NA, head(NatInsectyr_t, -1))#
-		) %>%#
-		as.data.frame#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate size and fruit production variables at the previous time step#
-#' @param x#
-#' @description calculate lag size and fruit.#
-#
-lag_size_fruit_function <- function(x=x){#
-	x %>% #
-		arrange(Date) %>%#
-		group_by(PlantID) %>%#
-		mutate(#
-			# size#
-			Size_t_1 			= c(NA, head(Size_t, -1)),#
-			Height_t_1 			= c(NA, head(Height_t, -1)),#
-			Cone_t_1 			= c(NA, head(Cone_t, -1)),#
-			Cylinder_Tall_t_1 	= c(NA, head(Cylinder_Tall_t, -1)),#
-			# fruit#
-			Fruit_t_1 			= c(NA, head(Fruit_t, -1)),#
-			FruitPres_t_1 		= c(NA, head(FruitPres_t, -1))#
-		)#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Calculate Relative Growth Rate#
-#' @param x#
-#' @description formula for relative growth rate is from Paine, C. E. T., Marthews, T. R., Vogt, D. R., Purves, D., Rees, M., Hector, A., & Turnbull, L. A. (2011). How to fit nonlinear plant growth models and calculate growth rates: an update for ecologists. Methods in Ecology and Evolution, no–no. doi:10.1111/j.2041-210X.2011.00155.x#
-#
-#' absolute growth rate (AGR) is the derivative with respect to time of the function used to predict biomass, and RGR is simply AGR divided by the current biomass#
-#
-#' RGR is (dM/dt)/M#
-#
-#' CURRENT FORMULA FOR RGR#
-#' after meeting with Mary and Bob (1 Dec 2014) Bob suggested that I divide by plant size at time t-1#
-#
-#' scale by DaysSincePrevTime#
-RGR_function <- function(x=x){#
-	x %<>% mutate(#
-		RGR_Height 			= (Height_t - Height_t_1) /#
-								(DaysSincePrevSurvey*Height_t_1), #
-	 	RGR_Size 			= (Size_t - Size_t_1) / #
-								(DaysSincePrevSurvey*Size_t_1),#
-		RGR_Cone 			= (Cone_t - Cone_t_1) / #
-								(DaysSincePrevSurvey*Cone_t_1),#
-		RGR_Cylinder_Tall 	= (Cylinder_Tall_t - Cylinder_Tall_t_1) / #
-								(DaysSincePrevSurvey*Cylinder_Tall_t_1),#
-		RGR_Size365 				= RGR_Size*365,#
-		RGR_Cone365 				= RGR_Cone*365,#
-		RGR_CylinderTall365 		= RGR_Cylinder_Tall*365,#
-		# lagged RGR#
-		RGR_Height_t_1 			= c(NA, head(RGR_Height, -1)),#
-		RGR_Size_t_1 			= c(NA, head(RGR_Size, -1)),#
-		RGR_Cone_t_1 			= c(NA, head(RGR_Cone, -1)),#
-		RGR_Cylinder_Tall_t_1 	= c(NA, head(RGR_Cylinder_Tall, -1))		#
-	) %>%#
-	as.data.table#
-	# remove Inf values#
-	cnames <- c(#
-		"RGR_Height", #
-		"RGR_Size", #
-		"RGR_Cone",#
-		"RGR_Cylinder_Tall",#
-		"RGR_Size365",#
-		"RGR_Cone365",#
-		"RGR_CylinderTall365",#
-		"RGR_Height_t_1",#
-		"RGR_Size_t_1",#
-		"RGR_Cone_t_1",#
-		"RGR_Cylinder_Tall_t_1"#
-		)#
-	for (cname in cnames) {#
-		x[, cname := NA_Function(x[[cname]]), with=FALSE]#
-	}#
-	return(x)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
-load.project()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = Marsico.Florida.data.collection.site.location.summary, #
-		crop=T) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3))
-str(Marsico.Florida.data.collection.site.location.summary)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(timeseries.sampling.locations) %>%#
-	melt(id.vars=c("X", "Name", "Latitude", "Longitude", "Host.Species.present.at.site",                  "Moth.Species.present.at.site", "State.Park.Property.", "Notes")) %>%#
-	filter(value=="Opuntia stricta" | value=="Opuntia humifusa")
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary) %>%#
-	melt(id.vars=c("X", "Name", "Latitude", "Longitude", "Host.Species.present.at.site",                  "Moth.Species.present.at.site", "State.Park.Property.", "Notes")) %>%#
-	filter(value=="Opuntia stricta" | value=="Opuntia humifusa")
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")
-sbt
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary)
-sampling_locs
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary) %>%#
-	melt(id.vars=c("X", "Name", "Latitude", "Longitude", "Host.Species.present.at.site",                  "Moth.Species.present.at.site", "State.Park.Property.", "Notes"))
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary)
-str(sampling_locs)
-sampling_locs$t.X.
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary) %>%#
-	melt(id.vars=c(#
-		"t.X.", #
-		"Name", #
-		"Latitude", #
-		"Longitude", #
-		"Host.Species.present.at.site",                  #
-		"Moth.Species.present.at.site", #
-		"State.Park.Property.", #
-		"Notes"#
-	)) %>%#
-	filter(value=="Opuntia stricta" | value=="Opuntia humifusa")
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary) %>%#
-	melt(id.vars=c(#
-		"t.X.", #
-		"Location.name", #
-		"Latitude", #
-		"Longitude", #
-		"Host.Species.present.at.site",                  #
-		"Moth.Species.present.at.site", #
-		"State.Park.Property.", #
-		"Notes"#
-	)) %>%#
-	filter(value=="Opuntia stricta" | value=="Opuntia humifusa")
-sampling_locs
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")
-sbt
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary) %>%#
-	melt(id.vars=c(#
-		"Location.name", #
-		"Latitude", #
-		"Longitude", #
-		"Host.Species.present.at.site",                  #
-		"Moth.Species.present.at.site", #
-		"State.Park.Property.", #
-		"Notes"#
-	)) %>%#
-	filter(value=="Opuntia stricta" | value=="Opuntia humifusa")
-sampling_locs
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-sbt <- strsplit(Marsico.Florida.data.collection.site.location.summary$Host.Species.present.at.site, " and ")#
-sampling_locs = rbind.fill(lapply(sbt, function(X) data.frame(t(X)))) %>% #
-	as.data.frame %>%#
-	cbind(Marsico.Florida.data.collection.site.location.summary) %>%#
-	melt(id.vars=c(#
-		"Location.name", #
-		"Latitude", #
-		"Longitude", #
-		"Host.Species.present.at.site",                  #
-		"Moth.Species.present.at.site", #
-		"State.Park.Property.", #
-		"Notes"#
-	)) %>%#
-	filter(value=="Opuntia stricta" | value=="Opuntia humifusa")#
-  Lon = mean(sampling_locs$Longitude)#
-  Lat = mean(sampling_locs$Latitude)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0))  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0))  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm"))
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-##
-# Result ##
-#--------##
-# Return a list whose elements are :#
-# 	- rectangle : a data.frame containing the coordinates to draw the first rectangle ;#
-# 	- rectangle2 : a data.frame containing the coordinates to draw the second rectangle ;#
-# 	- legend : a data.frame containing the coordinates of the legend texts, and the texts as well.#
-##
-# Arguments : ##
-#-------------##
-# lon, lat : longitude and latitude of the bottom left point of the first rectangle to draw ;#
-# distanceLon : length of each rectangle ;#
-# distanceLat : width of each rectangle ;#
-# distanceLegend : distance between rectangles and legend texts ;#
-# dist.units : units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles).#
-createScaleBar <- function(lon,lat,distanceLon,distanceLat,distanceLegend, dist.units = "km"){#
-	# First rectangle#
-	bottomRight <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon, dist.units = dist.units, model = "WGS84")#
-#
-	topLeft <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLat, dist.units = dist.units, model = "WGS84")#
-	rectangle <- cbind(lon=c(lon, lon, bottomRight[1,"long"], bottomRight[1,"long"], lon),#
-	lat = c(lat, topLeft[1,"lat"], topLeft[1,"lat"],lat, lat))#
-	rectangle <- data.frame(rectangle, stringsAsFactors = FALSE)#
-#
-	# Second rectangle t right of the first rectangle#
-	bottomRight2 <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon*2, dist.units = dist.units, model = "WGS84")#
-	rectangle2 <- cbind(lon = c(bottomRight[1,"long"], bottomRight[1,"long"], bottomRight2[1,"long"], bottomRight2[1,"long"], bottomRight[1,"long"]),#
-	lat=c(lat, topLeft[1,"lat"], topLeft[1,"lat"], lat, lat))#
-	rectangle2 <- data.frame(rectangle2, stringsAsFactors = FALSE)#
-#
-	# Now let's deal with the text#
-	onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLegend, dist.units = dist.units, model = "WGS84")#
-	onTop2 <- onTop3 <- onTop#
-	onTop2[1,"long"] <- bottomRight[1,"long"]#
-	onTop3[1,"long"] <- bottomRight2[1,"long"]#
-#
-	legend <- rbind(onTop, onTop2, onTop3)#
-	legend <- data.frame(cbind(legend, text = c(0, distanceLon, distanceLon*2)), stringsAsFactors = FALSE, row.names = NULL)#
-	return(list(rectangle = rectangle, rectangle2 = rectangle2, legend = legend))#
-}#
-#
-##
-# Result ##
-#--------##
-# Returns a list containing :#
-#	- res : coordinates to draw an arrow ;#
-#	- coordinates of the middle of the arrow (where the "N" will be plotted).#
-##
-# Arguments : ##
-#-------------##
-# scaleBar : result of createScaleBar() ;#
-# length : desired length of the arrow ;#
-# distance : distance between legend rectangles and the bottom of the arrow ;#
-# dist.units : units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles).#
-createOrientationArrow <- function(scaleBar, length, distance = 1, dist.units = "km"){#
-	lon <- scaleBar$rectangle2[1,1]#
-	lat <- scaleBar$rectangle2[1,2]#
-#
-	# Bottom point of the arrow#
-	begPoint <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distance, dist.units = dist.units, model = "WGS84")#
-	lon <- begPoint[1,"long"]#
-	lat <- begPoint[1,"lat"]#
-#
-	# Let us create the endpoint#
-	onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = length, dist.units = dist.units, model = "WGS84")#
-#
-	leftArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 225, dist = length/5, dist.units = dist.units, model = "WGS84")#
-#
-	rightArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 135, dist = length/5, dist.units = dist.units, model = "WGS84")#
-#
-	res <- rbind(#
-			cbind(x = lon, y = lat, xend = onTop[1,"long"], yend = onTop[1,"lat"]),#
-			cbind(x = leftArrow[1,"long"], y = leftArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]),#
-			cbind(x = rightArrow[1,"long"], y = rightArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]))#
-#
-	res <- as.data.frame(res, stringsAsFactors = FALSE)#
-#
-	# Coordinates from which "N" will be plotted#
-	coordsN <- cbind(x = lon, y = (lat + onTop[1,"lat"])/2)#
-#
-	return(list(res = res, coordsN = coordsN))#
-}#
-#
-##
-# Result ##
-#--------##
-# This function enables to draw a scale bar on a ggplot object, and optionally an orientation arrow ##
-# Arguments : ##
-#-------------##
-# lon, lat : longitude and latitude of the bottom left point of the first rectangle to draw ;#
-# distanceLon : length of each rectangle ;#
-# distanceLat : width of each rectangle ;#
-# distanceLegend : distance between rectangles and legend texts ;#
-# dist.units : units of distance "km" (kilometers) (by default), "nm" (nautical miles), "mi" (statute miles) ;#
-# rec.fill, rec2.fill : filling colour of the rectangles (default to white, and black, resp.);#
-# rec.colour, rec2.colour : colour of the rectangles (default to black for both);#
-# legend.colour : legend colour (default to black);#
-# legend.size : legend size (default to 3);#
-# orientation : (boolean) if TRUE (default), adds an orientation arrow to the plot ;#
-# arrow.length : length of the arrow (default to 500 km) ;#
-# arrow.distance : distance between the scale bar and the bottom of the arrow (default to 300 km) ;#
-# arrow.North.size : size of the "N" letter (default to 6).#
-scaleBar <- function(lon, lat, distanceLon, distanceLat, distanceLegend, dist.unit = "km", rec.fill = "white", rec.colour = "black", rec2.fill = "black", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 500, arrow.distance = 300, arrow.North.size = 6){#
-	laScaleBar <- createScaleBar(lon = lon, lat = lat, distanceLon = distanceLon, distanceLat = distanceLat, distanceLegend = distanceLegend, dist.unit = dist.unit)#
-	# First rectangle#
-	rectangle1 <- geom_polygon(data = laScaleBar$rectangle, aes(x = lon, y = lat), fill = rec.fill, colour = rec.colour)#
-#
-	# Second rectangle#
-	rectangle2 <- geom_polygon(data = laScaleBar$rectangle2, aes(x = lon, y = lat), fill = rec2.fill, colour = rec2.colour)#
-#
-	# Legend#
-	scaleBarLegend <- annotate("text", label = paste(laScaleBar$legend[,"text"], dist.unit, sep=""), x = laScaleBar$legend[,"long"], y = laScaleBar$legend[,"lat"], size = legend.size, colour = legend.colour)#
-#
-	res <- list(rectangle1, rectangle2, scaleBarLegend)#
-#
-	if(orientation){# Add an arrow pointing North#
-		coordsArrow <- createOrientationArrow(scaleBar = laScaleBar, length = arrow.length, distance = arrow.distance, dist.unit = dist.unit)#
-		arrow <- list(geom_segment(data = coordsArrow$res, aes(x = x, y = y, xend = xend, yend = yend)), annotate("text", label = "N", x = coordsArrow$coordsN[1,"x"], y = coordsArrow$coordsN[1,"y"], size = arrow.North.size, colour = "black"))#
-		res <- c(res, arrow)#
-	}#
-	return(res)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0))  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0))  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm"))
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/analysis')
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0))  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0))  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm"))
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Create a Scale Bar#
-#' @description This function enables to draw a scale bar on a ggplot object, and optionally an orientation arrow#
-#' @param lon longitude of the bottom left point of the first rectangle to draw #' @param lat latitude of the bottom left point of the first rectangle to draw#
-#' @param distanceLon length of each rectangle#
-#' @param distanceLat width of each rectangle#
-#' @param distanceLegend distance between rectangles and legend texts#
-#' @param dist.units units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles)#
-#' @param rec.fill filling colour of the rectangles (default to white, and black, resp.)#
-#' @param rec2.fill filling colour of the rectangles (default to white, and black, resp.)#
-#' @param rec.colour colour of the rectangles (default to black for both)#
-#' @param rec2.colour colour of the rectangles (default to black for both)#
-#' @param legend.colour legend colour (default to black)#
-#' @param legend.size legend size (default to 3)#
-#' @param orientation (boolean) if TRUE (default), adds an orientation arrow to the plot#
-#' @param arrow.length length of the arrow (default to 500 km)#
-#' @param arrow.distance distance between the scale bar and the bottom of the arrow (default to 300 km)#
-#' @param arrow.North.size size of the "N" letter (default to 6)#
-#
-scaleBar <- function(lon, lat, distanceLon, distanceLat, distanceLegend, dist.unit = "km", rec.fill = "white", rec.colour = "black", rec2.fill = "black", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 500, arrow.distance = 300, arrow.North.size = 6){#
-	laScaleBar <- createScaleBar(lon = lon, lat = lat, distanceLon = distanceLon, distanceLat = distanceLat, distanceLegend = distanceLegend, dist.unit = dist.unit)#
-	# First rectangle#
-	rectangle1 <- geom_polygon(data = laScaleBar$rectangle, aes(x = lon, y = lat), fill = rec.fill, colour = rec.colour)#
-#
-	# Second rectangle#
-	rectangle2 <- geom_polygon(data = laScaleBar$rectangle2, aes(x = lon, y = lat), fill = rec2.fill, colour = rec2.colour)#
-#
-	# Legend#
-	scaleBarLegend <- annotate("text", label = paste(laScaleBar$legend[,"text"], dist.unit, sep=""), x = laScaleBar$legend[,"long"], y = laScaleBar$legend[,"lat"], size = legend.size, colour = legend.colour)#
-#
-	res <- list(rectangle1, rectangle2, scaleBarLegend)#
-#
-	if(orientation){# Add an arrow pointing North#
-		coordsArrow <- createOrientationArrow(scaleBar = laScaleBar, length = arrow.length, distance = arrow.distance, dist.unit = dist.unit)#
-		arrow <- list(geom_segment(data = coordsArrow$res, aes(x = x, y = y, xend = xend, yend = yend)), annotate("text", label = "N", x = coordsArrow$coordsN[1,"x"], y = coordsArrow$coordsN[1,"y"], size = arrow.North.size, colour = "black"))#
-		res <- c(res, arrow)#
-	}#
-	return(res)#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-# Create a Scale Bar for a ggmap#
-#' @description Return a list whose elements are:#
-#' rectangle: a data.frame containing the coordinates to draw the first rectangle#
-#' rectangle2: a data.frame containing the coordinates to draw the second rectangle#
-#' legend: a data.frame containing the coordinates of the legend texts, and the texts as well#
-#
-#' @param lon longitude of the bottom left point of the first rectangle to draw #' @param lat latitude of the bottom left point of the first rectangle to draw#
-#' @param distanceLon length of each rectangle#
-#' @param distanceLat width of each rectangle#
-#' @param distanceLegend distance between rectangles and legend texts#
-#' @param dist.units units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles)#
-#
-createScaleBar <- function(lon,lat,distanceLon,distanceLat,distanceLegend, dist.units = "km"){#
-	# First rectangle#
-	bottomRight <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon, dist.units = dist.units, model = "WGS84")#
-#
-	topLeft <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLat, dist.units = dist.units, model = "WGS84")#
-	rectangle <- cbind(lon=c(lon, lon, bottomRight[1,"long"], bottomRight[1,"long"], lon),#
-	lat = c(lat, topLeft[1,"lat"], topLeft[1,"lat"],lat, lat))#
-	rectangle <- data.frame(rectangle, stringsAsFactors = FALSE)#
-#
-	# Second rectangle t right of the first rectangle#
-	bottomRight2 <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon*2, dist.units = dist.units, model = "WGS84")#
-	rectangle2 <- cbind(lon = c(bottomRight[1,"long"], bottomRight[1,"long"], bottomRight2[1,"long"], bottomRight2[1,"long"], bottomRight[1,"long"]),#
-	lat=c(lat, topLeft[1,"lat"], topLeft[1,"lat"], lat, lat))#
-	rectangle2 <- data.frame(rectangle2, stringsAsFactors = FALSE)#
-#
-	# Now let's deal with the text#
-	onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLegend, dist.units = dist.units, model = "WGS84")#
-	onTop2 <- onTop3 <- onTop#
-	onTop2[1,"long"] <- bottomRight[1,"long"]#
-	onTop3[1,"long"] <- bottomRight2[1,"long"]#
-#
-	legend <- rbind(onTop, onTop2, onTop3)#
-	legend <- data.frame(cbind(legend, text = c(0, distanceLon, distanceLon*2)), stringsAsFactors = FALSE, row.names = NULL)#
-	return(list(rectangle = rectangle, rectangle2 = rectangle2, legend = legend))#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Create an Orientation Arrow#
-#' @description Returns a list containing:#
-#' res : coordinates to draw an arrow#
-#' coordinates of the middle of the arrow (where the "N" will be plotted)#
-#' @param scaleBar result of createScaleBar()#
-#' @param length desired length of the arrow#
-#' @param distance distance between legend rectangles and the bottom of the arrow#
-#' @param dist.units units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles)#
-createOrientationArrow <- function(scaleBar, length, distance = 1, dist.units = "km"){#
-	lon <- scaleBar$rectangle2[1,1]#
-	lat <- scaleBar$rectangle2[1,2]#
-#
-	# Bottom point of the arrow#
-	begPoint <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distance, dist.units = dist.units, model = "WGS84")#
-	lon <- begPoint[1,"long"]#
-	lat <- begPoint[1,"lat"]#
-#
-	# Let us create the endpoint#
-	onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = length, dist.units = dist.units, model = "WGS84")#
-#
-	leftArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 225, dist = length/5, dist.units = dist.units, model = "WGS84")#
-#
-	rightArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 135, dist = length/5, dist.units = dist.units, model = "WGS84")#
-#
-	res <- rbind(#
-			cbind(x = lon, y = lat, xend = onTop[1,"long"], yend = onTop[1,"lat"]),#
-			cbind(x = leftArrow[1,"long"], y = leftArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]),#
-			cbind(x = rightArrow[1,"long"], y = rightArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]))#
-#
-	res <- as.data.frame(res, stringsAsFactors = FALSE)#
-#
-	# Coordinates from which "N" will be plotted#
-	coordsN <- cbind(x = lon, y = (lat + onTop[1,"lat"])/2)#
-#
-	return(list(res = res, coordsN = coordsN))#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Create an Orientation Arrow#
-#' @description Returns a list containing:#
-#' res : coordinates to draw an arrow#
-#' coordinates of the middle of the arrow (where the "N" will be plotted)#
-#' @param scaleBar result of createScaleBar()#
-#' @param length desired length of the arrow#
-#' @param distance distance between legend rectangles and the bottom of the arrow#
-#' @param dist.units units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles)#
-createOrientationArrow <- function(scaleBar, length, distance = 1, dist.units = "km"){#
-	lon <- scaleBar$rectangle2[1,1]#
-	lat <- scaleBar$rectangle2[1,2]#
-#
-	# Bottom point of the arrow#
-	begPoint <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distance, dist.units = dist.units, model = "WGS84")#
-	lon <- begPoint[1,"long"]#
-	lat <- begPoint[1,"lat"]#
-#
-	# Let us create the endpoint#
-	onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = length, dist.units = dist.units, model = "WGS84")#
-#
-	leftArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 225, dist = length/5, dist.units = dist.units, model = "WGS84")#
-#
-	rightArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 135, dist = length/5, dist.units = dist.units, model = "WGS84")#
-#
-	res <- rbind(#
-			cbind(x = lon, y = lat, xend = onTop[1,"long"], yend = onTop[1,"lat"]),#
-			cbind(x = leftArrow[1,"long"], y = leftArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]),#
-			cbind(x = rightArrow[1,"long"], y = rightArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]))#
-#
-	res <- as.data.frame(res, stringsAsFactors = FALSE)#
-#
-	# Coordinates from which "N" will be plotted#
-	coordsN <- cbind(x = lon, y = (lat + onTop[1,"lat"])/2)#
-#
-	return(list(res = res, coordsN = coordsN))#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-# Create a Scale Bar for a ggmap#
-#' @description Return a list whose elements are:#
-#' rectangle: a data.frame containing the coordinates to draw the first rectangle#
-#' rectangle2: a data.frame containing the coordinates to draw the second rectangle#
-#' legend: a data.frame containing the coordinates of the legend texts, and the texts as well#
-#
-#' @param lon longitude of the bottom left point of the first rectangle to draw #' @param lat latitude of the bottom left point of the first rectangle to draw#
-#' @param distanceLon length of each rectangle#
-#' @param distanceLat width of each rectangle#
-#' @param distanceLegend distance between rectangles and legend texts#
-#' @param dist.units units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles)#
-#
-createScaleBar <- function(lon,lat,distanceLon,distanceLat,distanceLegend, dist.units = "km"){#
-	# First rectangle#
-	bottomRight <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon, dist.units = dist.units, model = "WGS84")#
-#
-	topLeft <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLat, dist.units = dist.units, model = "WGS84")#
-	rectangle <- cbind(lon=c(lon, lon, bottomRight[1,"long"], bottomRight[1,"long"], lon),#
-	lat = c(lat, topLeft[1,"lat"], topLeft[1,"lat"],lat, lat))#
-	rectangle <- data.frame(rectangle, stringsAsFactors = FALSE)#
-#
-	# Second rectangle t right of the first rectangle#
-	bottomRight2 <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon*2, dist.units = dist.units, model = "WGS84")#
-	rectangle2 <- cbind(lon = c(bottomRight[1,"long"], bottomRight[1,"long"], bottomRight2[1,"long"], bottomRight2[1,"long"], bottomRight[1,"long"]),#
-	lat=c(lat, topLeft[1,"lat"], topLeft[1,"lat"], lat, lat))#
-	rectangle2 <- data.frame(rectangle2, stringsAsFactors = FALSE)#
-#
-	# Now let's deal with the text#
-	onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLegend, dist.units = dist.units, model = "WGS84")#
-	onTop2 <- onTop3 <- onTop#
-	onTop2[1,"long"] <- bottomRight[1,"long"]#
-	onTop3[1,"long"] <- bottomRight2[1,"long"]#
-#
-	legend <- rbind(onTop, onTop2, onTop3)#
-	legend <- data.frame(cbind(legend, text = c(0, distanceLon, distanceLon*2)), stringsAsFactors = FALSE, row.names = NULL)#
-	return(list(rectangle = rectangle, rectangle2 = rectangle2, legend = legend))#
-}
-setwd('/Users/KSauby/Documents/Projects/dataproc/R')
-#' Create a Scale Bar#
-#' @description This function enables to draw a scale bar on a ggplot object, and optionally an orientation arrow#
-#' @param lon longitude of the bottom left point of the first rectangle to draw #' @param lat latitude of the bottom left point of the first rectangle to draw#
-#' @param distanceLon length of each rectangle#
-#' @param distanceLat width of each rectangle#
-#' @param distanceLegend distance between rectangles and legend texts#
-#' @param dist.units units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles)#
-#' @param rec.fill filling colour of the rectangles (default to white, and black, resp.)#
-#' @param rec2.fill filling colour of the rectangles (default to white, and black, resp.)#
-#' @param rec.colour colour of the rectangles (default to black for both)#
-#' @param rec2.colour colour of the rectangles (default to black for both)#
-#' @param legend.colour legend colour (default to black)#
-#' @param legend.size legend size (default to 3)#
-#' @param orientation (boolean) if TRUE (default), adds an orientation arrow to the plot#
-#' @param arrow.length length of the arrow (default to 500 km)#
-#' @param arrow.distance distance between the scale bar and the bottom of the arrow (default to 300 km)#
-#' @param arrow.North.size size of the "N" letter (default to 6)#
-#
-scaleBar <- function(lon, lat, distanceLon, distanceLat, distanceLegend, dist.unit = "km", rec.fill = "white", rec.colour = "black", rec2.fill = "black", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 500, arrow.distance = 300, arrow.North.size = 6){#
-	laScaleBar <- createScaleBar(lon = lon, lat = lat, distanceLon = distanceLon, distanceLat = distanceLat, distanceLegend = distanceLegend, dist.unit = dist.unit)#
-	# First rectangle#
-	rectangle1 <- geom_polygon(data = laScaleBar$rectangle, aes(x = lon, y = lat), fill = rec.fill, colour = rec.colour)#
-#
-	# Second rectangle#
-	rectangle2 <- geom_polygon(data = laScaleBar$rectangle2, aes(x = lon, y = lat), fill = rec2.fill, colour = rec2.colour)#
-#
-	# Legend#
-	scaleBarLegend <- annotate("text", label = paste(laScaleBar$legend[,"text"], dist.unit, sep=""), x = laScaleBar$legend[,"long"], y = laScaleBar$legend[,"lat"], size = legend.size, colour = legend.colour)#
-#
-	res <- list(rectangle1, rectangle2, scaleBarLegend)#
-#
-	if(orientation){# Add an arrow pointing North#
-		coordsArrow <- createOrientationArrow(scaleBar = laScaleBar, length = arrow.length, distance = arrow.distance, dist.unit = dist.unit)#
-		arrow <- list(geom_segment(data = coordsArrow$res, aes(x = x, y = y, xend = xend, yend = yend)), annotate("text", label = "N", x = coordsArrow$coordsN[1,"x"], y = coordsArrow$coordsN[1,"y"], size = arrow.North.size, colour = "black"))#
-		res <- c(res, arrow)#
-	}#
-	return(res)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf")#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-?pdf
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=10, height=5)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7, height=3.5)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7.5, height=3.5)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7, height=4)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7, height=4.5)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-sampling_locs
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-sampling_locs[which(sampling_locs$Location.name=="Sweetwater Tract (Torreya State Park)"), ]$Location.name
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-sampling_locs[which(sampling_locs$Location.name=="Sweetwater Tract (Torreya State Park)"), ]$Location.name <- "Torreya State Park"
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7, height=4.5)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7, height=3.5)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("map.pdf", width=7, height=4)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()#
-```
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-png("map.png", width=7, height=4)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-pdf("sampling_locations_map.pdf", width=7, height=4)#
-p = get_map(c(-88,29.5, -84.5,31.1), zoom = 8, maptype = "toner-background")#
-ggmap(p) +  #
-	geom_rect(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf, fill="white", alpha=0.3) +#
-	geom_point(#
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			shape=value, #
-			size=value, #
-			colour=factor(value)#
-		), #
-		data = sampling_locs, #
-		crop=T#
-	) +#
-  	scale_shape_manual(values=c(0,15)) + #
-	scale_size_manual(values=c(6,3)) +#
-	scale_colour_manual(values=c("black", "black")) +#
-	scaleBar(#
-		lon = -86.9, #
-		lat = 29.65, #
-		distanceLon = 25, #
-		distanceLat = 5, #
-		distanceLegend = 10, #
-		dist.unit = "km", #
-		arrow.length = 30, #
-		arrow.distance = 20, #
-		arrow.North.size = 6#
-	) +#
-	geom_text(#
-		data = sampling_locs, #
-		aes(#
-			x = Longitude, #
-			y = Latitude, #
-			label = Location.name#
-		), #
-        size = 3, #
-		vjust = 2.5, #
-		hjust = 0.5, #
-		fontface="bold"#
-	) +#
-	scale_x_continuous(#
-		breaks=c(-88,-87.5,-87,-86.5,-86,-85.5,-85,-84.5), #
-		labels=paste(c(88,87.5,87,86.5,86,85.5,85,84.5), c(rep("°W",8)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	scale_y_continuous(#
-		breaks=c(29.5,30,30.5,31), #
-		labels=paste(c(29.5,30,30.5,31), c(rep("°N",4)),sep=""),#
-		expand=c(0,0)#
-	)  +#
-	xlab("Longitude") +#
-	ylab("Latitude") +#
-	theme(#
-		axis.text.x=element_text(size=10),#
-		axis.text.y=element_text(size=10),		#
-		axis.title.x=element_text(size=12, face="bold"),#
-		axis.title.y=element_text(size=12, face="bold"),		#
-		legend.position = "none",#
-		plot.margin = unit(c(0,1,0,0),"cm")#
-	) 							  #
-dev.off()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"T x P",#
-	"Number of Parameters",#
-	"cAIC"#
-)#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	SIZE.stricta.size.model.selection.models.dimensions, #
-	SIZE.stricta.size.model.selection.models.convergence.status, #
-	SIZE.stricta.size.model.selection.models.parameter.estimates, #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics, #
-	size_select_list#
 )
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
-#' #
-#' @param y#
-#' @param select_list#
-#
-names_processing_function <- function(y) {#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Number of Parameters" %in% names(y)) #
-		{setnames(y, "Number of Parameters", "p")}#
-	if ("Ln_Size_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_t_1_st", "S_t")}#
-	if ("Ln_Cone_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
-	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
-		"ln(Cylinder Volume [t-1]), Stand.")}#
-	if ("CA_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1", "Invasive Moth")}#
-	if ("CH_t_1" %in% names(y)) #
-		{setnames(y, "CH_t_1", "Native Bug")}#
-	if ("DA_t_1" %in% names(y)) #
-		{setnames(y, "DA_t_1", "Native Scale")}#
-	if ("ME_t_1" %in% names(y)) #
-		{setnames(y, "ME_t_1", "Native Moth")}#
-	if ("NatInsect_t_1" %in% names(y)) #
-		{setnames(y, "NatInsect_t_1", "Native Insects")}#
-	if ("CA_t_1*CH_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
-	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
-		"Invasive Moth [t-1] x Native Insects [t-1]")}#
-	if ("P1*CA_t_1" %in% names(y)) #
-		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
-	if ("T1*CA_t_1" %in% names(y)) #
-		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
-	if ("P1*CH_t_1" %in% names(y)) #
-		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
-	if ("P1*DA_t_1" %in% names(y)) #
-		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
-	if ("T1*DA_t_1" %in% names(y)) #
-		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
-	if ("P1*ME_t_1" %in% names(y)) #
-		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
-	if ("T1" %in% names(y)) #
-		{setnames(y, "T1", "T")}#
-	if ("P1" %in% names(y)) #
-		{setnames(y, "P1", "P")}#
-	return(y)			#
-}
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+size_select_list = c(#
+	"modelVars",#
+	"Ln_Size_t_1_st",#
+	"CHyr_t_1",#
+	"DAyr_t_1",#
+	"MEyr_t_1",#
+	"NatInsectyr_t_",#
+	"P1",#
+	"T1",#
+	"Insect x Weather",#
+	"P x T",#
+	"Upper Bound, Number of Parameters",#
+	"delta cAIC",#
+	"Prob(Model)",#
+	"InterceptPlantID",#
+	"Location"#
+)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
+models.dimensions = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
+convergence.status = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
+parameter.estimates = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
+conditional.fit.statistics = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
+select_list = size_select_list#
+model_selection_table <- model_selection_table_function(#
+	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics)#
+model_selection_results <- model_selection_results_function(model_selection_table, select_list)
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
 #' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
 #' #
@@ -3358,432 +740,1069 @@ setwd('/Users/KSauby/Documents/Projects/modresproc/R')
 #' @param conditional.fit.statistics#
 #' @param select_list#
 #
-modelselection_model_results_function <- function(#
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics, #
+model_selection_results_function <- function(#
+	model_selection_table,#
 	select_list#
 )#
 {#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`T x P` = "NA"#
-	y %<>%#
-	mutate(#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
+   model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)#
+	model_selection_table %<>% cAIC_function#
+	model_selection_table <- model_selection_table[, select_list]#
+	model_selection_table %<>% names_processing_function#
+	# take modelVars from top of list#
+	topmodels = model_selection_table[which(model_selection_table$`delta cAIC` <= 2), "modelVars"]#
+	top.estimates = #
+	parameter.estimates[which(parameter.estimates$modelVars %in% #
+		topmodels),]	#
+	# top.estimates = #
+	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	#
+	# modelVars = model_selection_table[1:nmodels, "modelVars"]#
+	# how do I convert ln standardized back to regular numbers?#
+	for (i in 1:length(topmodels)) {#
+		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]#
+		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					# T2#
+					", T2 = ", #
+					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					# P2#
+					", P2 = ", #
+					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P2"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P2"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("CA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Invasive Moth` = paste(#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CH_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("ME_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CHyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DAyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("MEyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		model_selection_table[i, ] %<>%#
+		mutate(	#
+			# Intercept = paste( #
+			# 	Data[which(Data$Effect=="Intercept"), #
+			# 		]$Estimate %>% round(2),#
+			# 	" [",#
+			# 	Data[which(Data$Effect=="Intercept"), ]$Lower #
+			# 		%>% round(2),#
+			# 	", ",#
+			# 	Data[which(Data$Effect=="Intercept"), ]$Upper #
+			# 		%>% round(2),#
+			# 	"]",#
+			# 	sep=""#
+			# ),#
+			C_t = paste(#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Estimate %>% round(2),#
+				" [",#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Lower %>% round(2),#
+				", ",#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Upper %>% round(2),#
+				"]",#
+				sep=""#
+			)#
 		)#
 	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	# insect/weather interactions#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("P1*CA_t_1*CH_t")) == #
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-	y[which(select(y, starts_with("T1*CA_t_1*CH_t")) ==#
-		"X"),]$`CA_t_1*CH_t_1`<-"X"#
-	y <- y[, select_list]#
-	y %<>% cAIC_function#
-	y %<>% names_processing_function#
-	y[, "T x P"][y[, "T x P"] == "NA"] <- ""#
-	y[, "Insect x Weather"][y[, "Insect x Weather"] == "NA"] <- ""#
-	return(y)#
+	#model_selection_table %<>% dplyr::select(-modelVars)#
+	model_selection_table[, "P x T"][model_selection_table[, "P x T"] == "NA"] <- ""#
+	model_selection_table[, "Insect x Weather"][model_selection_table[, "Insect x Weather"] == "NA"] <- ""#
+	model_selection_table %<>% dplyr::select(-modelVars)#
+	return(model_selection_table)#
 }
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
+models.dimensions = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
+convergence.status = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
+parameter.estimates = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
+conditional.fit.statistics = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
+select_list = size_select_list#
+model_selection_table <- model_selection_table_function(#
+	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics)#
+model_selection_results <- model_selection_results_function(model_selection_table, select_list)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
 size_select_list = c(#
+	"modelVars",#
 	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
+	"CHyr_t_1",#
+	"DAyr_t_1",#
+	"MEyr_t_1",#
+	"NatInsectyr_t_",#
 	"P1",#
 	"T1",#
 	"Insect x Weather",#
-	"T x P",#
-	"Number of Parameters",#
-	"cAIC"#
+	"P x T",#
+	"Upper Bound, Number of Parameters",#
+	"delta cAIC",#
+	"Prob(Model)",#
+	"InterceptPlantID",#
+	"Location"#
 )#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	SIZE.stricta.size.model.selection.models.dimensions, #
-	SIZE.stricta.size.model.selection.models.convergence.status, #
-	SIZE.stricta.size.model.selection.models.parameter.estimates, #
-	SIZE.stricta.size.model.selection.models.conditional.fit.statistics, #
-	size_select_list#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
----  #
-title: The Relative Importance of Herbivory and Abiotic Conditions to Demographic Rates of two Species of *Opuntia* Cacti in Florida  #
-author: Kristen E. Sauby, John Kilmer, Mary C. Christman, Robert D. Holt, and Travis D. Marsico#
-output: #
-  html_document#
-bibliography: "~/Documents/Dropbox/gradschool/Research/Written-Documents/MasterLatexFiles/cactoblastis.bib"#
----#
-<!-- #
-knitr::knit2html('Manuscript.Rmd')#
-rmarkdown::render('Manuscript.Rmd')#
-#
--->#
-```{r setup, include=FALSE}#
-#opts_chunk$set(dev = 'pdf') # if I use PDF #
-opts_chunk$set(fig.path='figures/Manuscript-')#
-theme_set(theme_bw(base_size = 30)) #
-```#
-```{r child = 'Abstract.Rmd'}#
-```#
-#
-```{r child = 'Introduction.Rmd'}#
-```#
-#
-```{r child = 'Methods.Rmd'}#
-```#
-#
-```{r child = 'Results.Rmd'}#
-```#
-#
-```{r child = 'Discussion.Rmd'}#
-```#
-#
-```{r child = 'Conclusions.Rmd'}#
-```#
-#
-# Conclusions
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-rmarkdown::render('Manuscript.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CA_t_1",#
-	"CH_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"CA_t_1*CH_t_1",#
-	"CA_t_1*NatInse",#
-	"P1*CA_t_1",#
-	"T1*CA_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"T x P",#
-	"p",#
-	"cAIC"#
-)#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	SIZE.humifusa.size.model.selection.models.dimensions, #
-	SIZE.humifusa.size.model.selection.models.convergence.status, #
-	SIZE.humifusa.size.model.selection.models.parameter.estimates, #
-	SIZE.humifusa.size.model.selection.models.conditional.fit.statistics, #
-	size_select_list#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-SIZE.humifusa.size.model.selection.models.parameter.estimates
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-size_select_list = c(#
-	"Ln_Size_t_1_st",#
-	"CH_t_1",#
-	"DA_t_1",#
-	"ME_t_1",#
-	"NatInsect_t_1",#
-	"P1",#
-	"T1",#
-	"P1*ME_t_1",#
-	"T1*ME_t_1",#
-	"P1*CH_t_1",#
-	"T1*CH_t_1",#
-	"P1*DA_t_1",#
-	"T1*DA_t_1",#
-	"T x P",#
-	"p",#
-	"cAIC"#
-)#
-#
-modelselection_size_results = modelselection_model_results_function(#
-	SIZE.humifusa.size.model.selection.models.dimensions, #
-	SIZE.humifusa.size.model.selection.models.convergence.status, #
-	SIZE.humifusa.size.model.selection.models.parameter.estimates, #
-	SIZE.humifusa.size.model.selection.models.conditional.fit.statistics, #
-	size_select_list#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-models.dimensions = SIZE.humifusa.size.model.selection.models.dimensions
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-convergence.status = SIZE.humifusa.size.model.selection.models.convergence.status
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-parameter.estimates = SIZE.humifusa.size.model.selection.models.parameter.estimates
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-conditional.fit.statistics = SIZE.humifusa.size.model.selection.models.conditional.fit.statistics
+covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
+models.dimensions = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
+convergence.status = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
+parameter.estimates = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
+conditional.fit.statistics = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
+select_list = size_select_list#
+model_selection_table <- model_selection_table_function(#
+	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics)#
+model_selection_results <- model_selection_results_function(model_selection_table, select_list)
+model_selection_table
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))
+model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)#
+	model_selection_table %<>% cAIC_function#
+	model_selection_table <- model_selection_table[, select_list]#
+	model_selection_table %<>% names_processing_function
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y$`T x P` = "NA"#
-	y %<>%#
-	mutate(#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
-load.project()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-models.dimensions = SIZE.humifusa.size.model.selection.models.dimensions
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-convergence.status = SIZE.humifusa.size.model.selection.models.convergence.status
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-parameter.estimates = SIZE.humifusa.size.model.selection.models.parameter.estimates
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-conditional.fit.statistics = SIZE.humifusa.size.model.selection.models.conditional.fit.statistics
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))#
-	# temperature and precipitation interactions#
-	y$`T x P` = "NA"#
-	y %<>%#
-	mutate(#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`!= "X"),#
-			"T1 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & `T2*P2`!="X"),#
-			"T1 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & `T2*P2`!="X"),#
-			"T2 x P1"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & `T2*P2`=="X"),#
-			"T2 x P2"),#
-		`T x P` = replace(`T x P`, #
-			which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & `T2*P2`=="X"),#
-			"T1 x T2 x P1 x P2")#
-	)#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
+topmodels = model_selection_table[which(model_selection_table$`delta cAIC` <= 2), "modelVars"]#
+	top.estimates = #
+	parameter.estimates[which(parameter.estimates$modelVars %in% #
+		topmodels),]	#
+	# top.estimates = #
+	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	#
+	# modelVars = model_selection_table[1:nmodels, "modelVars"]#
+	# how do I convert ln standardized back to regular numbers?#
+	for (i in 1:length(topmodels)) {#
+		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]#
+		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					# T2#
+					", T2 = ", #
+					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					# P2#
+					", P2 = ", #
+					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P2"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P2"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("CA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Invasive Moth` = paste(#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CH_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("ME_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CHyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DAyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("MEyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="MEyr_t_1" & #
+					Data$MEyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		model_selection_table[i, ] %<>%#
+		mutate(	#
+			# Intercept = paste( #
+			# 	Data[which(Data$Effect=="Intercept"), #
+			# 		]$Estimate %>% round(2),#
+			# 	" [",#
+			# 	Data[which(Data$Effect=="Intercept"), ]$Lower #
+			# 		%>% round(2),#
+			# 	", ",#
+			# 	Data[which(Data$Effect=="Intercept"), ]$Upper #
+			# 		%>% round(2),#
+			# 	"]",#
+			# 	sep=""#
+			# ),#
+			C_t = paste(#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Estimate %>% round(2),#
+				" [",#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Lower %>% round(2),#
+				", ",#
+				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
+					]$Upper %>% round(2),#
+				"]",#
+				sep=""#
+			)#
 		)#
 	}
+ui
+i
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y = merge(convergence.status, parameter.estimates) %>%#
-		# filter out models that didn't converge#
-		filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		model_dimensions_name_processing_function %>%#
-		mutate(#
-			cAIC = `-2 log L(y | r. effects)` + #
-				2*(`Number of Parameters` + ColumnsZ)#
-		) %>%#
-		arrange(cAIC) %>%#
-		dplyr::select(-(`-2 log L(y | r. effects)`))
-names(y)
+if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					# T2#
+					", T2 = ", #
+					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(#
+				T = paste(#
+					# T1#
+					"T1 = ", #
+					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}#
+		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					# P2#
+					", P2 = ", #
+					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P2"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P2"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				P = paste(#
+					# P1#
+					"P1 = ", #
+					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
+						 round(2),#
+					" [",#
+					Data[which(Data$Effect=="P1"), ]$Lower %>%#
+						 round(2),#
+					", ",#
+					Data[which(Data$Effect=="P1"), ]$Upper %>% #
+						round(2),#
+					"]",#
+					sep=""#
+				)	#
+			)#
+		}	#
+		if ("CA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Invasive Moth` = paste(#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CA_t_1" & #
+					Data$CA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CH_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CH_t_1" & #
+					Data$CH_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DA_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DA_t_1" & #
+					Data$DA_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("ME_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Moth` = paste(#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="ME_t_1" & #
+					Data$ME_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("CHyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Bug` = paste(#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="CHyr_t_1" & #
+					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}	#
+		if ("DAyr_t_1" %in% Data$Effect) {#
+			model_selection_table[i, ] %<>%#
+			mutate(	#
+				`Native Scale` = paste(#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
+					" [",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
+					", ",#
+					Data[which(Data$Effect=="DAyr_t_1" & #
+					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
+					"]",#
+					sep=""#
+				)#
+			)#
+		}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+names_processing_function
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+ME_t_1
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Process model results for a model selection table using data from SAS GLIMMIX models#
+#' #
+#' @param y#
+#' @param select_list#
+#
+names_processing_function <- function(y) {#
+	# change column names#
+	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
+	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
+	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
+	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
+	if ("Ln_Size_t_1_st" %in% names(y)) #
+		{setnames(y, "Ln_Size_t_1_st", "C_t")}#
+	if ("Ln_Cone_t_1_st" %in% names(y)) #
+		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
+	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
+		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
+		"ln(Cylinder Volume [t-1]), Stand.")}#
+	if ("CA_t_1" %in% names(y)) #
+		{setnames(y, "CA_t_1", "Invasive Moth")}#
+	if ("CAyr_t_1" %in% names(y)) #
+		{setnames(y, "CAyr_t_1", "Invasive Moth")}#
+	if ("CH_t_1" %in% names(y)) #
+		{setnames(y, "CH_t_1", "Native Bug")}#
+	if ("CHyr_t_1" %in% names(y)) #
+		{setnames(y, "CHyr_t_1", "Native Bug")}#
+	if ("DA_t_1" %in% names(y)) #
+		{setnames(y, "DA_t_1", "Native Scale")}#
+	if ("DAyr_t_1" %in% names(y)) #
+		{setnames(y, "DAyr_t_1", "Native Scale")}#
+	if ("ME_t_1" %in% names(y)) #
+		{setnames(y, "ME_t_1", "Native Moth")}#
+	if ("MEyr_t_1" %in% names(y)) #
+		{setnames(y, "MEyr_t_1", "Native Moth")}#
+	if ("NatInsect_t_1" %in% names(y)) #
+		{setnames(y, "NatInsect_t_1", "Native Insects")}#
+	if ("NatInsectyr_t_" %in% names(y)) #
+		{setnames(y, "NatInsectyr_t_", "Native Insects")}#
+	if ("CA_t_1*CH_t_1" %in% names(y)) #
+		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
+	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
+		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
+		"Invasive Moth [t-1] x Native Insects [t-1]")}#
+	if ("P1*CA_t_1" %in% names(y)) #
+		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
+	if ("T1*CA_t_1" %in% names(y)) #
+		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
+	if ("P1*CH_t_1" %in% names(y)) #
+		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
+	if ("T1*CH_t_1" %in% names(y)) #
+		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
+	if ("P1*DA_t_1" %in% names(y)) #
+		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
+	if ("T1*DA_t_1" %in% names(y)) #
+		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
+	if ("P1*ME_t_1" %in% names(y)) #
+		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
+	if ("T1*CH_t_1" %in% names(y)) #
+		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
+	if ("T1" %in% names(y)) #
+		{setnames(y, "T1", "T")}#
+	if ("P1" %in% names(y)) #
+		{setnames(y, "P1", "P")}#
+	return(y)			#
+}
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+size_select_list = c(#
+	"modelVars",#
+	"Ln_Size_t_1_st",#
+	"CHyr_t_1",#
+	"DAyr_t_1",#
+	"MEyr_t_1",#
+	"NatInsectyr_t_",#
+	"P1",#
+	"T1",#
+	"Insect x Weather",#
+	"P x T",#
+	"Upper Bound, Number of Parameters",#
+	"delta cAIC",#
+	"Prob(Model)",#
+	"InterceptPlantID",#
+	"Location"#
+)#
+covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
+models.dimensions = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
+convergence.status = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
+parameter.estimates = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
+conditional.fit.statistics = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
+select_list = size_select_list#
+model_selection_table <- model_selection_table_function(#
+	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics)#
+model_selection_results <- model_selection_results_function(model_selection_table, select_list)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+model_selection_results
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+modelresults
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %<>% names_processing_function
+model_selection_table
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
+models.dimensions = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
+convergence.status = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
+parameter.estimates = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
+conditional.fit.statistics = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
+select_list = size_select_list#
+model_selection_table <- model_selection_table_function(#
+	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics)#
+model_selection_results <- model_selection_results_function(model_selection_table, select_list)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+select_list = c(#
+	"C_t",#
+	"Native Bug",#
+	"Native Scale",#
+	"Native Moth",#
+	"Native Insects",#
+	"P",#
+	"T", #
+	"P x T",#
+	"Insect x Weather",#
+	"pdG",#
+	"InterceptPlantID", #
+	"Location"#
+)#
+#
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list]
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+select_list = c(#
+	"C_t",#
+	"Native Bug",#
+	"Native Scale",#
+	"Native Moth",#
+	"Native Insects",#
+	"P",#
+	"T", #
+	"P x T",#
+	"Insect x Weather",#
+	"InterceptPlantID", #
+	"Location",#
+	"pdG"#
+)#
+#
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(is.na(`Insect x Weather`)==T, "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"),#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(is.na(`Insect x Weather`), "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"),#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(`Insect x Weather`==NA, "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"),#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(is.na(`Insect x Weather`)==T, "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(is.na(`Insect x Weather`), "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(`Insect x Weather`==NA, "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(NA, "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(is.na(.), "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(#
+		`Insect x Weather` = ifelse(is.na, "", `Insect x Weather`),#
+		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
+		)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
+models.dimensions = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
+convergence.status = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
+parameter.estimates = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
+conditional.fit.statistics = #
+	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
+select_list = size_select_list#
+model_selection_table <- model_selection_table_function(#
+	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics)#
+model_selection_results <- model_selection_results_function(model_selection_table, select_list)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+select_list = c(#
+	"C_t",#
+	"Native Bug",#
+	"Native Scale",#
+	"Native Moth",#
+	"Native Insects",#
+	"P",#
+	"T", #
+	"P x T",#
+	"Insect x Weather",#
+	"InterceptPlantID", #
+	"Location",#
+	"pdG"#
+)#
+#
+model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`==NA), ]$`Insect x Weather`
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status <- model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))#
+model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`==NA), ]$`Insect x Weather`
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status[which(is.na(model_selection_converge_status$`Insect x Weather`)), ]$`Insect x Weather`
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+is.na(model_selection_converge_status$`Insect x Weather`)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status$`Insect x Weather`
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`=="NA"), ]$`Insect x Weather`
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status <- model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))#
+model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`=="NA"), ]$`Insect x Weather` <- ""#
+model_selection_converge_status[which(model_selection_converge_status$`P x T`=="NA"), ]$`P x T` <- ""
+model_selection_converge_status
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+model_selection_converge_status <- model_selection_table %>% #
+	names_processing_function %>%#
+	.[, select_list] %>%#
+	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")) %>%#
+	dplyr::select(-pdG)#
+model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`=="NA"), ]$`Insect x Weather` <- ""#
+model_selection_converge_status[which(model_selection_converge_status$`P x T`=="NA"), ]$`P x T` <- ""
+model_selection_converge_status

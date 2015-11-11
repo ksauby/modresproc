@@ -2,10 +2,15 @@
 #' @param y
 
 cAIC_function <- function(y) {
-   y %<>%
-   mutate(
-   	cAIC = `-2 log L(y | r. effects)` + 
-   		2*(`Upper Bound, Number of Parameters` + ColumnsZ)
+	y %<>% as.data.table
+	if ("-2 log L(FruitPres_t | r. effects)" %in% names(y)) 
+		{setnames(y, "-2 log L(FruitPres_t | r. effects)", "-2 LogLik")}
+	if ("-2 log L(y | r. effects)" %in% names(y)) 
+		{setnames(y, "-2 log L(y | r. effects)", "-2 LogLik")}
+	y %<>% as.data.frame %>%
+   dplyr::mutate(
+   	cAIC = `-2 LogLik` + 
+   		2*(ColumnsX + ColumnsZ)
    )
 	`min(cAIC)` = min(y$cAIC)
 	y %<>%
@@ -20,7 +25,7 @@ cAIC_function <- function(y) {
 	y %<>% dplyr::select(-c(
 		cAIC, 
 		`Model Lik`, 
-		`-2 log L(y | r. effects)`, 
+		`-2 LogLik`, 
 		ColumnsZ
 	)) %>%
  	arrange(`delta cAIC`)

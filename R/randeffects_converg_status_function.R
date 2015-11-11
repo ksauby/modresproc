@@ -3,10 +3,7 @@
 #' @param modelresults
 
 randeffects_converg_status_function <- function(modelresults) {
-	convergence.status
-	
-	
-	 %>% as.data.frame %>%
+	modelresults %>% as.data.frame %>%
 		dplyr::group_by(`Random Effects`) %>%
 		dplyr::summarise(
 			`Positive Definite G-Matrix?` = `Positive Definite G-Matrix?`[1]

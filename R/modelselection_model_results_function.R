@@ -239,18 +239,18 @@ model_selection_results_function <- function(
 		}	
 		model_selection_table[i, ] %<>%
 		mutate(	
-			# Intercept = paste( 
-			# 	Data[which(Data$Effect=="Intercept"), 
-			# 		]$Estimate %>% round(round.n),
-			# 	" [",
-			# 	Data[which(Data$Effect=="Intercept"), ]$Lower 
-			# 		%>% round(round.n),
-			# 	", ",
-			# 	Data[which(Data$Effect=="Intercept"), ]$Upper 
-			# 		%>% round(round.n),
-			# 	"]",
-			# 	sep=""
-			# ),
+			 Intercept = paste( 
+			 	Data[which(Data$Effect=="Intercept"), 
+			 		]$Estimate %>% round(round.n),
+			 	" [",
+			 	Data[which(Data$Effect=="Intercept"), ]$Lower 
+			 		%>% round(round.n),
+			 	", ",
+			 	Data[which(Data$Effect=="Intercept"), ]$Upper 
+			 		%>% round(round.n),
+			 	"]",
+			 	sep=""
+			),
 			C_t = paste(
 				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
 					]$Estimate %>% round(round.n),

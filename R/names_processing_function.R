@@ -5,6 +5,7 @@
 
 names_processing_function <- function(y) {
 	# change column names
+	if ("ColumnsX" %in% names(y)) {setnames(y, "ColumnsX", "Number of Fixed Effects Parameters")}
 	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}
 	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}
 	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}

@@ -16,7 +16,8 @@ cAIC_function <- function(y) {
 	y %<>%
 		mutate(
 			`delta cAIC` = cAIC - `min(cAIC)`,
-			`Model Lik` = exp((-1/2)*`delta cAIC`)
+			`Model Lik` = exp((-1/2)*`delta cAIC`),
+			`Number of Parameters` = paste(ColumnsX, "+", ColumnsZ, "=", ColumnsX + ColumnsZ)
 		)
 	sum.L = sum(y$`Model Lik`)
 	y %<>% mutate(`Prob(Model)` = `Model Lik`/sum.L)

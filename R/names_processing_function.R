@@ -2,6 +2,7 @@
 #' 
 #' @param y
 #' @param select_list
+#' @export
 
 names_processing_function <- function(y) {
 	# change column names

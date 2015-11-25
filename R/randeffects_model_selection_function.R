@@ -1,6 +1,8 @@
 #' Return table comparing SAS GLIMMIX random effects models.
-#' 
+#' DOES NOT LOAD RIGHT
 #' @param modelresults
+#' @export
+#' @importFrom magrittr %>% %$% %<>%
 
 randeffects_model_selection_function <- function(modelresults){
 	x = modelresults %>%

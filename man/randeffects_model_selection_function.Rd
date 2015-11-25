@@ -2,7 +2,8 @@
 % Please edit documentation in R/randeffects_model_selection_function.R
 \name{randeffects_model_selection_function}
 \alias{randeffects_model_selection_function}
-\title{Return table comparing SAS GLIMMIX random effects models.}
+\title{Return table comparing SAS GLIMMIX random effects models.
+DOES NOT LOAD RIGHT}
 \usage{
 randeffects_model_selection_function(modelresults)
 }
@@ -11,5 +12,6 @@ randeffects_model_selection_function(modelresults)
 }
 \description{
 Return table comparing SAS GLIMMIX random effects models.
+DOES NOT LOAD RIGHT
 }
 

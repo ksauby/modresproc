@@ -5,6 +5,7 @@
 #' @param parameter.estimates
 #' @param conditional.fit.statistics
 #' @param select_list
+#' @export
 
 model_selection_results_function <- function(
 	model_selection_table,
@@ -12,7 +13,7 @@ model_selection_results_function <- function(
 	round.n=2
 )
 {
-  	model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
+  	model_selection_table %<>% filter(pdG==1) %>% select(-pdG)
 	model_selection_table %<>% cAIC_function
 	model_selection_table <- model_selection_table[, select_list]
 	model_selection_table %<>% names_processing_function
@@ -268,6 +269,6 @@ model_selection_results_function <- function(
 	#model_selection_table %<>% dplyr::select(-modelVars)
 	model_selection_table[, "P x T"][model_selection_table[, "P x T"] == "NA"] <- ""
 	model_selection_table[, "Insect x Weather"][model_selection_table[, "Insect x Weather"] == "NA"] <- ""
-	model_selection_table %<>% dplyr::select(-modelVars)
+	model_selection_table %<>% select(-modelVars)
 	return(model_selection_table)
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/randeffects_G_side_effects_test_function.R
 \name{randeffects_G_side_effects_test_function}
 \alias{randeffects_G_side_effects_test_function}
-\title{Create table with G-side effects test results of multiple SAS GLIMMIX models}
+\title{Create table with G-side effects test results of multiple SAS GLIMMIX models DOES NOT LOAD RIGHT}
 \usage{
 randeffects_G_side_effects_test_function(modelresults)
 }
 \arguments{
-\item{modelresults}{}
+\item{modelresults}{importFrom dplyr filter select}
 }
 \description{
-Create table with G-side effects test results of multiple SAS GLIMMIX models
+Create table with G-side effects test results of multiple SAS GLIMMIX models DOES NOT LOAD RIGHT
 }
 

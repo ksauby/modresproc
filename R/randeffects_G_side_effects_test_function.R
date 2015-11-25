@@ -1,11 +1,11 @@
-#' Create table with G-side effects test results of multiple SAS GLIMMIX models
-#' 
+#' Create table with G-side effects test results of multiple SAS GLIMMIX models DOES NOT LOAD RIGHT
 #' @param modelresults
-
+#' importFrom dplyr filter select
+#' @export
 randeffects_G_side_effects_test_function <- function(modelresults) {
 	modelresults %>%
-		dplyr::filter(`Positive Definite G-Matrix?`=="Yes") %>%
-		dplyr::select(
+		filter(`Positive Definite G-Matrix?`=="Yes") %>%
+		select(
 			`Random Effects`, 
 			Label, 
 			DF, 
@@ -13,8 +13,8 @@ randeffects_G_side_effects_test_function <- function(modelresults) {
 			`Chi-Squared`, 
 			`Prob(Chi-Squared)`
 		) %>%
-		dplyr::group_by(`Random Effects`) %>%
-		dplyr::summarise(
+		group_by(`Random Effects`) %>%
+		summarise(
 			DF=DF[1],
 			Objective=Objective[1],
 			`Chi-Squared`=`Chi-Squared`[1],

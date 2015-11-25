@@ -1,14 +1,18 @@
 #' Create table with the convergence status of multiple SAS GLIMMIX models
 #' 
 #' @param modelresults
+#' @importFrom dplyr group_by summarise arrange desc
+#' @import data.table
+#' @import magrittr
+#' @export
 
 randeffects_converg_status_function <- function(modelresults) {
 	modelresults %>% as.data.frame %>%
-		dplyr::group_by(`Random Effects`) %>%
-		dplyr::summarise(
-			`Positive Definite G-Matrix?` = `Positive Definite G-Matrix?`[1]
+		group_by(`Random Effects`) %>%
+		summarise(
+			`Positive Non-Zero Covariance Estimates?` = `Positive Definite G-Matrix?`[1]
 		) %>%
 		as.data.frame %>%
-		dplyr::arrange(desc(`Positive Definite G-Matrix?`))
+		arrange(desc(`Positive Non-Zero Covariance Estimates?`))
 		
 }

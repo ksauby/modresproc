@@ -1,10 +1,11 @@
-#' Merge summary statistics from SAS GLIMMIX models to compare random effects models.
+#' Merge summary statistics from SAS GLIMMIX models to compare random effects models. DOES NOT LOAD RIGHT
 #' 
 #' @param covariance.parms.test
 #' @param convergence.status
 #' @param covariance.parms.estimates
 #' @param conditional.fit.statistics
 #' @param fit.statistics
+#' @export
 
 randeffects_model_results_function <- function(
 	covariance.parms.test, 
@@ -22,7 +23,7 @@ randeffects_model_results_function <- function(
 		short_to_long_format_function %>%
 		.[, -(4:7)]
 	parms.estimates %<>% 
-		dcast(modelVars~Effect, value.var="Estimate", fun=X_function)
+		reshape2::dcast(modelVars~Effect, value.var="Estimate", fun=X_function)
 	modelresults = merge(parms.estimates, covariance.parms.test,
 		by="modelVars", all=T) %>%
 		merge(convergence.status, all=T) %>%

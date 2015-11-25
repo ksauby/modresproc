@@ -1,16 +1,26 @@
-# build table of candidate models
+#' @title Build table of candidate models
+#' 
+#' @param covariance.parameter.estimates
+#' @param models.dimensions
+#' @param convergence.status
+#' @param parameter.estimates
+#' @param conditional.fit.statistics
+
+#' importFrom reshape2 dcast
+#' importFrom dplyr mutate
+#' @export
 
 model_selection_table_function <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, 
 	conditional.fit.statistics) {
 	# to verify that all models have the same covariance parameters included
 	if ("Subject" %in% names(covariance.parameter.estimates)) {
 		covariance.parameter.estimates %<>% 
-			dplyr::mutate(CovParm = paste(CovParm, Subject)) %>%
-			reshape2::dcast(modelVars~CovParm, value.var="Estimate")
+			mutate(CovParm = paste(CovParm, Subject)) %>%
+			dcast(modelVars~CovParm, value.var="Estimate")
 	} else {
 		covariance.parameter.estimates %<>% 
-			dplyr::mutate(CovParm = paste(CovParm)) %>%
-			reshape2::dcast(modelVars~CovParm, value.var="Estimate")
+			dmutate(CovParm = paste(CovParm)) %>%
+			dcast(modelVars~CovParm, value.var="Estimate")
 	}
 	names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")
 	conditional.fit.statistics %<>% 
@@ -18,7 +28,7 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 		.[, -3]
 	models.dimensions %<>%
 		short_to_long_format_function %>%
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))
+		select(modelVars, `Columns in X`, starts_with("Columns in Z"))
 	y = parameter.estimates %>%
 		# filter out models that didn't converge
 	#	filter(pdG==1) %>%

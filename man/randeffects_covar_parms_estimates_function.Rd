@@ -2,7 +2,7 @@
 % Please edit documentation in R/randeffects_covar_parms_estimates_function.R
 \name{randeffects_covar_parms_estimates_function}
 \alias{randeffects_covar_parms_estimates_function}
-\title{Create table with the covariance parameter estimates from multiple SAS GLIMMIX models}
+\title{Create table with the covariance parameter estimates from multiple SAS GLIMMIX models DOES NOT LOAD RIGHT}
 \usage{
 randeffects_covar_parms_estimates_function(modelresults)
 }
@@ -10,6 +10,6 @@ randeffects_covar_parms_estimates_function(modelresults)
 \item{modelresults}{}
 }
 \description{
-Create table with the covariance parameter estimates from multiple SAS GLIMMIX models
+Create table with the covariance parameter estimates from multiple SAS GLIMMIX models DOES NOT LOAD RIGHT
 }
 

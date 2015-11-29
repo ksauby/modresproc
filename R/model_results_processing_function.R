@@ -2,6 +2,7 @@
 #' 
 #' @param y
 #' @param select_list
+#' @export
 
 model_results_processing_function <- function(y, select_list) {
 	#y[, replace_list][y[, replace_list] > 0] <- "X"

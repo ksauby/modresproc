@@ -1,3 +1,8 @@
+#' Rename model dimensions
+#' 
+#' @param y
+#' @export
+
 model_dimensions_name_processing_function <- function(y) {
 	if ("Columns in X" %in% names(y)) 
 		{setnames(y, "Columns in X", "ColumnsX")}

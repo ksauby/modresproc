@@ -19,7 +19,7 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 			dcast(modelVars~CovParm, value.var="Estimate")
 	} else {
 		covariance.parameter.estimates %<>% 
-			dmutate(CovParm = paste(CovParm)) %>%
+			mutate(CovParm = paste(CovParm)) %>%
 			dcast(modelVars~CovParm, value.var="Estimate")
 	}
 	names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")

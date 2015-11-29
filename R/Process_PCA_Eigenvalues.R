@@ -3,6 +3,7 @@
 #' @param PCA.all.surveys.eigenvalues
 #' @param PCA.winter.eigenvalues
 #' @param PCA.spring.eigenvalues
+#' @export
 
 Process_PCA_Eigenvalues <- function(PCA.all.surveys.eigenvalues, PCA.winter.eigenvalues, PCA.spring.eigenvalues) {
 	PCA.all.surveys.eigenvalues$Data	<- "All Surveys"

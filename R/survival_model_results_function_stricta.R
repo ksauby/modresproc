@@ -5,6 +5,7 @@
 #' @param fit.statistics
 #' @param replace_list
 #' @param select_list
+#' @export
 
 survival_model_results_function_stricta <- function(
 	convergence.status, 

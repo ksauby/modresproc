@@ -10,4 +10,4 @@ model_dimensions_name_processing_function <- function(y) {
 		{setnames(y, names(y)[grep("Columns in Z", names(y), fixed=T)], 
 		"ColumnsZ")}
 	return(y)
-	}
+}

@@ -5,6 +5,7 @@
 #' @param covariance.parms.estimates
 #' @param conditional.fit.statistics
 #' @param fit.statistics
+#' 
 #' @export
 
 randeffects_model_results_function <- function(

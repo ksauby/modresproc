@@ -1,6 +1,7 @@
 #' Return table comparing AIC values for multiple models produced using SAS GLIMMIX.
 #' 
 #' @param y
+#' 
 #' @export
 
 AIC_function <- function(y) {

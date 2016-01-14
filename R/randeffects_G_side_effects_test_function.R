@@ -1,5 +1,7 @@
-#' Create table with G-side effects test results of multiple SAS GLIMMIX models DOES NOT LOAD RIGHT
+#' Create table with G-side effects test results of multiple SAS GLIMMIX models #' 
+#' @description DOES NOT LOAD RIGHT
 #' @param modelresults
+#' 
 #' importFrom dplyr filter select
 #' @export
 

@@ -4,6 +4,7 @@
 #' @importFrom dplyr group_by summarise arrange desc
 #' @import data.table
 #' @import magrittr
+#' 
 #' @export
 
 randeffects_converg_status_function <- function(modelresults) {

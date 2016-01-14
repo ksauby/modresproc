@@ -1,6 +1,7 @@
 #' Process ClassLevels output from SAS
 #' 
 #' @param x
+#' 
 #' @export
 
 ProcessClassLevels <- function(x) {

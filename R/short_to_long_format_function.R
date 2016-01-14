@@ -1,5 +1,7 @@
 #' Change from long to short format, using "Value"
+#' 
 #' @param x
+#' 
 #' @export
 
 short_to_long_format_function <- function(x) {

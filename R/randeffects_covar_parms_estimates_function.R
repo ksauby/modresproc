@@ -1,6 +1,7 @@
 #' Create table with the covariance parameter estimates from multiple SAS GLIMMIX models DOES NOT LOAD RIGHT
 #' 
 #' @param modelresults
+#' 
 #' @export
 
 randeffects_covar_parms_estimates_function <- function(modelresults){

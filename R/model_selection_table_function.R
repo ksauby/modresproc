@@ -5,7 +5,7 @@
 #' @param convergence.status
 #' @param parameter.estimates
 #' @param conditional.fit.statistics
-
+#' 
 #' importFrom reshape2 dcast
 #' importFrom dplyr mutate
 #' @export

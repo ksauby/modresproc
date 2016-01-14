@@ -1,5 +1,7 @@
 #' Return table comparing conditional AIC (cAIC) values for multiple models produced using SAS GLIMMIX.
+#' 
 #' @param y
+#' 
 #' @export
 
 cAIC_function <- function(y) {

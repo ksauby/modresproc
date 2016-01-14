@@ -1,6 +1,7 @@
 #' Create table with the convergence status of multiple SAS GLIMMIX models
 #' 
 #' @param modelresults
+#' 
 #' @export
 
 randeffects_converg_status_function <- function(modelresults) {

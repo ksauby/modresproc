@@ -6,8 +6,8 @@
 #' @param parameter.estimates
 #' @param conditional.fit.statistics
 #' 
-#' importFrom reshape2 dcast
-#' importFrom dplyr mutate
+#' @importFrom reshape2 dcast
+#' @importFrom dplyr mutate
 #' @export
 
 model_selection_table_function <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, 

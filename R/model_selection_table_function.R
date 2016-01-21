@@ -8,6 +8,7 @@
 #' 
 #' @importFrom reshape2 dcast
 #' @importFrom dplyr mutate
+#' @importFrom stringr str_replace
 #' @export
 
 model_selection_table_function <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, 
@@ -29,11 +30,13 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 	models.dimensions %<>%
 		short_to_long_format_function %>%
 		select(modelVars, `Columns in X`, starts_with("Columns in Z"))
+	parameter.estimates %<>% constructConfInt
 	y = parameter.estimates %>%
-		# filter out models that didn't converge
-	#	filter(pdG==1) %>%
-		# change effects to columns
-		short_to_long_format_X_function %>%
+		filter(CH_t_1!=0) %>%
+		filter(DA_t_1!=0) %>%
+		filter(ME_t_1!=0) %>%
+		filter(NatInsect_t_1!=0) %>%		
+		dcast(modelVars~Effect, value.var="Estimate.CF") %>%
 		# fit statistics
 		merge(conditional.fit.statistics) %>%
 		merge(models.dimensions) %>%
@@ -51,9 +54,11 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 		y %<>%
 		mutate(
 			`P x T` = replace(`P x T`, 
-				which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & 
-				`T2*P2`!= "X"),
-				"T1 x P1"),
+				which((!is.na(`T1*P1`)) & is.na(`T1*P2`) & is.na(`T2*P1`) & 
+				is.na(`T2*P2`)),
+				"T1 x P1")
+				)
+				,
 			`P x T` = replace(`P x T`, 
 				which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & 
 				`T2*P2`!="X"),
@@ -131,9 +136,12 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 	) {
 		y %<>%
 		mutate(
-			`P x T` = replace(`P x T`, 
-				which(`T1*P1`=="X" & `T1*P2`!="X"),
-				"T1 x P1"),
+			`P x T` = replace(
+				`P x T`, 
+				which((!is.na(`T1*P1`) & is.na(`T1*P2`)),
+				"T1 x P1")
+			))
+				,
 			`P x T` = replace(`P x T`, 
 				which(`T1*P1`!="X" & `T1*P2`=="X"),
 				"T1 x P2"),
@@ -142,6 +150,17 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 				"T1 x P1 x P2")
 		)
 	}
+	
+	y %<>%
+	mutate(
+		`P x T` = replace(`P x T`, 
+			which((!is.na(`T1*P1`)) & is.na(`T1*P2`) & is.na(`T2*P1`) & 
+			is.na(`T2*P2`)),
+			"T1 x P1")
+			)
+	
+	
+	
 	y$`Insect x Weather` = "NA"
 	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {
 		y %<>%

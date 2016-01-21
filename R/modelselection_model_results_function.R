@@ -31,7 +31,7 @@ model_selection_results_function <- function(
 	# how do I convert ln standardized back to regular numbers?
 	for (i in 1:length(topmodels)) {
 		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]
-		
+		model_selection_table[i  ] %<>% constructConfInt
 	
 	#model_selection_table %<>% dplyr::select(-modelVars)
 	model_selection_table[, "P x T"][model_selection_table[, "P x T"] == "NA"] <- ""

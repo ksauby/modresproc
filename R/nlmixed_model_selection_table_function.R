@@ -10,6 +10,8 @@
 #' @importFrom dplyr mutate
 #' @export
 
+constructNLMIXEDConfInt
+
 nlmixed_table_function <- function(models.dimensions, convergence.status, parameter.estimates) {
 	models.dimensions %<>%
 		dcast(modelVars~Descr, value.var="Value") %>%
@@ -33,6 +35,24 @@ nlmixed_table_function <- function(models.dimensions, convergence.status, parame
 				"Count Model"
 			)
 		) %>%
+		# change effects to columns
+		dcast(modelVars ~ Parameter, value.var="Estimate")
+		
+		z = as.data.frame(
+			NA, 
+			nrow=dim(parameter.estimates)[1] / 
+				length(unique(parameter.estimates$modelVars)),
+			ncol=1
+			)
+		for (i in 1:length(unique(y$modelVars))) {
+			parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]
+			for (j in 1:dim(y)[1]) {
+				z %<>% constructNLMIXEDConfInt(parm.est = parm.est)
+			}
+		}
+		
+		
+		
 		mutate(
 			Parameter = replace(
 				Parameter, 
@@ -83,8 +103,8 @@ nlmixed_table_function <- function(models.dimensions, convergence.status, parame
 				which(Parameter=="a11" | Parameter=="b11"), 
 				"P2 F/W")
 		) %>%
-		# change effects to columns
-		dcast(modelVars + ModelType ~Parameter, value.var="Estimate") %>%
+		
+		
 		# fit statistics
 		merge(models.dimensions) %>%
 		merge(convergence.status %>% dplyr::select(modelVars, Status))

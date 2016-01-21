@@ -68,1741 +68,3142 @@ install.packages('rgdal',repos="http://www.stats.ox.ac.uk/pub/RWin")
 library(rgdal)
 install.packages("http://cran.r-project.org/src/contrib/rgdal_0.9-1.tar.gz", repos = NULL, type="source", configure.args = "--with-gdal-config=/Library/Frameworks/GDAL.framework/Versions/1.10/unix/bin/gdal-config --with-proj-include=/Library/Frameworks/PROJ.framework/unix/include --with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib")
 18/1.618
+189+114
+library(lubridate)
+library(magrittr)
+seasons <- data.frame(#
+	   SE = as.POSIXct(c("2009-3-20", "2010-3-20", "2011-3-20", "2012-3-20", #
+            "2013-3-20", "2014-3-20"), format="%Y-%m-%d"),#
+	   SS = as.POSIXct(c("2009-6-21", "2010-6-21", "2011-6-21", "2012-6-20",#
+            "2013-6-20", "2014-6-20"), format="%Y-%m-%d"),#
+	   FE = as.POSIXct(c("2009-9-22", "2010-9-23", "2011-9-23", "2012-9-22",#
+            "2013-9-22", "2014-9-22"), format="%Y-%m-%d"),#
+	   WS = as.POSIXct(c("2009-12-21", "2010-12-21", "2011-12-22", "2012-12-21", #
+            "2013-12-21", "2014-12-21"), format="%Y-%m-%d")#
+    )#
+#
+    assignSeason <- function(dat, SeasonStarts=seasons) {#
+	    dat %<>% mutate(#
+		    Season = lapply(Date,#
+				function(x) {#
+					findInterval(#
+						x, #
+						SeasonStarts[which(year(x)==year(SeasonStarts$WS)), ]#
+					)#
+				}#
+			) %>% unlist	#
+		)#
+	    dat[which(dat$Season==0 | dat$Season==4), ]$Season 	<- "Winter"#
+	    dat[which(dat$Season==1), ]$Season 					<- "Spring"#
+	    dat[which(dat$Season==2), ]$Season 					<- "Summer"#
+	    dat[which(dat$Season==3), ]$Season 					<- "Fall"#
+	    return(dat)#
+    }
+dat = data.frame(#
+	    Date = as.POSIXct(strptime(as.Date("2011-12-01", format = "%Y-%m-%d") + #
+            (0:10)*30, format="%Y-%m-%d" ))#
+    )#
+    dat %>% assignSeason
+library(dplyr)
+dat = data.frame(#
+	    Date = as.POSIXct(strptime(as.Date("2011-12-01", format = "%Y-%m-%d") + #
+            (0:10)*30, format="%Y-%m-%d" ))#
+    )#
+    dat %>% assignSeason
+library(devtoolks)
+library(devtools)
+?install_github
+devtools::install_github("ksauby/ACSampling", auth_token="2ab30a602e52fae481f4249cc25e892c0a9ccfc7", subdir="/code/Restricted_ACS_Simulations/ACSampling", repos=NULL)
+devtools::install_github("ksauby/ACSampling", auth_token="2794c3f10db92f525181a0b1f6c19064fe3a2ef3", subdir="/code/Restricted_ACS_Simulations/ACSampling", repos=NULL)
+devtools::install("~/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+devtools::install(pkg="~/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+devtools::install(pkg="Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+devtools::install(pkg="~/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+devtools::install(pkg="/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+devtools::install_local(path="/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+library(devtools)
+devtools::install_local(path="/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+devtools::install(pkg="/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+install.packages("~/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
 library(ProjectTemplate)#
 setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
 # load project#
 load.project()
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
+#' @title Build table of candidate models#
 #' #
-#' @param y#
-#' @param select_list#
+#' @param covariance.parameter.estimates#
+#' @param models.dimensions#
+#' @param convergence.status#
+#' @param parameter.estimates#
+#' @param conditional.fit.statistics#
+#' #
+#' @importFrom reshape2 dcast#
+#' @importFrom dplyr mutate#
+#' @export#
 #
-model_results_processing_function <- function(y, select_list) {#
-	#y[, replace_list][y[, replace_list] > 0] <- "X"#
-	#y[, replace_list][y[, replace_list] == 0] <- "."#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Ln_Size_min_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_min_st", "Ln(Minimum Plant Size), standardized")}#
-	#y = y[, select_list]#
-	return(y)			#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-# build table of candidate models#
-#
-model_selection_table_function <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics) {#
-	# to verify that all models have the same covariance parameters included#
-	covariance.parameter.estimates %<>% #
-		mutate(CovParm = paste(CovParm, Subject)) %>%#
-		dcast(modelVars~CovParm, value.var="Estimate")#
-	names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
-	conditional.fit.statistics %<>% #
-		short_to_long_format_function %>%#
-		.[, -3]#
+nlmixed_table_function <- function(models.dimensions, convergence.status, parameter.estimates) {#
 	models.dimensions %<>%#
-		short_to_long_format_function %>%#
-		dplyr::select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
+		dcast(modelVars~Descr, value.var="Value") %>%#
+		dplyr::select(modelVars, Parameters)#
 	y = parameter.estimates %>%#
-		# filter out models that didn't converge#
-	#	filter(pdG==1) %>%#
-		# change effects to columns#
-		short_to_long_format_X_function %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates) %>%#
-		model_dimensions_name_processing_function %>%#
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))#
-	# temperature and precipitation interactions#
-	y$`P x T` = "NA"#
-	# if names contain P2 and T2#
-	if (length(grep("P2", names(y), fixed=T)) > 0 & length(grep("T2", names(y), #
-	fixed=T)) > 0) {#
-		y %<>%#
 		mutate(#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`=="X" & `T1*P2`!="X" & `T2*P1`!="X" & #
-				`T2*P2`!= "X"),#
-				"T1 x P1"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & #
-				`T2*P2`!="X"),#
-				"T1 x P2"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`=="X" & #
-				`T2*P2`!="X"),#
-				"T2 x P1"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`!="X" & `T1*P2`!="X" & `T2*P1`!="X" & #
-				`T2*P2`=="X"),#
-				"T2 x P2"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`=="X" & `T1*P2`=="X" & `T2*P1`=="X" & #
-				`T2*P2`=="X"),#
-				"T1 x T2 x P1 x P2")#
-		)#
-	}#
-	# if names contain T2 but NOT P2#
-	if (length(grep("P2", names(y), fixed=T)) == 0 & length(grep("T2", #
-	names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`=="X" & `T2*P1`!="X"),#
-				"T1 x P1"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`!="X" & `T2*P1`=="X"),#
-				"T2 x P1"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`=="X" & `T2*P1`=="X"),#
-				"T1 x T2 x P1")#
-		)#
-	}#
-	# if names contain P2 but NOT T2#
-	if (length(grep("P2", names(y), fixed=T)) > 0 & length(grep("T2", names(y), #
-	fixed=T)) == 0) {#
-		y %<>%#
-		mutate(#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`=="X" & `T1*P2`!="X"),#
-				"T1 x P1"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`!="X" & `T1*P2`=="X"),#
-				"T1 x P2"),#
-			`P x T` = replace(`P x T`, #
-				which(`T1*P1`=="X" & `T1*P2`=="X"),#
-				"T1 x P1 x P2")#
-		)#
-	}#
-	y$`Insect x Weather` = "NA"#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CA_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CA_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CA_t_1*CH_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CA_t_1*CH_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("CAyr_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CAyr_t_1`=="X"),#
-				"Invasive Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CAyr_t_1`=="X"),#
-				"Invasive Moth x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CHyr_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CHyr_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 			which(`P1*CAyr_t_1*CHyr_t`=="X"),#
-					"Invasive Moth x Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, 				which(`T1*CAyr_t_1*CHyr_t`=="X"),#
-				"Invasive Moth x Native Bug x T")#
-		)#
-	}#
-	if (length(grep("DA_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CH_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CH_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DA_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DA_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*ME_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*ME_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	if (length(grep("DAyr_t_1", names(y), fixed=T)) > 0) {#
-		y %<>%#
-		mutate(#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*CHyr_t_1`=="X"),#
-				"Native Bug x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*CHyr_t_1`=="X"),#
-				"Native Bug x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*DAyr_t_1`=="X"),#
-				"Native Scale x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*DAyr_t_1`=="X"),#
-				"Native Scale x T"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`P1*MEyr_t_1`=="X"),#
-				"Native Moth x P"),#
-			`Insect x Weather` = replace(`Insect x Weather`, #
-				which(`T1*MEyr_t_1`=="X"),#
-				"Native Moth x T")#
-		)#
-	}#
-	if (length(grep("CA_t_1", names(y), fixed=T)) > 0) {#
-		# insect/weather interactions#
-		y[which(select(y, #
-			starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CA_t_1`<-"X"#
-		y[which(select(y, #
-			starts_with("P1*CA_t_1*CH_t")) == "X"),]$`P1*CH_t_1`<-"X"#
-		y[which(select(y, #
-			starts_with("P1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"#
-		y[which(select(y, #
-			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CA_t_1`<-"X"#
-		y[which(select(y, #
-			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`T1*CH_t_1`<-"X"#
-		y[which(select(y, #
-			starts_with("T1*CA_t_1*CH_t")) == "X"),]$`CA_t_1*CH_t_1`<-"X"#
-	}#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Create table with the convergence status of multiple SAS GLIMMIX models#
-#' #
-#' @param modelresults#
-#
-randeffects_converg_status_function <- function(modelresults) {#
-	modelresults %>% as.data.frame %>%#
-		dplyr::group_by(`Random Effects`) %>%#
-		dplyr::summarise(#
-			`Positive Definite G-Matrix?` = `Positive Definite G-Matrix?`[1]#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
+			)#
 		) %>%#
-		as.data.frame %>%#
-		dplyr::arrange(desc(`Positive Definite G-Matrix?`))#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param y#
-#
-modelselection_format_parameter_estimates_function <- function(y) {	#
-	y %<>% #
-	dplyr::select(#
-		Effect,#
-		Estimate,#
-		StdErr,#
-		DF,#
-		tValue,#
-		Probt#
-	) %>%#
-	as.data.table %>%   #
-	# rename column names#
-	setnames("StdErr",	"Standard Error") %>%#
-	setnames("tValue",	"t-Value") %>%#
-	setnames("Probt",	"Prob(t)")#
-	# change effect names#
-	y[y$"Effect" == "Ln_Cone_t_1_st"]$Effect 	<- "Standardized Cone Volume [t-1]"#
-	y[y$"Effect" == "Ln_Size_t_1_st"]$Effect 	<- "Standardized Size [t-1]"#
-	y[y$"Effect" == "CA_t_1"]$Effect 			<- "Invasive Moth [t-1]"#
-	y[y$"Effect" == "CH_t_1"]$Effect 			<- "Native Bug [t-1]"#
-	y[y$"Effect" == "T1"]$Effect 				<- "Temp. PCA Axis 1"#
-	y[y$"Effect" == "T2"]$Effect 				<- "Temp. PCA Axis 2"#
-	y[y$"Effect" == "P1"]$Effect 				<- "Precip. PCA Axis 1"#
-	y[y$"Effect" == "P2"]$Effect 				<- "Precip. PCA Axis 2"#
-	y[y$"Effect" == "T1*P1"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 1"#
-	y[y$"Effect" == "T2*P1"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 1"#
-	y[y$"Effect" == "T1*P2"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 2"#
-	y[y$"Effect" == "T2*P2"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 2"#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-names_processing_function
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-model_selection_results_function <- function(#
-	model_selection_table,#
-	select_list#
-)#
-{#
-   model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)#
-	model_selection_table %<>% cAIC_function#
-	model_selection_table <- model_selection_table[, select_list]#
-	model_selection_table %<>% names_processing_function#
-	# take modelVars from top of list#
-	topmodels = model_selection_table[which(model_selection_table$`delta cAIC` <= 2), "modelVars"]#
-	top.estimates = #
-	parameter.estimates[which(parameter.estimates$modelVars %in% #
-		topmodels),]	#
-	# top.estimates = #
-	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	#
-	# modelVars = model_selection_table[1:nmodels, "modelVars"]#
-	# how do I convert ln standardized back to regular numbers?#
-	for (i in 1:length(topmodels)) {#
-		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]#
-		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					# T2#
-					", T2 = ", #
-					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}#
-		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}#
-		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					# P2#
-					", P2 = ", #
-					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P2"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P2"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}	#
-		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}	#
-		if ("CA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Invasive Moth` = paste(#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CH_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("ME_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CHyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DAyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("MEyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		model_selection_table[i, ] %<>%#
-		mutate(	#
-			# Intercept = paste( #
-			# 	Data[which(Data$Effect=="Intercept"), #
-			# 		]$Estimate %>% round(2),#
-			# 	" [",#
-			# 	Data[which(Data$Effect=="Intercept"), ]$Lower #
-			# 		%>% round(2),#
-			# 	", ",#
-			# 	Data[which(Data$Effect=="Intercept"), ]$Upper #
-			# 		%>% round(2),#
-			# 	"]",#
-			# 	sep=""#
-			# ),#
-			C_t = paste(#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Estimate %>% round(2),#
-				" [",#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Lower %>% round(2),#
-				", ",#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Upper %>% round(2),#
-				"]",#
-				sep=""#
-			)#
-		)#
-	}#
-	#model_selection_table %<>% dplyr::select(-modelVars)#
-	model_selection_table[, "P x T"][model_selection_table[, "P x T"] == "NA"] <- ""#
-	model_selection_table[, "Insect x Weather"][model_selection_table[, "Insect x Weather"] == "NA"] <- ""#
-	model_selection_table %<>% dplyr::select(-modelVars)#
-	return(model_selection_table)#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param y#
-#
-modelselection_format_parameter_estimates_function <- function(y) {	#
-	y %<>% #
-	dplyr::select(#
-		Effect,#
-		Estimate,#
-		StdErr,#
-		DF,#
-		tValue,#
-		Probt#
-	) %>%#
-	as.data.table %>%   #
-	# rename column names#
-	setnames("StdErr",	"Standard Error") %>%#
-	setnames("tValue",	"t-Value") %>%#
-	setnames("Probt",	"Prob(t)")#
-	# change effect names#
-	y[y$"Effect" == "Ln_Cone_t_1_st"]$Effect 	<- "Standardized Cone Volume [t-1]"#
-	y[y$"Effect" == "Ln_Size_t_1_st"]$Effect 	<- "Standardized Size [t-1]"#
-	y[y$"Effect" == "CA_t_1"]$Effect 			<- "Invasive Moth [t-1]"#
-	y[y$"Effect" == "CH_t_1"]$Effect 			<- "Native Bug [t-1]"#
-	y[y$"Effect" == "T1"]$Effect 				<- "Temp. PCA Axis 1"#
-	y[y$"Effect" == "T2"]$Effect 				<- "Temp. PCA Axis 2"#
-	y[y$"Effect" == "P1"]$Effect 				<- "Precip. PCA Axis 1"#
-	y[y$"Effect" == "P2"]$Effect 				<- "Precip. PCA Axis 2"#
-	y[y$"Effect" == "T1*P1"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 1"#
-	y[y$"Effect" == "T2*P1"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 1"#
-	y[y$"Effect" == "T1*P2"]$Effect 				<- "Temp. PCA Axis 1 x Precip. PCA Axis 2"#
-	y[y$"Effect" == "T2*P2"]$Effect 				<- "Temp. PCA Axis 2 x Precip. PCA Axis 2"#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Return table comparing conditional AIC (cAIC) values for multiple models produced using SAS GLIMMIX.#
-#' @param y#
-#
-cAIC_function <- function(y) {#
-   y %<>%#
-   mutate(#
-   	cAIC = `-2 log L(FruitPres_t | r. effects)` + #
-   		2*(`Upper Bound, Number of Parameters` + ColumnsZ)#
-   )#
-	`min(cAIC)` = min(y$cAIC)#
-	y %<>%#
 		mutate(#
-			`delta cAIC` = cAIC - `min(cAIC)`,#
-			`Model Lik` = exp((-1/2)*`delta cAIC`)#
-		)#
-	sum.L = sum(y$`Model Lik`)#
-	y %<>% mutate(`Prob(Model)` = `Model Lik`/sum.L)#
-	y$`Prob(Model)` %<>% round(digits=2)#
-	y$`Model Lik` %<>% round(digits=2)#
-	y %<>% dplyr::select(-c(#
-		cAIC, #
-		`Model Lik`, #
-		`-2 log L(FruitPres_t | r. effects)`, #
-		ColumnsZ#
-	)) %>%#
- 	arrange(`delta cAIC`)#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a0" | Parameter=="b0"), #
+				"Intercept"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a1" | Parameter=="b1"), #
+				"C_t"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a2" | Parameter=="b2"), #
+				"Native Bug Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a3" | Parameter=="b3"), #
+				"Native Scale Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a4" | Parameter=="b4"), #
+				"Native Moth Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a5" | Parameter=="b5"), #
+				"T1, F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a6" | Parameter=="b6"), #
+				"E1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a7" | Parameter=="b7"), #
+				"F, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a8" | Parameter=="b8"), #
+				"P1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a9" | Parameter=="b9"), #
+				"P2, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a10" | Parameter=="b10"), #
+				"P1 F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a11" | Parameter=="b11"), #
+				"P2 F/W")#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars + ModelType ~Parameter, value.var="Estimate") %>%#
+		# fit statistics#
+		merge(models.dimensions) %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, Status))#
 	return(y)#
 }
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-covariance.parms.test = #
-	FruitPres.spring.humifusa.size.randeffmodels.covariance.parameters.test#
-convergence.status = #
-	FruitPres.spring.humifusa.size.randeffmodels.convergence.status#
-covariance.parms.estimates = #
-	FruitPres.spring.humifusa.size.randeffmodels.covariance.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.spring.humifusa.size.randeffmodels.conditional.fit.statistics#
-fit.statistics = #
-	FruitPres.spring.humifusa.size.randeffmodels.fit.statistics#
-parms.estimates = #
-	FruitPres.spring.humifusa.size.randeffmodels.parameter.estimates#
-#
-humifusa.size.model.results = randeffects_model_results_function(#
-	covariance.parms.test, #
-	convergence.status, #
-	covariance.parms.estimates, #
-	conditional.fit.statistics, #
-	fit.statistics,#
-	parms.estimates#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-size_select_list = c(#
-	"modelVars",#
-	"Ln_Size_t_1_st",#
-	"CHyr_t_1",#
-	"DAyr_t_1",#
-	"MEyr_t_1",#
-	"NatInsectyr_t_",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"P x T",#
-	"Upper Bound, Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)",#
-	"InterceptPlantID",#
-	"Location"#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
-convergence.status = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
-parameter.estimates = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
-select_list = size_select_list#
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)#
-model_selection_results <- model_selection_results_function(model_selection_table, select_list)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Format parameters and their estimates for a model selection table using data from SAS GLIMMIX#
-#' #
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' @param select_list#
-#
-model_selection_results_function <- function(#
-	model_selection_table,#
-	select_list#
+fruit_humifusa_table <- nlmixed_table_function(#
+	fruit.humifusa.dimensions, #
+	fruit.humifusa.convergence.status, #
+	fruit.humifusa.parameter.estimates#
 )#
-{#
-   model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)#
-	model_selection_table %<>% cAIC_function#
-	model_selection_table <- model_selection_table[, select_list]#
-	model_selection_table %<>% names_processing_function#
-	# take modelVars from top of list#
-	topmodels = model_selection_table[which(model_selection_table$`delta cAIC` <= 2), "modelVars"]#
-	top.estimates = #
-	parameter.estimates[which(parameter.estimates$modelVars %in% #
-		topmodels),]	#
-	# top.estimates = #
-	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	#
-	# modelVars = model_selection_table[1:nmodels, "modelVars"]#
-	# how do I convert ln standardized back to regular numbers?#
-	for (i in 1:length(topmodels)) {#
-		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]#
-		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					# T2#
-					", T2 = ", #
-					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
+write.csv(fruit_humifusa_table, "fruit_humifusa_table.csv")
+fruit_humifusa_table
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
+fruit.humifusa.parameter.estimates -> parameter.estimates
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}#
-		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
+		) %>%#
+		mutate(#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a0" | Parameter=="b0"), #
+				"Intercept"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a1" | Parameter=="b1"), #
+				"C_t"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a2" | Parameter=="b2"), #
+				"Native Bug Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a3" | Parameter=="b3"), #
+				"Native Scale Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a4" | Parameter=="b4"), #
+				"Native Moth Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a5" | Parameter=="b5"), #
+				"T1, F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a6" | Parameter=="b6"), #
+				"E1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a7" | Parameter=="b7"), #
+				"F, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a8" | Parameter=="b8"), #
+				"P1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a9" | Parameter=="b9"), #
+				"P2, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a10" | Parameter=="b10"), #
+				"P1 F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a11" | Parameter=="b11"), #
+				"P2 F/W")#
+		) %>%
+()
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}#
-		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					# P2#
-					", P2 = ", #
-					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P2"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P2"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
+		) %>%#
+		mutate(#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a0" | Parameter=="b0"), #
+				"Intercept"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a1" | Parameter=="b1"), #
+				"C_t"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a2" | Parameter=="b2"), #
+				"Native Bug Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a3" | Parameter=="b3"), #
+				"Native Scale Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a4" | Parameter=="b4"), #
+				"Native Moth Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a5" | Parameter=="b5"), #
+				"T1, F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a6" | Parameter=="b6"), #
+				"E1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a7" | Parameter=="b7"), #
+				"F, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a8" | Parameter=="b8"), #
+				"P1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a9" | Parameter=="b9"), #
+				"P2, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a10" | Parameter=="b10"), #
+				"P1 F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a11" | Parameter=="b11"), #
+				"P2 F/W")#
+		)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+models.dimensions %<>%#
+		dcast(modelVars~Descr, value.var="Value") %>%#
+		dplyr::select(modelVars, Parameters)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}	#
-		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}	#
-		if ("CA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Invasive Moth` = paste(#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CH_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("ME_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CHyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DAyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("MEyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
+		) %>%#
+		dcast(modelVars + ModelType ~ Parameter, value.var="Estimate")
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+constructNLMIXEDConfInt <- function(Data) {#
+	if ("b0" %in% Data$Parameter) {#
 		model_selection_table[i, ] %<>%#
-		mutate(	#
-			# Intercept = paste( #
-			# 	Data[which(Data$Effect=="Intercept"), #
-			# 		]$Estimate %>% round(2),#
-			# 	" [",#
-			# 	Data[which(Data$Effect=="Intercept"), ]$Lower #
-			# 		%>% round(2),#
-			# 	", ",#
-			# 	Data[which(Data$Effect=="Intercept"), ]$Upper #
-			# 		%>% round(2),#
-			# 	"]",#
-			# 	sep=""#
-			# ),#
-			C_t = paste(#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Estimate %>% round(2),#
+		mutate(#
+			Intercept = paste(#
+				Data[which(Data$Parameter=="b0"), #
+					]$Estimate %>% round(round.n),#
 				" [",#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Lower %>% round(2),#
+				Data[which(Data$Parameter=="b0"), #
+					]$Lower %>% round(round.n),#
 				", ",#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Upper %>% round(2),#
+				Data[which(Data$Parameter=="b0"), #
+					]$Upper %>% round(round.n),#
 				"]",#
 				sep=""#
 			)#
 		)#
 	}#
-	#model_selection_table %<>% dplyr::select(-modelVars)#
-	model_selection_table[, "P x T"][model_selection_table[, "P x T"] == "NA"] <- ""#
-	model_selection_table[, "Insect x Weather"][model_selection_table[, "Insect x Weather"] == "NA"] <- ""#
-	model_selection_table %<>% dplyr::select(-modelVars)#
-	return(model_selection_table)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
-convergence.status = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
-parameter.estimates = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
-select_list = size_select_list#
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)#
-model_selection_results <- model_selection_results_function(model_selection_table, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-size_select_list = c(#
-	"modelVars",#
-	"Ln_Size_t_1_st",#
-	"CHyr_t_1",#
-	"DAyr_t_1",#
-	"MEyr_t_1",#
-	"NatInsectyr_t_",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"P x T",#
-	"Upper Bound, Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)",#
-	"InterceptPlantID",#
-	"Location"#
-)#
-covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
-convergence.status = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
-parameter.estimates = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
-select_list = size_select_list#
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)#
-model_selection_results <- model_selection_results_function(model_selection_table, select_list)
-model_selection_table
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %<>% filter(pdG==1) %>% dplyr::select(-pdG)#
-	model_selection_table %<>% cAIC_function#
-	model_selection_table <- model_selection_table[, select_list]#
-	model_selection_table %<>% names_processing_function
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-topmodels = model_selection_table[which(model_selection_table$`delta cAIC` <= 2), "modelVars"]#
-	top.estimates = #
-	parameter.estimates[which(parameter.estimates$modelVars %in% #
-		topmodels),]	#
-	# top.estimates = #
-	#	parameter.estimates[which(parameter.estimates$modelVars %in% topmodels$modelVars),]	#
-	# modelVars = model_selection_table[1:nmodels, "modelVars"]#
-	# how do I convert ln standardized back to regular numbers?#
-	for (i in 1:length(topmodels)) {#
-		Data = top.estimates[which(top.estimates$modelVars == model_selection_table$modelVars[i]), ]#
-		if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					# T2#
-					", T2 = ", #
-					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}#
-		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}#
-		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					# P2#
-					", P2 = ", #
-					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P2"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P2"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}	#
-		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
-			)#
-		}	#
-		if ("CA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Invasive Moth` = paste(#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CH_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("ME_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CHyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DAyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("MEyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="MEyr_t_1" & #
-					Data$MEyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
+	if ("b1" %in% Data$Parameter) {#
 		model_selection_table[i, ] %<>%#
-		mutate(	#
-			# Intercept = paste( #
-			# 	Data[which(Data$Effect=="Intercept"), #
-			# 		]$Estimate %>% round(2),#
-			# 	" [",#
-			# 	Data[which(Data$Effect=="Intercept"), ]$Lower #
-			# 		%>% round(2),#
-			# 	", ",#
-			# 	Data[which(Data$Effect=="Intercept"), ]$Upper #
-			# 		%>% round(2),#
-			# 	"]",#
-			# 	sep=""#
-			# ),#
-			C_t = paste(#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Estimate %>% round(2),#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				Data[which(Data$Parameter=="b1"), #
+					]$Estimate %>% round(round.n),#
 				" [",#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Lower %>% round(2),#
+				Data[which(Data$Parameter=="b1"), #
+					]$Lower %>% round(round.n),#
 				", ",#
-				Data[which(Data$Effect=="Ln_Size_t_1_st"), #
-					]$Upper %>% round(2),#
+				Data[which(Data$Parameter=="b1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b2" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				Data[which(Data$Parameter=="b2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b3" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				Data[which(Data$Parameter=="b3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b4" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				Data[which(Data$Parameter=="b4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b5" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				Data[which(Data$Parameter=="b5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b6" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				Data[which(Data$Parameter=="b6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b7" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				Data[which(Data$Parameter=="b7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b8" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				Data[which(Data$Parameter=="b8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b9" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				Data[which(Data$Parameter=="b9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b10" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				Data[which(Data$Parameter=="b10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b11" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				Data[which(Data$Parameter=="b11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="b11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="b11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a0" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				Data[which(Data$Parameter=="a0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a1" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				Data[which(Data$Parameter=="a1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a2" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				Data[which(Data$Parameter=="a2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a3" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				Data[which(Data$Parameter=="a3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a4" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				Data[which(Data$Parameter=="a4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a5" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				Data[which(Data$Parameter=="a5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a6" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				Data[which(Data$Parameter=="a6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a7" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				Data[which(Data$Parameter=="a7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a8" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				Data[which(Data$Parameter=="a8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a9" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				Data[which(Data$Parameter=="a9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a10" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				Data[which(Data$Parameter=="a10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a11" %in% Data$Parameter) {#
+		model_selection_table[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				Data[which(Data$Parameter=="a11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				Data[which(Data$Parameter=="a11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				Data[which(Data$Parameter=="a11"), #
+					]$Upper %>% round(round.n),#
 				"]",#
 				sep=""#
 			)#
 		)#
 	}
-ui
-i
+}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					# T2#
-					", T2 = ", #
-					Data[which(Data$Effect=="T2"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T2"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T2"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}#
-		if ("T1" %in% Data$Effect & !("T2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(#
-				T = paste(#
-					# T1#
-					"T1 = ", #
-					Data[which(Data$Effect=="T1"), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="T1"), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="T1"), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)	#
+		) %>%#
+		mutate(#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a0" | Parameter=="b0"), #
+				"Intercept"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a1" | Parameter=="b1"), #
+				"C_t"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a2" | Parameter=="b2"), #
+				"Native Bug Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a3" | Parameter=="b3"), #
+				"Native Scale Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a4" | Parameter=="b4"), #
+				"Native Moth Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a5" | Parameter=="b5"), #
+				"T1, F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a6" | Parameter=="b6"), #
+				"E1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a7" | Parameter=="b7"), #
+				"F, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a8" | Parameter=="b8"), #
+				"P1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a9" | Parameter=="b9"), #
+				"P2, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a10" | Parameter=="b10"), #
+				"P1 F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a11" | Parameter=="b11"), #
+				"P2 F/W")#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars + ModelType ~Parameter, value.var="Estimate")
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}#
-		if ("P1" %in% Data$Effect & "P2" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					# P2#
-					", P2 = ", #
-					Data[which(Data$Effect=="P2"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P2"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P2"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars + ModelType ~Parameter, value.var="Estimate") %>%
+()
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}	#
-		if ("P1" %in% Data$Effect & !("P2" %in% Data$Effect)) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				P = paste(#
-					# P1#
-					"P1 = ", #
-					Data[which(Data$Effect=="P1"), ]$Estimate %>%#
-						 round(2),#
-					" [",#
-					Data[which(Data$Effect=="P1"), ]$Lower %>%#
-						 round(2),#
-					", ",#
-					Data[which(Data$Effect=="P1"), ]$Upper %>% #
-						round(2),#
-					"]",#
-					sep=""#
-				)	#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars + ModelType ~Parameter, value.var="Estimate")
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}	#
-		if ("CA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Invasive Moth` = paste(#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CA_t_1" & #
-					Data$CA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars + ModelType ~Parameter, value.var="Estimate")
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}	#
-		if ("CH_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CH_t_1" & #
-					Data$CH_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars ~ Parameter, value.var="Estimate")
+i=1
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i])]
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i],)]
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]
+parm.est
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
 			)#
-		}	#
-		if ("DA_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DA_t_1" & #
-					Data$DA_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("ME_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Moth` = paste(#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="ME_t_1" & #
-					Data$ME_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("CHyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Bug` = paste(#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="CHyr_t_1" & #
-					Data$CHyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
-		}	#
-		if ("DAyr_t_1" %in% Data$Effect) {#
-			model_selection_table[i, ] %<>%#
-			mutate(	#
-				`Native Scale` = paste(#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Estimate %>% round(2),#
-					" [",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Lower %>% round(2),#
-					", ",#
-					Data[which(Data$Effect=="DAyr_t_1" & #
-					Data$DAyr_t_1==1), ]$Upper %>% round(2),#
-					"]",#
-					sep=""#
-				)#
-			)#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars ~ Parameter, value.var="Estimate")#
+		for (i in 1:length(unique(y$modelVars))) {#
+			parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]#
+			for (j in 1:dim(y)[1]) {#
+				y %<>% constructNLMIXEDConfInt(parm.est)#
+			}#
 		}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-names_processing_function
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-ME_t_1
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Process model results for a model selection table using data from SAS GLIMMIX models#
-#' #
-#' @param y#
-#' @param select_list#
-#
-names_processing_function <- function(y) {#
-	# change column names#
-	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}#
-	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}#
-	if ("DA" %in% names(y)) {setnames(y, "DA", "Native Scale")}#
-	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}#
-	if ("Ln_Size_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Size_t_1_st", "C_t")}#
-	if ("Ln_Cone_t_1_st" %in% names(y)) #
-		{setnames(y, "Ln_Cone_t_1_st", "ln(Cone Volume), Stand.")}#
-	if (length(grep("Ln_Cylinder", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("Ln_Cylinder", names(y), fixed=T)], #
-		"ln(Cylinder Volume [t-1]), Stand.")}#
-	if ("CA_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1", "Invasive Moth")}#
-	if ("CAyr_t_1" %in% names(y)) #
-		{setnames(y, "CAyr_t_1", "Invasive Moth")}#
-	if ("CH_t_1" %in% names(y)) #
-		{setnames(y, "CH_t_1", "Native Bug")}#
-	if ("CHyr_t_1" %in% names(y)) #
-		{setnames(y, "CHyr_t_1", "Native Bug")}#
-	if ("DA_t_1" %in% names(y)) #
-		{setnames(y, "DA_t_1", "Native Scale")}#
-	if ("DAyr_t_1" %in% names(y)) #
-		{setnames(y, "DAyr_t_1", "Native Scale")}#
-	if ("ME_t_1" %in% names(y)) #
-		{setnames(y, "ME_t_1", "Native Moth")}#
-	if ("MEyr_t_1" %in% names(y)) #
-		{setnames(y, "MEyr_t_1", "Native Moth")}#
-	if ("NatInsect_t_1" %in% names(y)) #
-		{setnames(y, "NatInsect_t_1", "Native Insects")}#
-	if ("NatInsectyr_t_" %in% names(y)) #
-		{setnames(y, "NatInsectyr_t_", "Native Insects")}#
-	if ("CA_t_1*CH_t_1" %in% names(y)) #
-		{setnames(y, "CA_t_1*CH_t_1", "Invasive Moth [t-1] x Native Bug [t-1]")}#
-	if (length(grep("CA_t_1*NatInse", names(y), fixed=T)) > 0) #
-		{setnames(y, names(y)[grep("CA_t_1*NatInse", names(y), fixed=T)], #
-		"Invasive Moth [t-1] x Native Insects [t-1]")}#
-	if ("P1*CA_t_1" %in% names(y)) #
-		{setnames(y, "P1*CA_t_1", "Invasive Moth [t-1] x Precipitation")}#
-	if ("T1*CA_t_1" %in% names(y)) #
-		{setnames(y, "T1*CA_t_1", "Invasive Moth [t-1] x Temperature")}#
-	if ("P1*CH_t_1" %in% names(y)) #
-		{setnames(y, "P1*CH_t_1", "Native Bug [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*CH_t_1", "Native Bug [t-1] x Temperature")}#
-	if ("P1*DA_t_1" %in% names(y)) #
-		{setnames(y, "P1*DA_t_1", "Native Scale [t-1] x Precipitation")}#
-	if ("T1*DA_t_1" %in% names(y)) #
-		{setnames(y, "T1*DA_t_1", "Native Scale [t-1] x Temperature")}#
-	if ("P1*ME_t_1" %in% names(y)) #
-		{setnames(y, "P1*ME_t_1", "Native Moth [t-1] x Precipitation")}#
-	if ("T1*CH_t_1" %in% names(y)) #
-		{setnames(y, "T1*ME_t_1", "Native Moth [t-1] x Temperature")}#
-	if ("T1" %in% names(y)) #
-		{setnames(y, "T1", "T")}#
-	if ("P1" %in% names(y)) #
-		{setnames(y, "P1", "P")}#
-	return(y)			#
+constructNLMIXEDConfInt <- function(y, parm.est) {#
+	if ("b0" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b1" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b2" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b3" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b4" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b5" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b6" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b7" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b8" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b9" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b10" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b11" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a0" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a1" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a2" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a3" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a4" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a5" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a6" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a7" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a8" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a9" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a10" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a11" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}
 }
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-size_select_list = c(#
-	"modelVars",#
-	"Ln_Size_t_1_st",#
-	"CHyr_t_1",#
-	"DAyr_t_1",#
-	"MEyr_t_1",#
-	"NatInsectyr_t_",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"P x T",#
-	"Upper Bound, Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)",#
-	"InterceptPlantID",#
-	"Location"#
-)#
-covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
-convergence.status = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
-parameter.estimates = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
-select_list = size_select_list#
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)#
-model_selection_results <- model_selection_results_function(model_selection_table, select_list)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-model_selection_results
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-modelresults
+constructNLMIXEDConfInt <- function(y, parm.est) {#
+	if ("b0" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b1" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b2" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b3" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b4" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b5" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b6" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b7" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b8" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b9" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b10" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b11" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a0" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a1" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a2" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a3" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a4" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a5" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a6" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a7" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a8" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a9" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a10" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a11" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	return(y)#
+}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table
+y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
+			)#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars ~ Parameter, value.var="Estimate")#
+		for (i in 1:length(unique(y$modelVars))) {#
+			parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]#
+			for (j in 1:dim(y)[1]) {#
+				y %<>% constructNLMIXEDConfInt(parm.est)#
+			}#
+		}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %<>% names_processing_function
-model_selection_table
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
-convergence.status = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
-parameter.estimates = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
-select_list = size_select_list#
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)#
-model_selection_results <- model_selection_results_function(model_selection_table, select_list)
+constructNLMIXEDConfInt <- function(y, parm.est, round.n=2) {#
+	if ("b0" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b1" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b2" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b3" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b4" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b5" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b6" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b7" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b8" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b9" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b10" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b11" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a0" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a1" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a2" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a3" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a4" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a5" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a6" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a7" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a8" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a9" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a10" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a11" %in% parm.est$Parameter) {#
+		y[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	return(y)#
+}
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-select_list = c(#
-	"C_t",#
-	"Native Bug",#
-	"Native Scale",#
-	"Native Moth",#
-	"Native Insects",#
-	"P",#
-	"T", #
-	"P x T",#
-	"Insect x Weather",#
-	"pdG",#
-	"InterceptPlantID", #
-	"Location"#
-)#
-#
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list]
+y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
+			)#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars ~ Parameter, value.var="Estimate")#
+		for (i in 1:length(unique(y$modelVars))) {#
+			parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]#
+			for (j in 1:dim(y)[1]) {#
+				y %<>% constructNLMIXEDConfInt(parm.est = parm.est)#
+			}#
+		}
+warnings()
+y
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-select_list = c(#
-	"C_t",#
-	"Native Bug",#
-	"Native Scale",#
-	"Native Moth",#
-	"Native Insects",#
-	"P",#
-	"T", #
-	"P x T",#
-	"Insect x Weather",#
-	"InterceptPlantID", #
-	"Location",#
-	"pdG"#
-)#
-#
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))
+y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
+			)#
+		)
+y
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(is.na(`Insect x Weather`)==T, "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"),#
+for (i in 1:length(unique(y$modelVars))) {#
+			parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]#
+			for (j in 1:dim(y)[1]) {#
+				y %<>% constructNLMIXEDConfInt(parm.est = parm.est)#
+			}#
+		}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+parm.est
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+z = data.frame()
+z %<>% mutate(y=1)
+z
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+constructNLMIXEDConfInt <- function(y, parm.est, round.n=2) {#
+	z = data.frame()#
+	if ("b0" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b1" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b2" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b3" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b4" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b5" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b6" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b7" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b8" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b9" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b10" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b11" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a0" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a1" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a2" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a3" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a4" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a5" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a6" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a7" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a8" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a9" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a10" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a11" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	return(z)#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+constructNLMIXEDConfInt <- function(parm.est, round.n=2) {#
+	z = data.frame()#
+	if ("b0" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b1" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b2" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b3" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}#
+	if ("b4" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b5" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b6" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b7" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b8" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b9" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b10" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("b11" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="b11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a0" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Intercept = paste(#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a0"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a1" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			Ln_size_max_t_1_st = paste(#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a1"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a2" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			CH_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a2"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a3" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			DA_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a3"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a4" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			ME_t_1 = paste(#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a4"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a5" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			T1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a5"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a6" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			E1_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a6"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a7" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			F_SS_st = paste(#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a7"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a8" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a8"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a9" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_SS = paste(#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a9"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a10" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P1_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a10"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	if ("a11" %in% parm.est$Parameter) {#
+		z[i, ] %<>%#
+		mutate(#
+			P2_FW = paste(#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Estimate %>% round(round.n),#
+				" [",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Lower %>% round(round.n),#
+				", ",#
+				parm.est[which(parm.est$Parameter=="a11"), #
+					]$Upper %>% round(round.n),#
+				"]",#
+				sep=""#
+			)#
+		)#
+	}	#
+	return(z)#
+}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
+			)#
 		)
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(is.na(`Insect x Weather`), "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"),#
-		)
+for (i in 1:length(unique(y$modelVars))) {#
+			parm.est <- parameter.estimates[which(parameter.estimates$modelVars == unique(y$modelVars)[i]), ]#
+			for (j in 1:dim(y)[1]) {#
+				new <- constructNLMIXEDConfInt(parm.est = parm.est)#
+			}#
+		}
+new
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(`Insect x Weather`==NA, "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"),#
-		)
+dim(parameter.estimates)[1]/length(unique(parameter.estimates$modelVars))
+parm.est
+?as.data.frame
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(is.na(`Insect x Weather`)==T, "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
-		)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(is.na(`Insect x Weather`), "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
-		)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(`Insect x Weather`==NA, "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
-		)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(NA, "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
-		)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(is.na(.), "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
-		)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(#
-		`Insect x Weather` = ifelse(is.na, "", `Insect x Weather`),#
-		`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")#
-		)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript')
-covariance.parameter.estimates = FruitPres.SPRING.HUMIFUSA.size.modselection.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.dimensions#
-convergence.status = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.convergence.status#
-parameter.estimates = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.SPRING.HUMIFUSA.size.modselection.conditional.fit.statistics#
-select_list = size_select_list#
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)#
-model_selection_results <- model_selection_results_function(model_selection_table, select_list)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-select_list = c(#
-	"C_t",#
-	"Native Bug",#
-	"Native Scale",#
-	"Native Moth",#
-	"Native Insects",#
-	"P",#
-	"T", #
-	"P x T",#
-	"Insect x Weather",#
-	"InterceptPlantID", #
-	"Location",#
-	"pdG"#
-)#
-#
-model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`==NA), ]$`Insect x Weather`
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status <- model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))#
-model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`==NA), ]$`Insect x Weather`
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status[which(is.na(model_selection_converge_status$`Insect x Weather`)), ]$`Insect x Weather`
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-is.na(model_selection_converge_status$`Insect x Weather`)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status$`Insect x Weather`
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`=="NA"), ]$`Insect x Weather`
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status <- model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No"))#
-model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`=="NA"), ]$`Insect x Weather` <- ""#
-model_selection_converge_status[which(model_selection_converge_status$`P x T`=="NA"), ]$`P x T` <- ""
-model_selection_converge_status
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-model_selection_converge_status <- model_selection_table %>% #
-	names_processing_function %>%#
-	.[, select_list] %>%#
-	mutate(	`Positive Definite G Matrix?` = ifelse(pdG==1, "Yes", "No")) %>%#
-	dplyr::select(-pdG)#
-model_selection_converge_status[which(model_selection_converge_status$`Insect x Weather`=="NA"), ]$`Insect x Weather` <- ""#
-model_selection_converge_status[which(model_selection_converge_status$`P x T`=="NA"), ]$`P x T` <- ""
-model_selection_converge_status
+z = as.data.frame(#
+			NA, #
+			nrow=dim(parameter.estimates)[1] / #
+				length(unique(parameter.estimates$modelVars)),#
+			ncol=1#
+			)
+z

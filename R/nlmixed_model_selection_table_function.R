@@ -10,10 +10,13 @@
 #' @importFrom dplyr mutate
 #' @export
 
-nlmixed_table_function <- function(models.dimensions, convergence.status, parameter.estimates) {
+nlmixed_table_function <- function(models.dimensions, convergence.status, parameter.estimates, round.n=2) {
 	models.dimensions %<>%
 		dcast(modelVars~Descr, value.var="Value") %>%
 		dplyr::select(modelVars, Parameters)
+	parameter.estimates$Estimate %<>% round(., round.n)	
+	parameter.estimates$Lower %<>% round(., round.n)	
+	parameter.estimates$Upper %<>% round(., round.n)	
 	parameter.estimates %<>% mutate(Estimate.CF = paste(
 		Estimate,
 		" [",

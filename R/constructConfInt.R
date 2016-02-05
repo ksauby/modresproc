@@ -1,5 +1,9 @@
+#' Construct Conf. Intervals the Hard Way
 #' @param parm.est parameter.estimate output from SAS
-constructConfInt <- function(parm.est) {
+#' 
+#' @export
+
+constructConfInt2 <- function(parm.est) {
 	if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {
 		model_selection_table[i, ] %<>%
 		mutate(
@@ -226,7 +230,9 @@ constructConfInt <- function(parm.est) {
 		)
 	}
 	if ("Ln_Size_t_1_st" %in% Data$Effect) {
-			C_t = paste(
+		model_selection_table[i, ] %<>%
+		mutate(
+			 C_t = paste(
 				Data[which(Data$Effect=="Ln_Size_t_1_st"), 
 					]$Estimate %>% round(round.n),
 				" [",
@@ -242,6 +248,11 @@ constructConfInt <- function(parm.est) {
 	}
 	return(Data)
 }
+
+#' Construct Conf. Intervals
+#' @param parameter.estimates Table of parameter.estimate output from SAS
+#' 
+#' @export
 
 constructConfInt <- function(parameter.estimates) {
 	parameter.estimates %>% mutate(Estimate.CF = paste(

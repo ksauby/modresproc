@@ -6,6 +6,9 @@
 \usage{
 short_to_long_format_X_function(x)
 }
+\arguments{
+\item{x}{}
+}
 \description{
 Change fit statistics from long to short format, changing cell value to either "X" or "."
 }

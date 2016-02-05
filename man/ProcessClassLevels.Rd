@@ -6,6 +6,9 @@
 \usage{
 ProcessClassLevels(x)
 }
+\arguments{
+\item{x}{}
+}
 \description{
 Process ClassLevels output from SAS
 }

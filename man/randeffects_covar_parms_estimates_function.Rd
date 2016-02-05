@@ -6,6 +6,9 @@
 \usage{
 randeffects_covar_parms_estimates_function(modelresults)
 }
+\arguments{
+\item{modelresults}{}
+}
 \description{
 Create table with the covariance parameter estimates from multiple SAS GLIMMIX models DOES NOT LOAD RIGHT
 }

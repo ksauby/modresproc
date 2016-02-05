@@ -6,6 +6,9 @@
 \usage{
 short_to_long_format_function(x)
 }
+\arguments{
+\item{x}{}
+}
 \description{
 Change from long to short format, using "Value"
 }

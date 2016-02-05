@@ -8,6 +8,11 @@ cAIC_function(y)
 
 cAIC_function(y)
 }
+\arguments{
+\item{y}{}
+
+\item{y}{}
+}
 \description{
 Return table comparing conditional AIC (cAIC) values for multiple models produced using SAS GLIMMIX.
 

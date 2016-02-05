@@ -6,6 +6,9 @@
 \usage{
 model_dimensions_name_processing_function(y)
 }
+\arguments{
+\item{y}{}
+}
 \description{
 Rename model dimensions
 }

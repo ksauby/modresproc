@@ -6,6 +6,9 @@
 \usage{
 names_processing_function(y)
 }
+\arguments{
+\item{select_list}{}
+}
 \description{
 Process model results for a model selection table using data from SAS GLIMMIX models
 }

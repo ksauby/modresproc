@@ -7,6 +7,9 @@
 Process_PCA_Eigenvalues(PCA.all.surveys.eigenvalues, PCA.winter.eigenvalues,
   PCA.spring.eigenvalues)
 }
+\arguments{
+\item{PCA.spring.eigenvalues}{}
+}
 \description{
 Process PCA Eigenvalue Results from SAS
 }

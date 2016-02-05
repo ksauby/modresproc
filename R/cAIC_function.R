@@ -8,6 +8,8 @@ cAIC_function <- function(y) {
 	y %<>% as.data.table
 	if ("-2 log L(FruitPres_t | r. effects)" %in% names(y)) 
 		{setnames(y, "-2 log L(FruitPres_t | r. effects)", "-2 LogLik")}
+	if ("-2 log L(Fruit_t | r. effects)" %in% names(y)) 
+		{setnames(y, "-2 log L(Fruit_t | r. effects)", "-2 LogLik")}
 	if ("-2 log L(y | r. effects)" %in% names(y)) 
 		{setnames(y, "-2 log L(y | r. effects)", "-2 LogLik")}
 	y %<>% as.data.frame %>%

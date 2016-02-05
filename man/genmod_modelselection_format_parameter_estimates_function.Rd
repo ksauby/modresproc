@@ -6,6 +6,9 @@
 \usage{
 genmod_modelselection_format_parameter_estimates_function(y)
 }
+\arguments{
+\item{y}{}
+}
 \description{
 Format parameters and their estimates for a model selection table using data from SAS GLIMMIX
 }

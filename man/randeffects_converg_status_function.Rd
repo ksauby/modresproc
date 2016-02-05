@@ -8,6 +8,9 @@ randeffects_converg_status_function(modelresults)
 
 randeffects_converg_status_function(modelresults)
 }
+\arguments{
+\item{modelresults}{}
+}
 \description{
 Create table with the convergence status of multiple SAS GLIMMIX models
 

@@ -7,6 +7,9 @@
 survival_model_selection_function(convergence.status, parameter.estimates,
   fit.statistics, replace_list, select_list)
 }
+\arguments{
+\item{select_list}{}
+}
 \description{
 Create table of survival model results
 }

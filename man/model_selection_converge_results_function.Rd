@@ -6,6 +6,9 @@
 \usage{
 model_selection_converge_results_function(model_selection_table, select_list)
 }
+\arguments{
+\item{select_list}{}
+}
 \description{
 Model selection converge results function
 }

@@ -6,6 +6,9 @@
 \usage{
 AIC_function(y)
 }
+\arguments{
+\item{y}{}
+}
 \description{
 Return table comparing AIC values for multiple models produced using SAS GLIMMIX.
 }

@@ -9,7 +9,9 @@ model_selection_table_function(covariance.parameter.estimates,
   conditional.fit.statistics)
 }
 \arguments{
-\item{conditional.fit.statistics}{importFrom reshape2 dcast
-importFrom dplyr mutate}
+\item{conditional.fit.statistics}{}
+}
+\description{
+Build table of candidate models
 }
 

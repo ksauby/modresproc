@@ -7,6 +7,9 @@
 survival_model_results_function_stricta(convergence.status, parameter.estimates,
   fit.statistics)
 }
+\arguments{
+\item{select_list}{}
+}
 \description{
 Create table of survival model results
 }

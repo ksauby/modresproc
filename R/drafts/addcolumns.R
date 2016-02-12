@@ -7,7 +7,7 @@
 
 addTempPrecipInterCol <- function(y) {
 	# temperature and precipitation interactions
-	y$`P x T` = "NA"
+	y$`P x T` = ""
 	# if names contain P2 and T2
 	if (
 		length(grep("P2", names(y), fixed=T)) > 0 & 
@@ -16,12 +16,13 @@ addTempPrecipInterCol <- function(y) {
 	) {
 		y %<>%
 		mutate(
-			`P x T` = replace(`P x T`, 
+			`P x T` = replace(
+				`P x T`, 
 				which((!is.na(`T1*P1`)) & is.na(`T1*P2`) & is.na(`T2*P1`) & 
 				is.na(`T2*P2`)),
-				"T1 x P1")
-				)
-				,
+				paste("T1 x P1 = ", `T1*P1`, sep=""))
+		) %>%
+		mutate(
 			`P x T` = replace(`P x T`, 
 				which(`T1*P1`!="X" & `T1*P2`=="X" & `T2*P1`!="X" & 
 				`T2*P2`!="X"),
@@ -53,25 +54,25 @@ addTempPrecipInterCol <- function(y) {
 					`T1*P2`=="X" & `T2*P1`!="X" & 
 					`T2*P2`!="X"),
 					"T1 x P2"
-				),
+			),
 			`P x T` = replace(`P x T`, 
 				which(
 					`T1*P2`!="X" & `T2*P1`=="X" & 
 					`T2*P2`!="X"),
 					"T2 x P1"
-				),
+			),
 			`P x T` = replace(`P x T`, 
 				which(
 					`T1*P2`!="X" & `T2*P1`!="X" & 
 					`T2*P2`=="X"),
 					"T2 x P2"
-				),
+			),
 			`P x T` = replace(`P x T`, 
 				which(
 					`T1*P2`=="X" & `T2*P1`=="X" & 
 					`T2*P2`=="X"),
 					"T1 x T2 x P1 x P2"
-				)
+			)
 		)
 	}
 	# if names contain T2 but NOT P2
@@ -83,7 +84,7 @@ addTempPrecipInterCol <- function(y) {
 		mutate(
 			`P x T` = replace(`P x T`, 
 				which(`T1*P1`=="X" & `T2*P1`!="X"),
-				"T1 x P1"),
+				paste("T1 x P1 = ", `T1*P1`, sep="")),
 			`P x T` = replace(`P x T`, 
 				which(`T1*P1`!="X" & `T2*P1`=="X"),
 				"T2 x P1"),
@@ -101,11 +102,10 @@ addTempPrecipInterCol <- function(y) {
 		mutate(
 			`P x T` = replace(
 				`P x T`, 
-				which((!is.na(`T1*P1`) & is.na(`T1*P2`)),
-				"T1 x P1")
-			))
-				,
-			`P x T` = replace(`P x T`, 
+				which((!is.na(`T1*P1`) & is.na(`T1*P2`))),
+				"T1 x P1"),
+			`P x T` = replace(
+				`P x T`, 
 				which(`T1*P1`!="X" & `T1*P2`=="X"),
 				"T1 x P2"),
 			`P x T` = replace(`P x T`, 
@@ -151,7 +151,9 @@ addInsectWeatherCol <- function(y) {
 		mutate(
 			`Insect x Weather` = replace(`Insect x Weather`, 
 				which(`P1*CH_t_1`=="X"),
-				"Native Bug x P"),
+				"Native Bug x P")
+		) %>%
+		mutate(
 			`Insect x Weather` = replace(`Insect x Weather`, 
 				which(`T1*CH_t_1`=="X"),
 				"Native Bug x T"),

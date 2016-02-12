@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-model_dimensions_name_processing_function <- function(y) {
+formatColumnsXZNames <- function(y) {
 	if ("Columns in X" %in% names(y)) 
 		{setnames(y, "Columns in X", "ColumnsX")}
 	if (length(grep("Columns in Z", names(y), fixed=T)) > 0) 

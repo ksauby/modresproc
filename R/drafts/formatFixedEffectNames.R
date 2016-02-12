@@ -5,7 +5,7 @@
 #' 
 #' @export
 
-model_results_processing_function <- function(y, select_list) {
+formatFixedEffectNames <- function(y, select_list) {
 	#y[, replace_list][y[, replace_list] > 0] <- "X"
 	#y[, replace_list][y[, replace_list] == 0] <- "."
 	# change column names

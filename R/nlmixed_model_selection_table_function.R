@@ -114,12 +114,12 @@ nlmixed_table_function <- function(models.dimensions, convergence.status, parame
 replaceNLMIXEDnames <- function(y) {
 	y[y$Parameter == "a0" | y$Parameter == "b0", ]$Parameter <- "Intercept"	
 	y[y$Parameter == "a1" | y$Parameter == "b1", ]$Parameter <- "C_t"
-	y[y$Parameter == "a2" | y$Parameter == "b2", ]$Parameter <- "Native Bug Presence"
-	y[y$Parameter == "a3" | y$Parameter == "b4", ]$Parameter <- "Mean Max. Temp, Spring/Summer"
-	y[y$Parameter == "a4", ]$Parameter 			<- "P1, Spring/Summer"
-	y[y$Parameter == "b3", ]$Parameter 			<- "Native Moth Presence"
-	y[y$Parameter == "b5", ]$Parameter 			<- "Mean Degree Day, Spring/Summer"
-	y[y$Parameter == "b6", ]$Parameter 			<- "P1, Fall/Winter"
+	y[y$Parameter == "a2" | y$Parameter == "b2", ]$Parameter <- "Native Bug"
+	y[y$Parameter == "a3" | y$Parameter == "b4", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"
+	y[y$Parameter == "a4", ]$Parameter 			<- "P1 (Spring/Summer)"
+	y[y$Parameter == "b3", ]$Parameter 			<- "Native Moth"
+	y[y$Parameter == "b5", ]$Parameter 			<- "Mean Degree Day (Spring/Summer)"
+	y[y$Parameter == "b6", ]$Parameter 			<- "P1 (Fall/Winter)"
 	return(y)
 }
 

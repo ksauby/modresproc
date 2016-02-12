@@ -8,7 +8,7 @@
 #' 
 #' @importFrom reshape2 dcast
 #' @importFrom dplyr mutate
-#' @importFrom stringr str_replace
+#' @importFrom stringr str_replace str_replace_all
 #' @export
 
 model_selection_table_function <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, 
@@ -23,6 +23,7 @@ model_selection_table_function <- function(covariance.parameter.estimates, model
 			mutate(CovParm = paste(CovParm)) %>%
 			dcast(modelVars~CovParm, value.var="Estimate")
 	}
+	# what is this code for?
 	names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")
 	conditional.fit.statistics %<>% 
 		short_to_long_format_function %>%

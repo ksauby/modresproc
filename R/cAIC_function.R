@@ -15,14 +15,14 @@ cAIC_function <- function(y) {
 	y %<>% as.data.frame %>%
    dplyr::mutate(
    	cAIC = `-2 LogLik` + 
-   		2*(ColumnsX + ColumnsZ)
+   		2*(`Columns in X` + `Columns in Z`)
    )
 	`min(cAIC)` = min(y$cAIC)
 	y %<>%
 		mutate(
 			`delta cAIC` = cAIC - `min(cAIC)`,
 			`Model Lik` = exp((-1/2)*`delta cAIC`),
-			`Number of Parameters` = paste(ColumnsX, "+", ColumnsZ, "=", ColumnsX + ColumnsZ)
+			`Number of Parameters` = paste(`Columns in X`, "+", `Columns in Z`, "=", `Columns in X` + `Columns in Z`)
 		)
 	sum.L = sum(y$`Model Lik`)
 	y %<>% mutate(`Prob(Model)` = `Model Lik`/sum.L)
@@ -32,7 +32,7 @@ cAIC_function <- function(y) {
 		cAIC, 
 		`Model Lik`, 
 		`-2 LogLik`, 
-		ColumnsZ
+		`Columns in Z`
 	)) %>%
  	arrange(`delta cAIC`)
 	return(y)

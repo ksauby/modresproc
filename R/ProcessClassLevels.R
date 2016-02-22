@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-ProcessClassLevels <- function(x) {
+processClassLevels <- function(x) {
 	x %>%
 		filter(Class=="Location" | Class=="PlantID") %>%
 		select(Class,Levels,modelVars) %>%

@@ -7,8 +7,8 @@
 
 processColumnNames <- function(y) {
 	# change column names
-	if ("ColumnsX" %in% names(y)) {
-		setnames(y, "ColumnsX", "Number of Fixed Effects Parameters")
+	if ("Columns in X" %in% names(y)) {
+		setnames(y, "Columns in X", "Number of Fixed Effects Parameters")
 	}
 	if (length(grep("Columns in Z", names(y), fixed=T)) > 0) {
 		setnames(
@@ -52,9 +52,6 @@ processColumnNames <- function(y) {
 			"ln(Cylinder Volume), Stand."
 		)
 	}
-	# weather
-	if ("T1" %in% names(y)) {setnames(y, "T1", "T")}
-	if ("P1" %in% names(y)) {setnames(y, "P1", "P")}
 	# interactions
 	if ("CA_t_1*CH_t_1" %in% names(y)) {
 		setnames(y, "CA_t_1*CH_t_1", "Invasive Moth x Native Bug")
@@ -91,4 +88,16 @@ processColumnNames <- function(y) {
 		setnames(y, "T1*ME_t_1", "Native Moth x Temperature")
 	}
 	return(y)			
+}
+
+#' Change Names of Precipitation and Temperature Columns
+#' 
+#' @param y
+#' @param select_list
+#' 
+#' @export
+
+processT1P1ColumnNames <- function(y) {
+	if ("T1" %in% names(y)) {setnames(y, "T1", "T")}
+	if ("P1" %in% names(y)) {setnames(y, "P1", "P")}
 }

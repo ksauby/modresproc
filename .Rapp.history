@@ -130,58 +130,729 @@ library(ProjectTemplate)#
 setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
 # load project#
 load.project()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
-library(ProjectTemplate)#
-setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
-# load project#
-load.project()
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parameter.estimates = FruitPres.humifusa.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.humifusa.dimensions#
+covariance.parms.test = #
+	RGR.humifusa.size.random.effects.models.covariance.parameters.test#
 convergence.status = #
-	FruitPres.humifusa.convergence.status#
-parameter.estimates = #
-	FruitPres.humifusa.parameter.estimates#
+	RGR.humifusa.size.random.effects.models.convergence.status#
+covariance.parms.estimates = #
+	RGR.humifusa.size.random.effects.models.covariance.parameter.estimates#
 conditional.fit.statistics = #
-	FruitPres.humifusa.conditional.fit.statistics#
-select_list = size_select_list
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-size_select_list = c(#
-	"modelVars",#
-	"Intercept",#
-	"Ln_Size_t_1_st",#
-	"CHyr_t_1",#
-	"DAyr_t_1",#
-	"MEyr_t_1",#
-	"NatInsectyr_t_",#
-	"P1",#
-	"T1",#
-	"Insect x Weather",#
-	"P x T",#
-	"Upper Bound, Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)"#
+	RGR.humifusa.size.random.effects.models.conditional.fit.statistics#
+fit.statistics = #
+	RGR.humifusa.size.random.effects.models.fit.statistics#
+parms.estimates = #
+	RGR.humifusa.size.random.effects.models.parameter.estimates#
+#
+humifusa.size.model.results = randeffects_model_results_function(#
+	covariance.parms.test, #
+	convergence.status, #
+	covariance.parms.estimates, #
+	conditional.fit.statistics, #
+	fit.statistics,#
+	parms.estimates#
 )#
-covariance.parameter.estimates = FruitPres.humifusa.covariance.parameter.estimates#
-models.dimensions = #
-	FruitPres.humifusa.dimensions#
-convergence.status = #
-	FruitPres.humifusa.convergence.status#
-parameter.estimates = #
-	FruitPres.humifusa.parameter.estimates#
-conditional.fit.statistics = #
-	FruitPres.humifusa.conditional.fit.statistics#
-select_list = size_select_list
+humifusa.size.converg.status = #
+	randeffects_converg_status_function(modelresults=humifusa.size.model.results)#
+humifusa.size.covar.results = #
+	randeffects_G_side_effects_test_function(humifusa.size.model.results)#
+humifusa.size.covar.parms = #
+	randeffects_covar_parms_estimates_function(humifusa.size.model.results)#
+humifusa.size.rand.model.selection = #
+	randeffects_model_selection_function(humifusa.size.model.results)
+library(dataproc)
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-model_selection_table <- model_selection_table_function(#
-	covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics)
+covariance.parms.test = #
+	RGR.humifusa.size.random.effects.models.covariance.parameters.test#
+convergence.status = #
+	RGR.humifusa.size.random.effects.models.convergence.status#
+covariance.parms.estimates = #
+	RGR.humifusa.size.random.effects.models.covariance.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.random.effects.models.conditional.fit.statistics#
+fit.statistics = #
+	RGR.humifusa.size.random.effects.models.fit.statistics#
+parms.estimates = #
+	RGR.humifusa.size.random.effects.models.parameter.estimates#
+#
+humifusa.size.model.results = randeffects_model_results_function(#
+	covariance.parms.test, #
+	convergence.status, #
+	covariance.parms.estimates, #
+	conditional.fit.statistics, #
+	fit.statistics,#
+	parms.estimates#
+)#
+humifusa.size.converg.status = #
+	randeffects_converg_status_function(modelresults=humifusa.size.model.results)#
+humifusa.size.covar.results = #
+	randeffects_G_side_effects_test_function(humifusa.size.model.results)#
+humifusa.size.covar.parms = #
+	randeffects_covar_parms_estimates_function(humifusa.size.model.results)#
+humifusa.size.rand.model.selection = #
+	randeffects_model_selection_function(humifusa.size.model.results)
 setwd('/Users/KSauby/Documents/Projects')
 setwd("./modresproc")#
+devtools::test()#
 devtools::document()#
 devtools::install()
 setwd('/Users/KSauby/Documents/Projects')
 setwd("./modresproc")#
+#devtools::test()#
+devtools::document()#
+devtools::install()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+covariance.parms.test = #
+	RGR.humifusa.size.random.effects.models.covariance.parameters.test#
+convergence.status = #
+	RGR.humifusa.size.random.effects.models.convergence.status#
+covariance.parms.estimates = #
+	RGR.humifusa.size.random.effects.models.covariance.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.random.effects.models.conditional.fit.statistics#
+fit.statistics = #
+	RGR.humifusa.size.random.effects.models.fit.statistics#
+parms.estimates = #
+	RGR.humifusa.size.random.effects.models.parameter.estimates#
+#
+humifusa.size.model.results = randeffects_model_results_function(#
+	covariance.parms.test, #
+	convergence.status, #
+	covariance.parms.estimates, #
+	conditional.fit.statistics, #
+	fit.statistics,#
+	parms.estimates#
+)#
+humifusa.size.converg.status = #
+	randeffects_converg_status_function(modelresults=humifusa.size.model.results)#
+humifusa.size.covar.results = #
+	randeffects_G_side_effects_test_function(humifusa.size.model.results)#
+humifusa.size.covar.parms = #
+	randeffects_covar_parms_estimates_function(humifusa.size.model.results)#
+humifusa.size.rand.model.selection = #
+	randeffects_model_selection_function(humifusa.size.model.results)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
+models.dimensions = #
+	RGR.humifusa.size.model.selection.models.dimensions#
+convergence.status = #
+	RGR.humifusa.size.model.selection.models.convergence.status#
+parameter.estimates = #
+	RGR.humifusa.size.model.selection.models.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.model.selection.models.conditional.fit.statistics#
+select_list = c(#
+	"Intercept",#
+	"C_t",#
+	"Native Bug",#
+	"Native Scale",#
+	"Native Moth",#
+	"Native Insects",#
+	"P",#
+	"T", #
+	"P x T",#
+	"Insect x Weather",#
+	"Location(Year)",#
+	"pdG",#
+	"Number of Parameters",#
+	"delta cAIC",#
+	"Prob(Model)"#
+)#
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables %>%#
+	cAIC_function %>%#
+	addTempxPrecipColumns %>%#
+	addInsectWeatherCol %>%#
+	processColumnNames %>%#
+	processT1P1ColumnNames %>%#
+	as.data.table %>%#
+	setnames("Location(Year) ", "Location(Year)") %>%#
+	as.data.frame %>%#
+	.[, select_list]
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables %>%#
+	cAIC_function
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables
+head(modelselection_size_results)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+head(modelselection_size_results)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+covariance.parms.estimates
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
+models.dimensions = #
+	RGR.humifusa.size.model.selection.models.dimensions#
+convergence.status = #
+	RGR.humifusa.size.model.selection.models.convergence.status#
+parameter.estimates = #
+	RGR.humifusa.size.model.selection.models.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("Subject" %in% names(covariance.parameter.estimates)) {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm, Subject)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	} else {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	}#
+	# what i
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+conditional.fit.statistics %<>% #
+		convertShorttoLong %>%#
+		.[, -3]#
+	models.dimensions %<>%#
+		convertShorttoLong %>%#
+		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
+	y <- parameter.estimates %>% constructConfInt
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+conditional.fit.statistics
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+models.dimensions
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {y %<>% filter(NatInsect_t_1!=0)}
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("NatInsect_t_1" %in% y$Effect) {y %<>% filter(NatInsect_t_1!=0)}
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+"NatInsect_t_1" %in% y$Effect
+y %>% filter(NatInsect_t_1!=0)
+y %>% filter(!(NatInsect_t_1==0))
+y %>% filter(!(NatInsect_t_1==1))
+y %>% filter(NatInsect_t_1==NA)
+y %>% filter(is.na(NatInsect_t_1))
+y %>% filter(is.na(NatInsect_t_1), NatInsect_t_1==1)
+y %>% filter(is.na(NatInsect_t_1) & NatInsect_t_1==1)
+y %>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("NatInsect_t_1" %in% y$Effect) {#
+		filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates) %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, pdG))
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates) %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, pdG))
+y
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./modresproc")#
+#devtools::test()#
+devtools::document()#
+devtools::install()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
+models.dimensions = #
+	RGR.humifusa.size.model.selection.models.dimensions#
+convergence.status = #
+	RGR.humifusa.size.model.selection.models.convergence.status#
+parameter.estimates = #
+	RGR.humifusa.size.model.selection.models.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.model.selection.models.conditional.fit.statistics#
+select_list = c(#
+	"Intercept",#
+	"C_t",#
+	"Native Bug",#
+	"Native Scale",#
+	"Native Moth",#
+	"Native Insects",#
+	"P",#
+	"T", #
+	"P x T",#
+	"Insect x Weather",#
+	"Location(Year)",#
+	"pdG",#
+	"Number of Parameters",#
+	"delta cAIC",#
+	"Prob(Model)"#
+)#
+modelselection_size_results = createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables %>%#
+	cAIC_function %>%#
+	addTempxPrecipColumns %>%#
+	addInsectWeatherCol %>%#
+	processColumnNames %>%#
+	processT1P1ColumnNames %>%#
+	as.data.table %>%#
+	setnames("Location(Year) ", "Location(Year)") %>%#
+	as.data.frame %>%#
+	.[, select_list] #
+#
+modelselection_size_results[is.na(modelselection_size_results)] <- ""#
+#
+model_selection_converge_results <- model_selection_converge_results_function(modelselection_size_results)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables %>%#
+	cAIC_function %>%#
+	addTempxPrecipColumns %>%#
+	addInsectWeatherCol
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+) %>% #
+	processWeatherVariables
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+library(modresproc)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+# MODEL SELECTION#
+covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
+models.dimensions = #
+	RGR.humifusa.size.model.selection.models.dimensions#
+convergence.status = #
+	RGR.humifusa.size.model.selection.models.convergence.status#
+parameter.estimates = #
+	RGR.humifusa.size.model.selection.models.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+if ("Subject" %in% names(covariance.parameter.estimates)) {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm, Subject)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	} else {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	}#
+	# what is this code for?#
+	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
+	conditional.fit.statistics %<>% #
+		convertShorttoLong %>%#
+		.[, -3]#
+	models.dimensions %<>%#
+		convertShorttoLong %>%#
+		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
+	y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y %<>% dcast(modelVars~Effect, value.var="Estimate.CF")
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics)
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions)
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates)
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates) %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, pdG))
+y
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+# MODEL SELECTION#
+covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
+models.dimensions = #
+	RGR.humifusa.size.model.selection.models.dimensions#
+convergence.status = #
+	RGR.humifusa.size.model.selection.models.convergence.status#
+parameter.estimates = #
+	RGR.humifusa.size.model.selection.models.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./modresproc")#
+#devtools::test()#
+devtools::document()#
+devtools::install()
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./modresproc")#
+#devtools::test()#
+devtools::document()
+warnings()
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./modresproc")#
+#devtools::test()#
+devtools::document()#
+devtools::install()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+# to verify that all models have the same covariance parameters included#
+	if ("Subject" %in% names(covariance.parameter.estimates)) {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm, Subject)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	} else {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	}#
+	# what is this code for?#
+	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
+	conditional.fit.statistics %<>% #
+		convertShorttoLong %>%#
+		.[, -3]#
+	models.dimensions %<>%#
+		convertShorttoLong %>%#
+		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
+	y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates) %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, pdG))
+y
+setwd('/Users/KSauby/Documents/Projects/modresproc/R')
+#' Paste PCA axis data together#
+#' #
+#' @param y#
+#' #
+#' @export#
+#
+processWeatherVariables <- function(y) {#
+	if ("T1" %in% names(y)) {#
+		y %<>%#
+		group_by(modelVars) %>%#
+		mutate(#
+			T1 = replace(#
+				T1,#
+				which(!is.na(T1)),#
+				paste("T1 = ", T1, sep="")#
+			)#
+		) %>%#
+		ungroup %>%#
+		as.data.frame#
+	}#
+	if ("T2" %in% names(y)) {#
+		y %<>%#
+		group_by(modelVars) %>%#
+		mutate(#
+			T2 = replace(#
+				T2,#
+				which(!is.na(T2)),#
+				paste("T2 = ", T2, sep="")#
+			)#
+		) %>%#
+   		mutate(#
+   			T1 = paste(T1, T2, sep=", ")#
+   		) %>%#
+		ungroup %>%#
+		as.data.frame#
+	}#
+	if ("P1" %in% names(y)) {#
+		y %<>%#
+		group_by(modelVars) %>%#
+		mutate(#
+			P1 = replace(#
+				P1,#
+				which(!is.na(P1)),#
+				paste("P1 = ", P1, sep="")#
+			)#
+		) %>%#
+		ungroup %>%#
+		as.data.frame#
+	}#
+	if ("P2" %in% names(y)) {#
+		y %<>%#
+		group_by(modelVars) %>%#
+		mutate(#
+			P2 = replace(#
+				P2,#
+				which(!is.na(P2)),#
+				paste("P2 = ", P2, sep="")#
+			)#
+		) %>%#
+		mutate(#
+			P1 = paste(P1, P2, sep=", ")#
+		) %>%#
+		ungroup %>%#
+		as.data.frame#
+	}#
+	return(y)#
+}#
+#
+#' Build table of candidate models#
+#' #
+#' @param covariance.parameter.estimates#
+#' @param models.dimensions#
+#' @param convergence.status#
+#' @param parameter.estimates#
+#' @param conditional.fit.statistics#
+#' #
+#' @importFrom reshape2 dcast#
+#' @importFrom dplyr mutate#
+#' @export#
+#
+createModelSelectionTable <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
+	conditional.fit.statistics) {#
+	# to verify that all models have the same covariance parameters included#
+	if ("Subject" %in% names(covariance.parameter.estimates)) {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm, Subject)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	} else {#
+		covariance.parameter.estimates %<>% #
+			mutate(CovParm = paste(CovParm)) %>%#
+			dcast(modelVars~CovParm, value.var="Estimate")#
+	}#
+	# what is this code for?#
+	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
+	conditional.fit.statistics %<>% #
+		convertShorttoLong %>%#
+		.[, -3]#
+	models.dimensions %<>%#
+		convertShorttoLong %>%#
+		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
+	y <- parameter.estimates %>% constructConfInt#
+	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
+	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
+	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
+	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
+	if ("NatInsect_t_1" %in% y$Effect) {#
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
+	}#
+	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
+		# fit statistics#
+		merge(conditional.fit.statistics) %>%#
+		merge(models.dimensions) %>%#
+		merge(covariance.parameter.estimates) %>%#
+		merge(convergence.status %>% dplyr::select(modelVars, pdG))#
+	return(y)#
+}
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
+models.dimensions = #
+	RGR.humifusa.size.model.selection.models.dimensions#
+convergence.status = #
+	RGR.humifusa.size.model.selection.models.convergence.status#
+parameter.estimates = #
+	RGR.humifusa.size.model.selection.models.parameter.estimates#
+conditional.fit.statistics = #
+	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+createModelSelectionTable(#
+	covariance.parms.estimates, #
+	models.dimensions, #
+	convergence.status, #
+	parameter.estimates, #
+	conditional.fit.statistics#
+)
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./modresproc")#
+#devtools::test()#
 devtools::document()#
 devtools::install()

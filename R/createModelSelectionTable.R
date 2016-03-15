@@ -75,7 +75,7 @@ processWeatherVariables <- function(y) {
 #' @param conditional.fit.statistics
 #' 
 #' @importFrom reshape2 dcast
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate select filter
 #' @export
 
 createModelSelectionTable <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, 
@@ -103,13 +103,15 @@ createModelSelectionTable <- function(covariance.parameter.estimates, models.dim
 	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}
 	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}
 	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}
-	if ("NatInsect_t_1" %in% y$Effect) {y %<>% filter(NatInsect_t_1!=0)}
+	if ("NatInsect_t_1" %in% y$Effect) {
+		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)
+	}
 	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%
 		# fit statistics
 		merge(conditional.fit.statistics) %>%
 		merge(models.dimensions) %>%
 		merge(covariance.parameter.estimates) %>%
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))
+		merge(convergence.status %>% select(modelVars, pdG))
 	return(y)
 }
 

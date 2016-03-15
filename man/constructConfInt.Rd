@@ -4,7 +4,7 @@
 \alias{constructConfInt}
 \title{Construct Conf. Intervals}
 \usage{
-constructConfInt(parameter.estimates)
+constructConfInt(parameter.estimates, round_n = 2)
 }
 \arguments{
 \item{parameter.estimates}{Table of parameter.estimate output from SAS}

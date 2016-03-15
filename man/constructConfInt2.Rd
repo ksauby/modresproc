@@ -4,7 +4,7 @@
 \alias{constructConfInt2}
 \title{Construct Conf. Intervals the Hard Way}
 \usage{
-constructConfInt2(parm.est)
+constructConfInt2(parm.est, round.n = 2)
 }
 \arguments{
 \item{parm.est}{parameter.estimate output from SAS}

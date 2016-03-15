@@ -3,7 +3,7 @@
 #' 
 #' @export
 
-constructConfInt2 <- function(parm.est) {
+constructConfInt2 <- function(parm.est, round.n=2) {
 	if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {
 		model_selection_table[i, ] %<>%
 		mutate(
@@ -254,7 +254,8 @@ constructConfInt2 <- function(parm.est) {
 #' 
 #' @export
 
-constructConfInt <- function(parameter.estimates) {
+constructConfInt <- function(parameter.estimates, round_n=2) {
+	parameter.estimates %<>% round_df(round_n)
 	parameter.estimates %>% mutate(Estimate.CF = paste(
 		Estimate,
 		" [",

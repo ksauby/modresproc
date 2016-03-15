@@ -18,10 +18,10 @@ randeffects_model_results_function <- function(
 )
 {	
 	conditional.fit.statistics %<>% 
-		short_to_long_format_function %>%
+		convertShorttoLong %>%
 		.[, -(2:3)]
 	fit.statistics %<>% 
-		short_to_long_format_function %>%
+		convertShorttoLong %>%
 		.[, -(4:7)]
 	parms.estimates %<>% 
 		reshape2::dcast(modelVars~Effect, value.var="Estimate", fun=X_function)

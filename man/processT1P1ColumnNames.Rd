@@ -7,7 +7,7 @@
 processT1P1ColumnNames(y)
 }
 \arguments{
-\item{select_list}{}
+\item{y}{}
 }
 \description{
 Change Names of Precipitation and Temperature Columns

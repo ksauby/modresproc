@@ -1,7 +1,6 @@
 #' Change Names of Columns in a Model Selection Table from SAS GLIMMIX Model Output 
 #' 
 #' @param y
-#' @param select_list
 #' 
 #' @export
 
@@ -17,6 +16,8 @@ processColumnNames <- function(y) {
 			"ColumnsZ"
 		)
 	}
+	# plant size
+	if ("C_t" %in% names(y)) {setnames(y, "C_t", "$C_t$")}
 	# insects
 	if ("CA" %in% names(y)) {setnames(y, "CA", "Invasive Moth")}
 	if ("CH" %in% names(y)) {setnames(y, "CH", "Native Bug")}
@@ -93,11 +94,66 @@ processColumnNames <- function(y) {
 #' Change Names of Precipitation and Temperature Columns
 #' 
 #' @param y
-#' @param select_list
 #' 
 #' @export
 
 processT1P1ColumnNames <- function(y) {
 	if ("T1" %in% names(y)) {setnames(y, "T1", "T")}
 	if ("P1" %in% names(y)) {setnames(y, "P1", "P")}
+}
+
+#' Change Names of Model Selection Columns
+#' 
+#' @param y
+#' 
+#' @export
+
+processModSelectionColumnNames <- function(y) {
+	if ("Intercept" %in% names(y)) {setnames(y, "Intercept", "$\\beta_{0}$")}
+	if ("Value" %in% names(y)) {setnames(y, "Value", "AIC")}
+	if ("modelVars" %in% names(y)) {setnames(y, "modelVars", "Model")}
+	if ("delta AIC" %in% names(y)) {setnames(y, "delta AIC", "$\\Delta$AIC")}
+	if ("Model Lik" %in% names(y)) {setnames(y, "Model Lik", "Model $\\Lagr$")}
+	if ("Prob(Model)" %in% names(y)) {setnames(y, "Prob(Model)", "$P$(Model)")}
+	return(y)
+}
+
+#' Change Names of Statistics Columns
+#' 
+#' @param y
+#' 
+#' @export
+
+processStatisticsColumnNames <- function(y) {
+	if ("Pearson Chi-Square/DF" %in% names(y)) {setnames(y, "Pearson Chi-Square/DF", "Pearson $\\chi^2$/DF")}
+	if ("ProbChiSq" %in% names(y)) {setnames(y, "ProbChiSq", "$P$($\\chi^2$)")}
+	if ("ChiSq" %in% names(y)) {setnames(y, "ChiSq", "$\\chi^2$")}
+	if ("StdErr" %in% names(y)) {setnames(y, "StdErr", "Standard Error")}
+	if ("LowerWaldCL" %in% names(y)) {setnames(y, "LowerWaldCL", "Lower Wald CL")}
+	if ("UpperWaldCL" %in% names(y)) {setnames(y, "UpperWaldCL", "Upper Wald CL")}
+		return(y)
+}
+
+
+processModSelectionColumnNames <- function(y) {
+	if ("Intercept" %in% names(y)) {setnames(y, "Intercept", "$\\beta_{0}$")}
+	if ("Value" %in% names(y)) {setnames(y, "Value", "AIC")}
+	if ("modelVars" %in% names(y)) {setnames(y, "modelVars", "Model")}
+	if ("delta AIC" %in% names(y)) {setnames(y, "delta AIC", "$\\Delta$AIC")}
+	if ("Model Lik" %in% names(y)) {setnames(y, "Model Lik", "Model $\\Lagr$")}
+	if ("Prob(Model)" %in% names(y)) {setnames(y, "Prob(Model)", "$P$(Model)")}
+	return(y)
+}
+
+#' Abbreviate Insect Column Names
+#' 
+#' @param y
+#' 
+#' @export
+
+abbrInsectNames <- function(y) {
+	if ("Native Bug" %in% names(y)) {setnames(y, "Native Bug", "Bug")}
+	if ("Native Moth" %in% names(y)) {setnames(y, "Native Moth", "Moth")}
+	if ("Native Scale" %in% names(y)) {setnames(y, "Native Scale", "Scale")}
+	return(y)
 }

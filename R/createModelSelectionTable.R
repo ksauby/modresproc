@@ -9,10 +9,10 @@ processWeatherVariables <- function(y) {
 		y %<>%
 		group_by(modelVars) %>%
 		mutate(
-			T1 = replace(
-				T1,
-				which(!is.na(T1)),
-				paste("T1 = ", T1, sep="")
+			T1 = ifelse(
+				!is.na(T1),
+				paste("T1 = ", T1, sep=""),
+				T1
 			)
 		) %>%
 		ungroup %>%
@@ -22,14 +22,18 @@ processWeatherVariables <- function(y) {
 		y %<>%
 		group_by(modelVars) %>%
 		mutate(
-			T2 = replace(
-				T2,
-				which(!is.na(T2)),
-				paste("T2 = ", T2, sep="")
+			T2 = ifelse(
+				!is.na(T2),
+				paste("T2 = ", T2, sep=""),
+				T2
 			)
 		) %>%
    		mutate(
-   			T1 = paste(T1, T2, sep=", ")
+   			T1 = ifelse(
+				!is.na(T1),
+				paste(T1, T2, sep=", "),
+				T1
+			)
    		) %>%
 		ungroup %>%
 		as.data.frame
@@ -38,10 +42,10 @@ processWeatherVariables <- function(y) {
 		y %<>%
 		group_by(modelVars) %>%
 		mutate(
-			P1 = replace(
-				P1,
-				which(!is.na(P1)),
-				paste("P1 = ", P1, sep="")
+			P1 = ifelse(
+				!is.na(P1),
+				paste("P1 = ", P1, sep=""),
+				P1
 			)
 		) %>%
 		ungroup %>%
@@ -51,14 +55,19 @@ processWeatherVariables <- function(y) {
 		y %<>%
 		group_by(modelVars) %>%
 		mutate(
-			P2 = replace(
-				P2,
-				which(!is.na(P2)),
-				paste("P2 = ", P2, sep="")
+			P2 = ifelse(
+				!is.na(P2),
+				paste("P2 = ", P2, sep=""),
+				P2
 			)
 		) %>%
 		mutate(
-			P1 = paste(P1, P2, sep=", ")
+			P1 = ifelse(
+				!is.na(P1),
+				paste(P1, P2, sep=", "),
+				P1
+			)
+			
 		) %>%
 		ungroup %>%
 		as.data.frame

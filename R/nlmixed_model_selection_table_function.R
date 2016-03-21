@@ -112,28 +112,65 @@ nlmixed_table_function <- function(models.dimensions, convergence.status, parame
 #' 
 #' @export
 replaceNLMIXEDnames <- function(y) {
-	y[y$Parameter == "a0" | y$Parameter == "b0", ]$Parameter <- "Intercept"	
-	y[y$Parameter == "a1" | y$Parameter == "b1", ]$Parameter <- "C_t"
-	y[y$Parameter == "a2" | y$Parameter == "b2", ]$Parameter <- "Native Bug"
-	y[y$Parameter == "a3" | y$Parameter == "b4", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"
-	y[y$Parameter == "a4", ]$Parameter 			<- "P1 (Spring/Summer)"
-	y[y$Parameter == "b3", ]$Parameter 			<- "Native Moth"
-	y[y$Parameter == "b5", ]$Parameter 			<- "Mean Degree Day (Spring/Summer)"
-	y[y$Parameter == "b6", ]$Parameter 			<- "P1 (Fall/Winter)"
+	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	
+	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"
+	y[y$Parameter == "A2" | y$Parameter == "B2", ]$Parameter <- "Native Bug"
+	y[y$Parameter == "A3" | y$Parameter == "B3", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"
+	y[y$Parameter == "B4", ]$Parameter 			<- "Mean Degree Day (Spring/Summer)"
+	y[y$Parameter == "B5", ]$Parameter 			<- "P1 (Fall/Winter)"
 	return(y)
 }
 
-#' @title Add Vital Rate Column
+#' @title Replace Parameter Names for NLMIXED Output for O. stricta
 #' 
 #' @param y Parameter estimates output
 #' 
 #' @export
-addVitalRateColumn <- function(y) {
- y$`Vital Rate` <- "Fruit Abundance"	
- y$`Vital Rate` <- replace(
- 	y$`Vital Rate`,
- 	grep("a", y$Parameter),
- 	"Fruit Absence"
- )
- return(y)
+replaceNLMIXEDnamesOstricta <- function(y) {
+	y[y$Parameter == "a0" | y$Parameter == "b0", ]$Parameter <- "Intercept"	
+	y[y$Parameter == "a1" | y$Parameter == "b1", ]$Parameter <- "C_t"
+	y[y$Parameter == "b2", ]$Parameter <- "Invasive Moth"
+	return(y)
+}
+
+#' @title Replace Parameter Names for NLMIXED Output
+#' 
+#' @param y Parameter estimates output
+#' 
+#' @export
+replaceGENMODRowNames <- function(y) {
+	if ("Ln_size_max_t_1_st" %in% y$Parameter) {
+		y[y$Parameter == "Ln_size_max_t_1_st", ]$Parameter <- "$C_t$"	
+	}
+	if ("CH_t_1" %in% y$Parameter) {
+		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"
+	}
+	if ("DA_t_1" %in% y$Parameter) {
+		y[y$Parameter == "DA_t_1", ]$Parameter 		<- "Native Scale"
+	}
+	if ("ME_t_1" %in% y$Parameter) {
+		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth"
+	}
+	if ("T1_FW" %in% y$Parameter) {
+		y[y$Parameter == "T1_FW", ]$Parameter 		<- "T1 (Fall/Winter)"
+	}
+	if ("E1_SS_st" %in% y$Parameter) {
+		y[y$Parameter == "E1_SS_st", ]$Parameter 	<- "Mean Maximum Daily Temperature (Spring/Summer)"
+	}
+	if ("F_SS_st" %in% y$Parameter) {
+		y[y$Parameter == "F_SS_st", ]$Parameter 	<- "Mean Degree Day (Spring/Summer)"
+	}
+	if ("P1_SS" %in% y$Parameter) {
+		y[y$Parameter == "P1_SS", ]$Parameter 		<- "P1 (Spring/Summer)"
+	}
+	if ("P2_SS" %in% y$Parameter) {
+		y[y$Parameter == "P2_SS", ]$Parameter 		<- "P2 (Spring/Summer)"
+	}
+	if ("P1_FW" %in% y$Parameter) {
+		y[y$Parameter == "P1_FW", ]$Parameter 		<- "P1 (Fall/Winter)"
+	}
+	if ("P2_FW" %in% y$Parameter) {
+		y[y$Parameter == "P2_FW", ]$Parameter 		<- "P2 (Fall/Winter)"
+	}
+	return(y)
 }

@@ -7,7 +7,7 @@
 processColumnNames(y)
 }
 \arguments{
-\item{select_list}{}
+\item{y}{}
 }
 \description{
 Change Names of Columns in a Model Selection Table from SAS GLIMMIX Model Output

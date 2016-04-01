@@ -46,9 +46,9 @@ addTempxPrecipColumns <- function(y) {
 					!is.na(`T2*P2`),
 				paste(
 					"T1 x P1 = ", `T1*P1`,
-					", T1 x P2 = ", `T1*P2`,
-					", T2 x P1 = ", `T2*P1`,
-					", T2 x P2 = ", `T2*P2`,
+					",\nT1 x P2 = ", `T1*P2`,
+					",\nT2 x P1 = ", `T2*P1`,
+					",\nT2 x P2 = ", `T2*P2`,
 					sep=""
 				),
 				`P x T`
@@ -82,9 +82,9 @@ addTempxPrecipColumns <- function(y) {
 				!is.na(`T1*P2`) & !is.na(`T2*P1`) & !is.na(`T2*P2`),
 				paste(
 					"T1 x P1 = ", `T1*P1`,
-					", T1 x P2 = ", `T1*P2`,
-					", T2 x P1 = ", `T2*P1`,
-					", T2 x P2 = ", `T2*P2`,
+					",\nT1 x P2 = ", `T1*P2`,
+					",\nT2 x P1 = ", `T2*P1`,
+					",\nT2 x P2 = ", `T2*P2`,
 					sep=""
 				),
 				`P x T`
@@ -112,7 +112,7 @@ addTempxPrecipColumns <- function(y) {
 				!is.na(`T1*P1`) & !is.na(`T2*P1`),
 				paste(
 					"T1 x P1 = ", `T1*P1`,
-					", T2 x P1 = ", `T2*P1`,
+					",\nT2 x P1 = ", `T2*P1`,
 					sep=""
 				),
 				`P x T`
@@ -141,7 +141,7 @@ addTempxPrecipColumns <- function(y) {
 				!is.na(`T1*P1`) & !is.na(`T1*P2`),
 				paste(
 					"T1 x P1 = ", `T1*P1`,
-					", T1 x P2 = ", `T1*P2`,
+					",\nT1 x P2 = ", `T1*P2`,
 					sep=""
 				),
 				`P x T`
@@ -240,12 +240,23 @@ addInsectWeatherCol <- function(y) {
 #' @param y Parameter estimates output
 #' 
 #' @export
+
 addVitalRateColumn <- function(y) {
  y$`Vital Rate` <- "Fruit Abundance"	
  y$`Vital Rate` <- replace(
  	y$`Vital Rate`,
- 	grep("A", y$Parameter),
+ 	grep("a", y$Parameter, ignore.case=T),
  	"Fruit Absence"
+ )
+ y$`Vital Rate` <- replace(
+ 	y$`Vital Rate`,
+ 	grep("aPlantID", y$Parameter, ignore.case=T),
+ 	"Fruit Absence"
+ )
+ y$`Vital Rate` <- replace(
+ 	y$`Vital Rate`,
+ 	grep("bPlantID", y$Parameter, ignore.case=T),
+ 	"Fruit Abundance"
  )
  return(y)
 }

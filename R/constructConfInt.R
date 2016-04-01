@@ -276,12 +276,36 @@ constructConfInt <- function(parameter.estimates, round_n=2) {
 constructConfIntforRandomEffects <- function(y) {
 	for (i in 1:dim(y)[1]) {
 		if (grepl("LocYr", y$Parameter[i])==T) {
-			y$Estimate.CF[i] = paste("Location (Fecundity Year)", " = ", y$Estimate.CF[i], sep="")
-		} else if (grepl("Loc", y$Parameter[i])==T & grepl("LocYr", y$Parameter[i])==F) {
-			y$Estimate.CF[i] = paste("Location", " = ", y$Estimate.CF[i], sep="")
+			y$Estimate.CF[i] = paste(
+				"Location (Fecundity Year)", 
+				" = ", 
+				y$Estimate.CF[i], 
+				sep=""
+			)
+		} else if (grepl("Loc", y$Parameter[i])==T & grepl("LocYr", 
+			y$Parameter[i])==F) {
+			y$Estimate.CF[i] = paste(
+				"Location", 
+				"\n= ", 
+				y$Estimate.CF[i], 
+				sep=""
+			)
 		}
 		if (grepl("Yr", y$Parameter[i])==T & grepl("LocYr", y$Parameter[i])==F) {
-			y$Estimate.CF[i] = paste("Fecundity Year", " = ", y$Estimate.CF[i], sep="")
+			y$Estimate.CF[i] = paste(
+				"Fecundity Year", 
+				"\n= ", 
+				y$Estimate.CF[i], 
+				sep=""
+			)
+		}
+		if (grepl("PlantID", y$Parameter[i])==T) {
+			y$Estimate.CF[i] = paste(
+				"Plant ID", 
+				"\n= ", 
+				y$Estimate.CF[i], 
+				sep=""
+			)
 		}
 	}
 	return(y)
@@ -296,10 +320,10 @@ constructConfIntforRandomEffects <- function(y) {
 constructConfIntforWeatherData <- function(y) {
 	for (i in 1:dim(y)[1]) {
 		if (grepl("Spring", y$Parameter[i])==T) {
-			y$Estimate.CF[i] = paste(y$Parameter[i], " = ", y$Estimate.CF[i], sep="")
+			y$Estimate.CF[i] = paste(y$Parameter[i], "\n= ", y$Estimate.CF[i], sep="")
 		}
 		if (grepl("Fall", y$Parameter[i])==T) {
-			y$Estimate.CF[i] = paste(y$Parameter[i], " = ", y$Estimate.CF[i], sep="")
+			y$Estimate.CF[i] = paste(y$Parameter[i], "\n= ", y$Estimate.CF[i], sep="")
 		}
 	}
 	return(y)

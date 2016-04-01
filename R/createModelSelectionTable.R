@@ -64,7 +64,7 @@ processWeatherVariables <- function(y) {
 		mutate(
 			P1 = ifelse(
 				!is.na(P1),
-				paste(P1, P2, sep=", "),
+				paste(P1, P2, sep=",\n"),
 				P1
 			)
 			

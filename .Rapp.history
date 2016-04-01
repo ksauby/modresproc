@@ -125,659 +125,29 @@ library(devtools)
 devtools::install_local(path="/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
 devtools::install(pkg="/Users/KSauby/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
 install.packages("~/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
+??limit
+37-13
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
+reload.project()
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
 library(ProjectTemplate)#
 setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
 # load project#
 load.project()
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parms.test = #
-	RGR.humifusa.size.random.effects.models.covariance.parameters.test#
-convergence.status = #
-	RGR.humifusa.size.random.effects.models.convergence.status#
-covariance.parms.estimates = #
-	RGR.humifusa.size.random.effects.models.covariance.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.random.effects.models.conditional.fit.statistics#
-fit.statistics = #
-	RGR.humifusa.size.random.effects.models.fit.statistics#
-parms.estimates = #
-	RGR.humifusa.size.random.effects.models.parameter.estimates#
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+parm.est <- fruit.STRICTA.parameter.estimates %>% round_df(2)#
+models <- data.frame(modelVars=paste("MOD", c(1:10), sep=""))#
+y <- merge(parm.est, models)#
 #
-humifusa.size.model.results = randeffects_model_results_function(#
-	covariance.parms.test, #
-	convergence.status, #
-	covariance.parms.estimates, #
-	conditional.fit.statistics, #
-	fit.statistics,#
-	parms.estimates#
-)#
-humifusa.size.converg.status = #
-	randeffects_converg_status_function(modelresults=humifusa.size.model.results)#
-humifusa.size.covar.results = #
-	randeffects_G_side_effects_test_function(humifusa.size.model.results)#
-humifusa.size.covar.parms = #
-	randeffects_covar_parms_estimates_function(humifusa.size.model.results)#
-humifusa.size.rand.model.selection = #
-	randeffects_model_selection_function(humifusa.size.model.results)
-library(dataproc)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parms.test = #
-	RGR.humifusa.size.random.effects.models.covariance.parameters.test#
-convergence.status = #
-	RGR.humifusa.size.random.effects.models.convergence.status#
-covariance.parms.estimates = #
-	RGR.humifusa.size.random.effects.models.covariance.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.random.effects.models.conditional.fit.statistics#
-fit.statistics = #
-	RGR.humifusa.size.random.effects.models.fit.statistics#
-parms.estimates = #
-	RGR.humifusa.size.random.effects.models.parameter.estimates#
-#
-humifusa.size.model.results = randeffects_model_results_function(#
-	covariance.parms.test, #
-	convergence.status, #
-	covariance.parms.estimates, #
-	conditional.fit.statistics, #
-	fit.statistics,#
-	parms.estimates#
-)#
-humifusa.size.converg.status = #
-	randeffects_converg_status_function(modelresults=humifusa.size.model.results)#
-humifusa.size.covar.results = #
-	randeffects_G_side_effects_test_function(humifusa.size.model.results)#
-humifusa.size.covar.parms = #
-	randeffects_covar_parms_estimates_function(humifusa.size.model.results)#
-humifusa.size.rand.model.selection = #
-	randeffects_model_selection_function(humifusa.size.model.results)
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
-devtools::test()#
-devtools::document()#
-devtools::install()
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
-#devtools::test()#
-devtools::document()#
-devtools::install()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parms.test = #
-	RGR.humifusa.size.random.effects.models.covariance.parameters.test#
-convergence.status = #
-	RGR.humifusa.size.random.effects.models.convergence.status#
-covariance.parms.estimates = #
-	RGR.humifusa.size.random.effects.models.covariance.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.random.effects.models.conditional.fit.statistics#
-fit.statistics = #
-	RGR.humifusa.size.random.effects.models.fit.statistics#
-parms.estimates = #
-	RGR.humifusa.size.random.effects.models.parameter.estimates#
-#
-humifusa.size.model.results = randeffects_model_results_function(#
-	covariance.parms.test, #
-	convergence.status, #
-	covariance.parms.estimates, #
-	conditional.fit.statistics, #
-	fit.statistics,#
-	parms.estimates#
-)#
-humifusa.size.converg.status = #
-	randeffects_converg_status_function(modelresults=humifusa.size.model.results)#
-humifusa.size.covar.results = #
-	randeffects_G_side_effects_test_function(humifusa.size.model.results)#
-humifusa.size.covar.parms = #
-	randeffects_covar_parms_estimates_function(humifusa.size.model.results)#
-humifusa.size.rand.model.selection = #
-	randeffects_model_selection_function(humifusa.size.model.results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.size.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.model.selection.models.conditional.fit.statistics#
-select_list = c(#
-	"Intercept",#
-	"C_t",#
-	"Native Bug",#
-	"Native Scale",#
-	"Native Moth",#
-	"Native Insects",#
-	"P",#
-	"T", #
-	"P x T",#
-	"Insect x Weather",#
-	"Location(Year)",#
-	"pdG",#
-	"Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)"#
-)#
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables %>%#
-	cAIC_function %>%#
-	addTempxPrecipColumns %>%#
-	addInsectWeatherCol %>%#
-	processColumnNames %>%#
-	processT1P1ColumnNames %>%#
-	as.data.table %>%#
-	setnames("Location(Year) ", "Location(Year)") %>%#
-	as.data.frame %>%#
-	.[, select_list]
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables %>%#
-	cAIC_function
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables
-head(modelselection_size_results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-head(modelselection_size_results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parms.estimates
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.size.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
+#y <- merge(random.effects, parm.est)#
+y$Lower %<>% as.numeric#
+y$Upper %<>% as.numeric#
+y$tValue %<>% as.numeric#
+y %<>% round_df(2)
 setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("Subject" %in% names(covariance.parameter.estimates)) {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm, Subject)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	} else {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	}#
-	# what i
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-conditional.fit.statistics %<>% #
-		convertShorttoLong %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		convertShorttoLong %>%#
-		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y <- parameter.estimates %>% constructConfInt
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-conditional.fit.statistics
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-models.dimensions
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {y %<>% filter(NatInsect_t_1!=0)}
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("NatInsect_t_1" %in% y$Effect) {y %<>% filter(NatInsect_t_1!=0)}
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-"NatInsect_t_1" %in% y$Effect
-y %>% filter(NatInsect_t_1!=0)
-y %>% filter(!(NatInsect_t_1==0))
-y %>% filter(!(NatInsect_t_1==1))
-y %>% filter(NatInsect_t_1==NA)
-y %>% filter(is.na(NatInsect_t_1))
-y %>% filter(is.na(NatInsect_t_1), NatInsect_t_1==1)
-y %>% filter(is.na(NatInsect_t_1) & NatInsect_t_1==1)
-y %>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("NatInsect_t_1" %in% y$Effect) {#
-		filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates) %>%#
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates) %>%#
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))
-y
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
-#devtools::test()#
-devtools::document()#
-devtools::install()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.size.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.model.selection.models.conditional.fit.statistics#
-select_list = c(#
-	"Intercept",#
-	"C_t",#
-	"Native Bug",#
-	"Native Scale",#
-	"Native Moth",#
-	"Native Insects",#
-	"P",#
-	"T", #
-	"P x T",#
-	"Insect x Weather",#
-	"Location(Year)",#
-	"pdG",#
-	"Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)"#
-)#
-modelselection_size_results = createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables %>%#
-	cAIC_function %>%#
-	addTempxPrecipColumns %>%#
-	addInsectWeatherCol %>%#
-	processColumnNames %>%#
-	processT1P1ColumnNames %>%#
-	as.data.table %>%#
-	setnames("Location(Year) ", "Location(Year)") %>%#
-	as.data.frame %>%#
-	.[, select_list] #
-#
-modelselection_size_results[is.na(modelselection_size_results)] <- ""#
-#
-model_selection_converge_results <- model_selection_converge_results_function(modelselection_size_results)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables %>%#
-	cAIC_function %>%#
-	addTempxPrecipColumns %>%#
-	addInsectWeatherCol
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-) %>% #
-	processWeatherVariables
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-library(modresproc)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-# MODEL SELECTION#
-covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.size.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("Subject" %in% names(covariance.parameter.estimates)) {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm, Subject)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	} else {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	}#
-	# what is this code for?#
-	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
-	conditional.fit.statistics %<>% #
-		convertShorttoLong %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		convertShorttoLong %>%#
-		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y %<>% dcast(modelVars~Effect, value.var="Estimate.CF")
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics)
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions)
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates)
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates) %>%#
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))
-y
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-# MODEL SELECTION#
-covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.size.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
-#devtools::test()#
-devtools::document()#
-devtools::install()
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
-#devtools::test()#
-devtools::document()
-warnings()
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
-#devtools::test()#
-devtools::document()#
-devtools::install()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
-)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-# to verify that all models have the same covariance parameters included#
-	if ("Subject" %in% names(covariance.parameter.estimates)) {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm, Subject)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	} else {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	}#
-	# what is this code for?#
-	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
-	conditional.fit.statistics %<>% #
-		convertShorttoLong %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		convertShorttoLong %>%#
-		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
-		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates) %>%#
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))
-y
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' Paste PCA axis data together#
-#' #
-#' @param y#
-#' #
-#' @export#
-#
-processWeatherVariables <- function(y) {#
-	if ("T1" %in% names(y)) {#
-		y %<>%#
-		group_by(modelVars) %>%#
-		mutate(#
-			T1 = replace(#
-				T1,#
-				which(!is.na(T1)),#
-				paste("T1 = ", T1, sep="")#
-			)#
-		) %>%#
-		ungroup %>%#
-		as.data.frame#
-	}#
-	if ("T2" %in% names(y)) {#
-		y %<>%#
-		group_by(modelVars) %>%#
-		mutate(#
-			T2 = replace(#
-				T2,#
-				which(!is.na(T2)),#
-				paste("T2 = ", T2, sep="")#
-			)#
-		) %>%#
-   		mutate(#
-   			T1 = paste(T1, T2, sep=", ")#
-   		) %>%#
-		ungroup %>%#
-		as.data.frame#
-	}#
-	if ("P1" %in% names(y)) {#
-		y %<>%#
-		group_by(modelVars) %>%#
-		mutate(#
-			P1 = replace(#
-				P1,#
-				which(!is.na(P1)),#
-				paste("P1 = ", P1, sep="")#
-			)#
-		) %>%#
-		ungroup %>%#
-		as.data.frame#
-	}#
-	if ("P2" %in% names(y)) {#
-		y %<>%#
-		group_by(modelVars) %>%#
-		mutate(#
-			P2 = replace(#
-				P2,#
-				which(!is.na(P2)),#
-				paste("P2 = ", P2, sep="")#
-			)#
-		) %>%#
-		mutate(#
-			P1 = paste(P1, P2, sep=", ")#
-		) %>%#
-		ungroup %>%#
-		as.data.frame#
-	}#
-	return(y)#
-}#
-#
-#' Build table of candidate models#
+#' @title Build table of candidate models#
 #' #
 #' @param covariance.parameter.estimates#
 #' @param models.dimensions#
@@ -789,68 +159,512 @@ processWeatherVariables <- function(y) {#
 #' @importFrom dplyr mutate#
 #' @export#
 #
-createModelSelectionTable <- function(covariance.parameter.estimates, models.dimensions, convergence.status, parameter.estimates, #
-	conditional.fit.statistics) {#
-	# to verify that all models have the same covariance parameters included#
-	if ("Subject" %in% names(covariance.parameter.estimates)) {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm, Subject)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	} else {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	}#
-	# what is this code for?#
-	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
-	conditional.fit.statistics %<>% #
-		convertShorttoLong %>%#
-		.[, -3]#
+nlmixed_table_function <- function(models.dimensions, convergence.status, parameter.estimates, round.n=2) {#
 	models.dimensions %<>%#
-		convertShorttoLong %>%#
-		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y <- parameter.estimates %>% constructConfInt#
-	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}#
-	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}#
-	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}#
-	if ("ME_t_1" 		%in% y$Effect) {y %<>% filter(ME_t_1!=0)}#
-	if ("NatInsect_t_1" %in% y$Effect) {#
-		y %<>% filter(is.na(NatInsect_t_1) | NatInsect_t_1==1)#
-	}#
-	y %<>% dcast(modelVars~Effect, value.var="Estimate.CF") %>%#
-		# fit statistics#
-		merge(conditional.fit.statistics) %>%#
+		dcast(modelVars~Descr, value.var="Value") %>%#
+		dplyr::select(modelVars, Parameters)#
+	parameter.estimates$Estimate %<>% round(., round.n)	#
+	parameter.estimates$Lower %<>% round(., round.n)	#
+	parameter.estimates$Upper %<>% round(., round.n)	#
+	parameter.estimates %<>% mutate(Estimate.CF = paste(#
+		Estimate,#
+		" [",#
+		Lower,#
+		", ",#
+		Upper,#
+		"]",#
+		sep=""#
+	))#
+	convergence.status %<>% #
+		dplyr::select(modelVars, Status) %>%#
+		filter(Status==0)#
+	y = parameter.estimates %>%#
+		mutate(#
+			ModelType = "Count Model",#
+			ModelType = replace(#
+				ModelType, #
+				grep("a", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Loc", parameter.estimates$Parameter), #
+				"Zero Model"#
+			),#
+			ModelType = replace(#
+				ModelType, #
+				grep("sigma2_Yr", parameter.estimates$Parameter), #
+				"Count Model"#
+			)#
+		) %>%#
+		mutate(#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a0" | Parameter=="b0"), #
+				"Intercept"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a1" | Parameter=="b1"), #
+				"C_t"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a2" | Parameter=="b2"), #
+				"Native Bug Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a3" | Parameter=="b3"), #
+				"Native Scale Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a4" | Parameter=="b4"), #
+				"Native Moth Presence"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a5" | Parameter=="b5"), #
+				"T1, F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a6" | Parameter=="b6"), #
+				"E1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a7" | Parameter=="b7"), #
+				"F, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a8" | Parameter=="b8"), #
+				"P1, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a9" | Parameter=="b9"), #
+				"P2, S/S"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a10" | Parameter=="b10"), #
+				"P1 F/W"),#
+			Parameter = replace(#
+				Parameter, #
+				which(Parameter=="a11" | Parameter=="b11"), #
+				"P2 F/W")#
+		) %>%#
+		# change effects to columns#
+		dcast(modelVars + ModelType ~ Parameter, value.var="Estimate.CF") %>%#
 		merge(models.dimensions) %>%#
-		merge(covariance.parameter.estimates) %>%#
-		merge(convergence.status %>% dplyr::select(modelVars, pdG))#
+		merge(convergence.status) %>%#
+		dplyr::select(-Status)#
+	return(y)#
+}#
+#
+#' @title Replace Parameter Names for NLMIXED Output#
+#' #
+#' @param y Parameter estimates output#
+#' #
+#' @export#
+replaceNLMIXEDnames <- function(y) {#
+	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	#
+	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"#
+	y[y$Parameter == "A2" | y$Parameter == "B2", ]$Parameter <- "Native Bug"#
+	y[y$Parameter == "A3" | y$Parameter == "B3", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"#
+	y[y$Parameter == "B4", ]$Parameter 			<- "Mean Degree Day (Spring/Summer)"#
+	y[y$Parameter == "B5", ]$Parameter 			<- "P1 (Fall/Winter)"#
+	return(y)#
+}#
+#
+#' @title Replace Parameter Names for NLMIXED Output for O. stricta#
+#' #
+#' @param y Parameter estimates output#
+#' #
+#' @export#
+replaceNLMIXEDnamesOstricta <- function(y) {#
+	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	#
+	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"#
+	y[y$Parameter == "B2", ]$Parameter <- "Invasive Moth"#
+	return(y)#
+}#
+#
+#' @title Replace Parameter Names for NLMIXED Output#
+#' #
+#' @param y Parameter estimates output#
+#' #
+#' @export#
+replaceGENMODRowNames <- function(y) {#
+	if ("Ln_size_max_t_1_st" %in% y$Parameter) {#
+		y[y$Parameter == "Ln_size_max_t_1_st", ]$Parameter <- "$C_t$"	#
+	}#
+	if ("CH_t_1" %in% y$Parameter) {#
+		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"#
+	}#
+	if ("DA_t_1" %in% y$Parameter) {#
+		y[y$Parameter == "DA_t_1", ]$Parameter 		<- "Native Scale"#
+	}#
+	if ("ME_t_1" %in% y$Parameter) {#
+		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth"#
+	}#
+	if ("T1_FW" %in% y$Parameter) {#
+		y[y$Parameter == "T1_FW", ]$Parameter 		<- "T1 (Fall/Winter)"#
+	}#
+	if ("E1_SS_st" %in% y$Parameter) {#
+		y[y$Parameter == "E1_SS_st", ]$Parameter 	<- "Mean Maximum Daily Temperature (Spring/Summer)"#
+	}#
+	if ("F_SS_st" %in% y$Parameter) {#
+		y[y$Parameter == "F_SS_st", ]$Parameter 	<- "Mean Degree Day (Spring/Summer)"#
+	}#
+	if ("P1_SS" %in% y$Parameter) {#
+		y[y$Parameter == "P1_SS", ]$Parameter 		<- "P1 (Spring/Summer)"#
+	}#
+	if ("P2_SS" %in% y$Parameter) {#
+		y[y$Parameter == "P2_SS", ]$Parameter 		<- "P2 (Spring/Summer)"#
+	}#
+	if ("P1_FW" %in% y$Parameter) {#
+		y[y$Parameter == "P1_FW", ]$Parameter 		<- "P1 (Fall/Winter)"#
+	}#
+	if ("P2_FW" %in% y$Parameter) {#
+		y[y$Parameter == "P2_FW", ]$Parameter 		<- "P2 (Fall/Winter)"#
+	}#
 	return(y)#
 }
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
+parm.est <- fruit.STRICTA.parameter.estimates %>% round_df(2)#
+models <- data.frame(modelVars=paste("MOD", c(1:10), sep=""))#
+y <- merge(parm.est, models)#
+#
+#y <- merge(random.effects, parm.est)#
+y$Lower %<>% as.numeric#
+y$Upper %<>% as.numeric#
+y$tValue %<>% as.numeric#
+y %<>% round_df(2)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+y %<>%#
+	constructConfInt %>%#
+	addVitalRateColumn %>%#
+	replaceNLMIXEDnamesOstricta %>%#
+	constructConfIntforRandomEffects#
+#
+# go from long to short format         #
+y %<>% dcast(modelVars + `Vital Rate` ~ Parameter, value.var="Estimate.CF")
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+y %<>% #merge(random.effects) %>%#
+	merge(fruit.STRICTA.fit.statistics %>% filter(Descr=="AIC (smaller is better)")) %>%#
+	arrange(Value) %>%#
+	dplyr::select(#
+		modelVars,#
+		`Vital Rate`,#
+		Intercept,#
+		C_t,#
+		everything()#
+	)#
+y[which(y$`Vital Rate`=="Fruit Abundance"), ]$Value <- NA
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+y[is.na(y)] <- ""	#
+# create a single random effects column#
+y %<>% mutate(#
+	`$\\gamma$` = paste(#
+		abLoc, #
+		abYr, #
+		s2_aLoc, #
+		s2_aLocYr, #
+		s2_aYr, #
+		s2_bLoc, #
+		s2_bLocYr, #
+		s2_bYr, #
+		sep=""#
+	),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Location (Fecundity Year) = 1 [-0.07, 2.08]Fecundity Year = 0 [NA, NA]"),#
+		"Location (Fecundity Year) = 1 [-0.07, 2.08], Fecundity Year = 0 [NA, NA]"),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Location = 0 [NA, NA]Location = 0 [NA, NA]"),#
+		"Location = 0 [NA, NA], Location = 0 [NA, NA]"),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Fecundity Year = 0 [NA, NA]Fecundity Year = 0.54 [-3.55, 4.64]"),#
+		"Fecundity Year = 0 [NA, NA], Fecundity Year = 0.54 [-3.55, 4.64]"),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Location (Fecundity Year) = 0 [NA, NA]Fecundity Year = 0.56 [-1.58, 2.7]"),#
+		"Location (Fecundity Year) = 0 [NA, NA], Fecundity Year = 0.56 [-1.58, 2.7]")#
+)#
+y %<>% dplyr::select(-c(abLoc, abYr,  s2_aLoc, s2_aLocYr, s2_aYr, s2_bLoc, s2_bLocYr, s2_bYr ))
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+# add AIC model selection	#
+y$Value %<>% as.numeric#
+y %<>% setnames("Value", "AIC")#
+y %<>% #
+	AIC_function %>%#
+	arrange(modelVars)#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`delta AIC` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`delta AIC`#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Model Lik` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Model Lik`#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Prob(Model)` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Prob(Model)`#
+# rename Vital Rates#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Vital Rate` <- "Zero"#
+y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Vital Rate` <- "Count"#
+# give Model Number	#
+for (i in 1:length(unique(y$modelVars))) {#
+	y[which(y$modelVars==unique(y$modelVars)[i]), ]$modelVars <- i#
+}
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+y %<>% cleanAICModelSelectionZIP
+y
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+y[is.na(y)] <- ""#
+y %<>%#
+	processColumnNames %>%#
+	processModSelectionColumnNames#
+#
+y %<>% dplyr::select(#
+	Model,#
+	`Vital Rate`,#
+	`$\\gamma$`,#
+	`$\\beta_{0}$`,#
+	`$C_t$`,#
+	`Invasive Moth`,#
+	`$\\Delta$AIC`,#
+	`Model $\\Lagr$`,#
+	`$P$(Model)`#
 )
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-covariance.parameter.estimates = RGR.humifusa.size.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.size.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.size.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.size.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.size.model.selection.models.conditional.fit.statistics
+# give Model Number	#
+y$Model %<>% as.numeric#
+y$Model <- rep(1:10, each=2)#
+y %>% pandoc.table(split.tables=500)
 setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-createModelSelectionTable(#
-	covariance.parms.estimates, #
-	models.dimensions, #
-	convergence.status, #
-	parameter.estimates, #
-	conditional.fit.statistics#
+# give Model Number	#
+y$Model %<>% as.numeric#
+y$Model <- rep(1:9, each=2)#
+y %>% pandoc.table(split.tables=500)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+x <- fruit.humifusa.GLIMMIX.covariance.parameters %>%#
+dplyr::select(-modelVars) %>%#
+setnames("CovParm", "Covariance Parameter") %>%#
+setnames("StdErr", "Standard Error") %>%#
+setnames("LowerLRCL", "Lower Bound") %>%#
+setnames("probLRLower", "$P > \\chi^2$") %>%#
+setnames("UpperLRCL", "Upper Bound") %>%#
+setnames("UpperLRCL", "$P > \\chi^2$") %>%#
+as.data.frame
+x
+fruit.humifusa.GLIMMIX.covariance.parameters
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+x <- fruit.humifusa.GLIMMIX.covariance.parameters %>%#
+dplyr::select(-modelVars) %>%#
+setnames("CovParm", "Covariance Parameter") %>%#
+setnames("StdErr", "Standard Error") %>%#
+setnames("LowerLRCL", "Lower Bound") %>%#
+setnames("probLRLower", "$P > \\chi^2$") %>%#
+setnames("UpperLRCL", "Upper Bound") %>%#
+setnames("probLRUpper", "$P > \\chi^2$") %>%#
+as.data.frame
+x
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+x <- fruit.humifusa.GLIMMIX.covariance.parameters %>%#
+dplyr::select(-modelVars) %>%#
+setnames("CovParm", "Covariance Parameter") %>%#
+setnames("StdErr", "Standard Error") %>%#
+setnames("LowerLRCL", "Lower Bound") %>%#
+setnames("probLRLower", "$P > \\chi^2$") %>%#
+setnames("UpperLRCL", "Upper Bound") %>%#
+setnames("probLRUpper", "$P > \\chi^2$") %>%#
+as.data.frame#
+x$`Covariance Parameter` = c("Location", "Location (Year)", "Year")#
+x %>% pandoc.table(#
+	split.tables=500,#
+	caption = "Estimated Likelihood 95% Confidence Bounds."#
 )
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+parm.est <- fruit.humifusa.parameter.estimates %>% round_df(2)#
+models <- data.frame(modelVars=paste("MOD", c(0:10), sep=""))#
+y <- merge(parm.est, models)#
+# y <- merge(random.effects, parm.est)#
+y$Lower %<>% as.numeric#
+y$Upper %<>% as.numeric#
+y$tValue %<>% as.numeric#
+y %<>% round_df(2)#
+#
+y %<>%#
+	constructConfInt %>%#
+	addVitalRateColumn %>%#
+	replaceNLMIXEDnames %>%#
+	constructConfIntforRandomEffects %>%#
+	constructConfIntforWeatherData#
+# go from long to short format         #
+y %<>% dcast(modelVars + `Vital Rate` ~ Parameter, value.var="Estimate.CF") #
+# create Temperature Column#
+y$`Mean Degree Day (Spring/Summer)`[which(is.na(y$`Mean Degree Day (Spring/Summer)`))] <- ""#
+y$`Mean Max. Temp (Spring/Summer)`[which(is.na(y$`Mean Max. Temp (Spring/Summer)`))] <- ""#
+y$Temperature <- ifelse(#
+	y$`Mean Degree Day (Spring/Summer)`=="",#
+	y$`Mean Max. Temp (Spring/Summer)`,#
+	paste(y$`Mean Degree Day (Spring/Summer)`, y$`Mean Max. Temp (Spring/Summer)`, sep=", ")#
+)#
+# merge#
+y %<>% #
+	merge(fruit.humifusa.fit.statistics %>% filter(Descr=="AIC (smaller is better)"), all.x=T) %>%#
+	arrange(Value)#
+y[which(y$`Vital Rate`=="Fruit Abundance"), ]$Value <- NA#
+# add AIC model selection	#
+y %<>% setnames("Value", "AIC")#
+y$AIC %<>% as.numeric#
+y %<>% #
+	AIC_function %>%#
+	arrange(modelVars)#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`delta AIC` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`delta AIC`#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Model Lik` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Model Lik`#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Prob(Model)` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Prob(Model)`#
+# rename Vital Rates#
+y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Vital Rate` <- "Zero"#
+y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Vital Rate` <- "Count"#
+# give Model Number	#
+for (i in 1:length(unique(y$modelVars))) {#
+	y[which(y$modelVars==unique(y$modelVars)[i]), ]$modelVars <- i#
+}#
+# arrange#
+y %<>% cleanAICModelSelectionZIP#
+y[is.na(y)] <- ""#
+y %<>%#
+	abbrInsectNames %>%#
+	processColumnNames %>%#
+	processModSelectionColumnNames#
+y %<>% mutate(#
+	`$\\gamma$` = paste(#
+		abLoc, #
+		abYr, #
+		s2_aLoc, #
+		s2_aLocYr, #
+		s2_aYr, #
+		s2_bLoc, #
+		s2_bLocYr, #
+		s2_bYr, #
+		sep=""#
+	),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Fecundity Year = 0 [NA, NA]Fecundity Year = 0 [NA, NA]"),#
+		"Fecundity Year = 0 [NA, NA], Fecundity Year = 0 [NA, NA]"),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Location (Fecundity Year) = 0 [NA, NA]Fecundity Year = 0 [-0.01, 0.02]"),#
+		"Location (Fecundity Year) = 0 [NA, NA], Fecundity Year = 0 [-0.01, 0.02]"),#
+	`$\\gamma$` = replace(#
+		`$\\gamma$`,#
+		which(`$\\gamma$` == "Location (Fecundity Year) = 0 [NA, NA]Fecundity Year = 0 [NA, NA]"),#
+		"Location (Fecundity Year) = 0 [NA, NA], Fecundity Year = 0 [NA, NA]")#
+)
+u
+y
+ls()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+x = timeseries_all_surveys[which(timeseries_all_surveys$Species=="Opuntia humifusa"), ]$PlantID %>% unique %>% length
+x
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+RGR.humifusa.size.model.selection.models.class.levels
+ls()
+fruit.humifusa.dimensions
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+ls()
+fruit.STRICTA.genmod.number.of.observations
+fruit.humifusa.genmod.model.info
+fruit.humifusa.dimensions
+fruit.humifusa.genmod.model.info
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.stricta.genmod.zero.parameter.estimates %>%#
+	filter(modelVars=="S_INDIVINSECT") %>%#
+	filter(Level1 == 1 | is.na(Level1)) %>%#
+	filter(Parameter != "Scale") %>%#
+	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
+	processStatisticsColumnNames %>%#
+	replaceGENMODRowNames %>%#
+	pandoc.table(#
+		split.tables=500,#
+		caption = "Zero Component of the Model"#
+	)
+ls()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.STRICTA.genmod.zero.parameter.estimates %>%#
+	filter(modelVars=="S_INDIVINSECT") %>%#
+	filter(Level1 == 1 | is.na(Level1)) %>%#
+	filter(Parameter != "Scale") %>%#
+	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
+	processStatisticsColumnNames %>%#
+	replaceGENMODRowNames %>%#
+	pandoc.table(#
+		split.tables=500,#
+		caption = "Zero Component of the Model"#
+	)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.STRICTA.genmod.zero.parameter.estimates
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.STRICTA.genmod.zero.parameter.estimates %>%#
+	filter(modelVars=="S_FULLMODEL") %>%#
+	filter(Level1 == 1 | is.na(Level1)) %>%#
+	filter(Parameter != "Scale") %>%#
+	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
+	processStatisticsColumnNames %>%#
+	replaceGENMODRowNames %>%#
+	pandoc.table(#
+		split.tables=500,#
+		caption = "Zero Component of the Model"#
+	)
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./modresproc")#
+#devtools::test()#
+devtools::document()#
+devtools::install()
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.STRICTA.genmod.zero.parameter.estimates %>%#
+	filter(modelVars=="S_FULLMODEL") %>%#
+	filter(Level1 == 1 | is.na(Level1)) %>%#
+	filter(Parameter != "Scale") %>%#
+	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
+	processStatisticsColumnNames %>%#
+	replaceGENMODRowNames %>%#
+	pandoc.table(#
+		split.tables=500,#
+		caption = "Zero Component of the Model"#
+	)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.STRICTA.genmod.zero.parameter.estimates %>%#
+	filter(modelVars=="S_FULLMODEL") %>%#
+	filter(Level1 == 1 | is.na(Level1)) %>%#
+	filter(Parameter != "Scale") %>%#
+	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
+	processStatisticsColumnNames %>%#
+	replaceGENMODRowNames %>%#
+	pandoc.table(#
+		split.tables=500,#
+		caption = "Zero Component of the Model"#
+	)
+library(modresproc)
+setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
+fruit.STRICTA.genmod.zero.parameter.estimates %>%#
+	filter(modelVars=="S_FULLMODEL") %>%#
+	filter(Level1 == 1 | is.na(Level1)) %>%#
+	filter(Parameter != "Scale") %>%#
+	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
+	processStatisticsColumnNames %>%#
+	replaceGENMODRowNames %>%#
+	pandoc.table(#
+		split.tables=500,#
+		caption = "Zero Component of the Model"#
+	)
 setwd('/Users/KSauby/Documents/Projects')
 setwd("./modresproc")#
 #devtools::test()#

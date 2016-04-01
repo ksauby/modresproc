@@ -116,8 +116,12 @@ replaceNLMIXEDnames <- function(y) {
 	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"
 	y[y$Parameter == "A2" | y$Parameter == "B2", ]$Parameter <- "Native Bug"
 	y[y$Parameter == "A3" | y$Parameter == "B3", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"
-	y[y$Parameter == "B4", ]$Parameter 			<- "Mean Degree Day (Spring/Summer)"
-	y[y$Parameter == "B5", ]$Parameter 			<- "P1 (Fall/Winter)"
+	if ("B4" %in% y$Parameter) {
+		y[y$Parameter == "B4", ]$Parameter 	<- "Mean Degree Day (Spring/Summer)"
+	}
+	if ("B5" %in% y$Parameter) {
+		y[y$Parameter == "B5", ]$Parameter 	<- "P1 (Fall/Winter)"
+	}
 	return(y)
 }
 
@@ -127,9 +131,10 @@ replaceNLMIXEDnames <- function(y) {
 #' 
 #' @export
 replaceNLMIXEDnamesOstricta <- function(y) {
-	y[y$Parameter == "a0" | y$Parameter == "b0", ]$Parameter <- "Intercept"	
-	y[y$Parameter == "a1" | y$Parameter == "b1", ]$Parameter <- "C_t"
-	y[y$Parameter == "b2", ]$Parameter <- "Invasive Moth"
+	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	
+	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"
+	y[y$Parameter == "B2", ]$Parameter <- "Invasive Moth"
+	y[y$Parameter == "B3", ]$Parameter <- "Native Bug"
 	return(y)
 }
 
@@ -141,6 +146,9 @@ replaceNLMIXEDnamesOstricta <- function(y) {
 replaceGENMODRowNames <- function(y) {
 	if ("Ln_size_max_t_1_st" %in% y$Parameter) {
 		y[y$Parameter == "Ln_size_max_t_1_st", ]$Parameter <- "$C_t$"	
+	}
+	if ("CA_t_1" %in% y$Parameter) {
+		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "Invasive Moth"
 	}
 	if ("CH_t_1" %in% y$Parameter) {
 		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"

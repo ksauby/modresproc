@@ -44,12 +44,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				substr(Variable,1,3)=="log",
-				paste(Factor1, "(log)"),
+				paste(Factor1, "(ln)"),
 				Factor1
 			),
 			Factor2 = ifelse(
 				substr(Variable,1,3)=="log",
-				paste(Factor2, "(log)"),
+				paste(Factor2, "(ln)"),
 				Factor2
 			),
 			Variable = ifelse(

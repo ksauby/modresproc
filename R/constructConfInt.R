@@ -254,7 +254,7 @@ constructConfInt2 <- function(parm.est, round.n=2) {
 #' 
 #' @export
 
-constructConfInt <- function(parameter.estimates, round_n=2) {
+constructConfInt <- function(parameter.estimates, round_n=3) {
 	parameter.estimates %<>% round_df(round_n)
 	parameter.estimates %>% mutate(Estimate.CF = paste(
 		Estimate,

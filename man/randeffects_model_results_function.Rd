@@ -7,11 +7,19 @@
 randeffects_model_results_function(covariance.parms.test, convergence.status,
   covariance.parms.estimates, conditional.fit.statistics, fit.statistics,
   parms.estimates)
+
+randeffects_model_results_function(covariance.parms.test, convergence.status,
+  covariance.parms.estimates, conditional.fit.statistics, fit.statistics,
+  parms.estimates)
 }
 \arguments{
+\item{fit.statistics}{}
+
 \item{fit.statistics}{}
 }
 \description{
 Merge summary statistics from SAS GLIMMIX models to compare random effects models. DOES NOT LOAD RIGHT
+
+Merge summary statistics from SAS GLIMMIX models to compare random effects models for GTMNERR
 }
 

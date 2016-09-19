@@ -307,6 +307,33 @@ constructConfIntforRandomEffects <- function(y) {
 				sep=""
 			)
 		}
+		if (grepl("Island", y$Parameter[i])==T) {
+			if (grepl("NetIsland", y$Parameter[i])==T) {
+				y$Estimate.CF[i] = paste(
+					"Network x Island", 
+					"\n= ", 
+					y$Estimate.CF[i], 
+					sep=""
+				)
+			} else {
+			y$Estimate.CF[i] = paste(
+					"Island", 
+					"\n= ", 
+					y$Estimate.CF[i], 
+					sep=""
+				)
+			}
+		}
+		if (grepl("Network", y$Parameter[i])==T) {
+			y$Estimate.CF[i] = paste(
+				"Network", 
+				"\n= ", 
+				y$Estimate.CF[i], 
+				sep=""
+			)
+		}
+		
+		
 	}
 	return(y)
 }

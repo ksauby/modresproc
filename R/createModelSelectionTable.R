@@ -107,7 +107,7 @@ createModelSelectionTable <- function(covariance.parameter.estimates, models.dim
 	models.dimensions %<>%
 		convertShorttoLong %>%
 		select(modelVars, `Columns in X`, starts_with("Columns in Z"))
-	y <- parameter.estimates %>% constructConfInt
+	y <- standardized.coefficients %>% constructConfInt
 	if ("CA_t_1" 		%in% y$Effect) {y %<>% filter(CA_t_1!=0)}
 	if ("CH_t_1" 		%in% y$Effect) {y %<>% filter(CH_t_1!=0)}
 	if ("DA_t_1" 		%in% y$Effect) {y %<>% filter(DA_t_1!=0)}

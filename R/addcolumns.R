@@ -186,12 +186,12 @@ addInsectWeatherCol <- function(y) {
 				`Insect x Weather`
 			),
 			`Insect x Weather` = ifelse(
-				!is.na(`P1*CA_t_1*CH_t_1`),
+				!is.na(`P1*CA_t_1*CH_t`),
 				"Invasive Moth x Native Bug x P",
 				`Insect x Weather`
 			),
 			`Insect x Weather` = ifelse(
-				!is.na(`T1*CA_t_1*CH_t_1`),
+				!is.na(`T1*CA_t_1*CH_t`),
 				"Invasive Moth x Native Bug x T",
 				`Insect x Weather`
 			)
@@ -245,18 +245,13 @@ addVitalRateColumn <- function(y) {
  y$`Vital Rate` <- "Fruit Abundance"	
  y$`Vital Rate` <- replace(
  	y$`Vital Rate`,
- 	grep("a", y$Parameter, ignore.case=T),
+ 	grep("s2_a", y$Parameter, ignore.case=T),
  	"Fruit Absence"
  )
  y$`Vital Rate` <- replace(
  	y$`Vital Rate`,
- 	grep("aPlantID", y$Parameter, ignore.case=T),
+ 	grep("A", y$Parameter),
  	"Fruit Absence"
- )
- y$`Vital Rate` <- replace(
- 	y$`Vital Rate`,
- 	grep("bPlantID", y$Parameter, ignore.case=T),
- 	"Fruit Abundance"
  )
  return(y)
 }

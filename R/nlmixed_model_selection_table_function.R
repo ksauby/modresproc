@@ -125,6 +125,18 @@ replaceNLMIXEDnames <- function(y) {
 	return(y)
 }
 
+#' @title Replace Parameter Names for NLMIXED Output for GTMNERR O. stricta
+#' 
+#' @param y Parameter estimates output
+#' 
+#' @export
+replaceNLMIXEDnamesGTMNERR <- function(y) {
+	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	
+	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"
+	y[y$Parameter == "B2", ]$Parameter <- "Invasive Moth Plant Presence"
+	return(y)
+}
+
 #' @title Replace Parameter Names for NLMIXED Output for O. stricta
 #' 
 #' @param y Parameter estimates output
@@ -147,8 +159,11 @@ replaceGENMODRowNames <- function(y) {
 	if ("Ln_size_max_t_1_st" %in% y$Parameter) {
 		y[y$Parameter == "Ln_size_max_t_1_st", ]$Parameter <- "$C_t$"	
 	}
+	if ("Ln_Size_t_1_st" %in% y$Parameter) {
+		y[y$Parameter == "Ln_Size_t_1_st", ]$Parameter <- "$C_t$"	
+	}
 	if ("CA_t_1" %in% y$Parameter) {
-		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "Invasive Moth"
+		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "Invasive Moth Presence, t"
 	}
 	if ("CH_t_1" %in% y$Parameter) {
 		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"
@@ -157,7 +172,7 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "DA_t_1", ]$Parameter 		<- "Native Scale"
 	}
 	if ("ME_t_1" %in% y$Parameter) {
-		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth"
+		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth Presence, t"
 	}
 	if ("T1_FW" %in% y$Parameter) {
 		y[y$Parameter == "T1_FW", ]$Parameter 		<- "T1 (Fall/Winter)"
@@ -179,6 +194,18 @@ replaceGENMODRowNames <- function(y) {
 	}
 	if ("P2_FW" %in% y$Parameter) {
 		y[y$Parameter == "P2_FW", ]$Parameter 		<- "P2 (Fall/Winter)"
+	}
+	if ("Old_Moth_Evidence_t_" %in% y$Parameter) {
+		y[y$Parameter == "Old_Moth_Evidence_t_", ]$Parameter <- "Presence of Moth Evidence, t"
+	}
+	if ("OldMothPlantPres" %in% y$Parameter) {
+		y[y$Parameter == "OldMothPlantPres", ]$Parameter <- "Presence of Moth Evidence During the Study"
+	}
+	if ("CAPlantPres" %in% y$Parameter) {
+		y[y$Parameter == "CAPlantPres", ]$Parameter <- "Presence of Invasive Moth During the Study"
+	}
+	if ("MEPlantPres" %in% y$Parameter) {
+		y[y$Parameter == "MEPlantPres", ]$Parameter <- "Presence of Native Moth During the Study"
 	}
 	return(y)
 }

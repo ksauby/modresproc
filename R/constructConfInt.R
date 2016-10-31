@@ -267,6 +267,28 @@ constructConfInt <- function(parameter.estimates, round_n=3) {
 	))
 }
 
+#' Construct Conf. Intervals with p-values
+#' @param parameter.estimates Table of parameter.estimate output from SAS
+#' 
+#' @export
+
+constructConfIntpValue <- function(parameter.estimates, round_n=3) {
+	parameter.estimates %<>% round_df(round_n)
+	parameter.estimates %>% mutate(Estimate.CF = paste(
+		Estimate,
+		" [",
+		Lower,
+		", ",
+		Upper,
+		"]",
+		" (",
+		Probt,
+		")",
+		sep=""
+	))
+}
+
+
 #' Construct Conf. Intervals for Fecundity Random Effects
 
 #' @param parameter.estimates Table of parameter.estimate output from SAS

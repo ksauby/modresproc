@@ -5,7 +5,7 @@
 \title{Combine PCA results from SAS into a table}
 \usage{
 sas_PCA_table_function(eigens, factors, rfactors, dataset_type = "all",
-  round_n = 3, n.axes = 2)
+  round_n = 2, n.axes = 2)
 }
 \arguments{
 \item{eigens}{SAS output of eigenvalues and variance explained}

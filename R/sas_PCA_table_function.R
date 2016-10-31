@@ -13,7 +13,7 @@
 #' @importFrom plyr rbind.fill
 #' @importFrom reshape2 dcast
 
-sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all", round_n=3, n.axes=2) {
+sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all", round_n=2, n.axes=2) {
 	# which models are NOT in the rotated factor pattern data? merge them with the rotated factor pattern data
 	factors %<>% 
 		filter(!(modelVars %in% rfactors$modelVars)) %>%
@@ -40,16 +40,36 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 	eigens[, nums] %<>% round(round_n)
 	# edit cells so they indicate transformations
 	Y <- X %>% 
+		mutate(
+			Factor1 = ifelse(
+				str_sub(Variable, -3, -1)!="075" &
+				str_sub(Variable, -3, -1)!="125" &
+				substr(Variable,1,3)!="log" &
+				substr(Variable,1,3)!="sqr" &
+				substrRight(Variable,3)!="sqr",
+				paste(Factor1,  " (", Factor1sq, ")", sep=""),
+				Factor1
+			),
+			Factor2 = ifelse(
+				str_sub(Variable, -3, -1)!="075" &
+				str_sub(Variable, -3, -1)!="125" &
+				substr(Variable,1,3)!="log" &
+				substr(Variable,1,3)!="sqr" &
+				substrRight(Variable,3)!="sqr",
+				paste(Factor2,  " (", Factor2sq, ")", sep=""),
+				Factor2
+			)
+		) %>%
 		# log
 		mutate(
 			Factor1 = ifelse(
 				substr(Variable,1,3)=="log",
-				paste(Factor1, "(ln)"),
+				paste(Factor1, " (", Factor1sq, ") ", "[ln]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				substr(Variable,1,3)=="log",
-				paste(Factor2, "(ln)"),
+				paste(Factor2,  " (", Factor2sq, ") ", "[ln]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
@@ -62,12 +82,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				str_sub(Variable, -3, -1)=="125",
-				paste(Factor1, "(^1.25)"),
+				paste(Factor1,  " (", Factor1sq, ") ", "[^1.25]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				str_sub(Variable, -3, -1)=="125",
-				paste(Factor2, "(^1.25)"),
+				paste(Factor2,  " (", Factor2sq, ") ", "[^1.25]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
@@ -81,12 +101,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				str_sub(Variable, -3, -1)=="075",
-				paste(Factor1, "(^0.75)"),
+				paste(Factor1,  " (", Factor1sq, ") ", "[^0.75]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				str_sub(Variable, -3, -1)=="075",
-				paste(Factor2, "(^0.75)"),
+				paste(Factor2,  " (", Factor2sq, ") ", "[^0.75]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
@@ -99,12 +119,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				substr(Variable,1,3)=="sqr",
-				paste(Factor1, "(sqrt)"),
+				paste(Factor1,  " (", Factor1sq, ") ", "[sqrt]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				substr(Variable,1,3)=="sqr",
-				paste(Factor2, "(sqrt)"),
+				paste(Factor2,  " (", Factor2sq, ") ", "[sqrt]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
@@ -117,12 +137,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				substrRight(Variable,3)=="sqr",
-				paste(Factor1, "(^2)"),
+				paste(Factor1,  " (", Factor1sq, ") ", "[^2]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				substrRight(Variable,3)=="sqr",
-				paste(Factor2, "(^2)"),
+				paste(Factor2,  " (", Factor2sq, ") ", "[^2]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(

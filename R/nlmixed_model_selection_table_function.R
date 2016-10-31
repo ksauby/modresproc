@@ -163,7 +163,7 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "Ln_Size_t_1_st", ]$Parameter <- "$C_t$"	
 	}
 	if ("CA_t_1" %in% y$Parameter) {
-		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "Invasive Moth Presence, t"
+		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "$\\mu_t$"
 	}
 	if ("CH_t_1" %in% y$Parameter) {
 		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"
@@ -172,7 +172,7 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "DA_t_1", ]$Parameter 		<- "Native Scale"
 	}
 	if ("ME_t_1" %in% y$Parameter) {
-		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth Presence, t"
+		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "$\\nu_t$"
 	}
 	if ("T1_FW" %in% y$Parameter) {
 		y[y$Parameter == "T1_FW", ]$Parameter 		<- "T1 (Fall/Winter)"
@@ -196,16 +196,53 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "P2_FW", ]$Parameter 		<- "P2 (Fall/Winter)"
 	}
 	if ("Old_Moth_Evidence_t_" %in% y$Parameter) {
-		y[y$Parameter == "Old_Moth_Evidence_t_", ]$Parameter <- "Presence of Moth Evidence, t"
+		y[y$Parameter == "Old_Moth_Evidence_t_", ]$Parameter <- "$\\delta_t$"
 	}
 	if ("OldMothPlantPres" %in% y$Parameter) {
-		y[y$Parameter == "OldMothPlantPres", ]$Parameter <- "Presence of Moth Evidence During the Study"
+		y[y$Parameter == "OldMothPlantPres", ]$Parameter <- "$\\delta_s$"
 	}
 	if ("CAPlantPres" %in% y$Parameter) {
-		y[y$Parameter == "CAPlantPres", ]$Parameter <- "Presence of Invasive Moth During the Study"
+		y[y$Parameter == "CAPlantPres", ]$Parameter <- "$\\mu_s$"
 	}
 	if ("MEPlantPres" %in% y$Parameter) {
-		y[y$Parameter == "MEPlantPres", ]$Parameter <- "Presence of Native Moth During the Study"
+		y[y$Parameter == "MEPlantPres", ]$Parameter <- "$\\nu_s$"
 	}
+	if ("RGR_Size365_st" %in% y$Parameter) {
+		y[y$Parameter == "RGR_Size365_st", ]$Parameter <- "Annual RGR"
+	}
+	if ("Ln_Size_t*RGR_Size36" %in% y$Parameter) {
+		y[y$Parameter == "Ln_Size_t*RGR_Size36", ]$Parameter <- "$C_t \\times$ Annual RGR"
+	}
+	if ("LossToOffspring_st" %in% y$Parameter) {
+		y[y$Parameter == "LossToOffspring_st", ]$Parameter <- "$\\omega_{t+1}$"
+	}
+	if ("Ln_Size_t*LossToOffs" %in% y$Parameter) {
+		y[y$Parameter == "Ln_Size_t*LossToOffs", ]$Parameter <- "$C_t \\times \\omega_{t+1}$"
+	}
+	if ("FruitFlowers_st" %in% y$Parameter) {
+		y[y$Parameter == "FruitFlowers_st", ]$Parameter <- "$\\psi_{t+1}$"
+	}
+	if ("FruitFlow*Ln_Size_t_" %in% y$Parameter) {
+		y[y$Parameter == "FruitFlow*Ln_Size_t_", ]$Parameter <- "$C_t \\times \\psi_{t+1}$"
+	}
+	if ("Ln_Size_t*FruitFlowe" %in% y$Parameter) {
+		y[y$Parameter == "Ln_Size_t*FruitFlowe", ]$Parameter <- "$C_t \\times \\psi_{t+1}$"
+	}
+	if ("CAhistory" %in% y$Parameter) {
+		y[y$Parameter == "CAhistory", ]$Parameter <- "$\\mu_h$"
+	}
+	if ("MEhistory" %in% y$Parameter) {
+		y[y$Parameter == "MEhistory", ]$Parameter <- "$\\nu_h$"
+	}
+	if ("OldMothhistory" %in% y$Parameter) {
+		y[y$Parameter == "OldMothhistory", ]$Parameter <- "$\\delta_h$"
+	}
+	if ("cactus_density_per_p" %in% y$Parameter) {
+		y[y$Parameter == "cactus_density_per_p", ]$Parameter <- "Cactus Density per Plot"
+	}
+	
+	
+	
+	
 	return(y)
 }

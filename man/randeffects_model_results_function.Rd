@@ -2,24 +2,16 @@
 % Please edit documentation in R/randeffects_model_results_function.R
 \name{randeffects_model_results_function}
 \alias{randeffects_model_results_function}
-\title{Merge summary statistics from SAS GLIMMIX models to compare random effects models. DOES NOT LOAD RIGHT}
+\title{Merge summary statistics from SAS GLIMMIX models to compare random effects models for GTMNERR}
 \usage{
-randeffects_model_results_function(covariance.parms.test, convergence.status,
-  covariance.parms.estimates, conditional.fit.statistics, fit.statistics,
-  parms.estimates)
-
 randeffects_model_results_function(covariance.parms.test, convergence.status,
   covariance.parms.estimates, conditional.fit.statistics, fit.statistics,
   parms.estimates)
 }
 \arguments{
 \item{fit.statistics}{}
-
-\item{fit.statistics}{}
 }
 \description{
-Merge summary statistics from SAS GLIMMIX models to compare random effects models. DOES NOT LOAD RIGHT
-
 Merge summary statistics from SAS GLIMMIX models to compare random effects models for GTMNERR
 }
 

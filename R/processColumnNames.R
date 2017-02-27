@@ -25,16 +25,16 @@ processColumnNames <- function(y) {
 	if ("ME" %in% names(y)) {setnames(y, "ME", "Native Moth")}
 	if ("MEhistory" %in% names(y)) {setnames(y, "MEhistory", "$\\nu_h$")}
 	if ("CAhistory" %in% names(y)) {setnames(y, "CAhistory", "$\\mu_h$")}
-	if ("Old_Moth_Evidence_t_" %in% names(y)) {setnames(y, "Old_Moth_Evidence_t_", "$\\delta_t$")}
+	if ("Old_Moth_Evidence_t_" %in% names(y)) {setnames(y, "Old_Moth_Evidence_t_", "Moth Damage Evidence")}
 	if ("OldMothPlantPres" %in% names(y)) {setnames(y, "OldMothPlantPres", "Moth Damage Presence During the Study")}
 	if ("OldMothhistory" %in% names(y)) {setnames(y, "OldMothhistory", "$\\delta_h$")}
-	if ("CA_t_1" %in% names(y)) {setnames(y, "CA_t_1", "$\\mu_t$")}
+	if ("CA_t_1" %in% names(y)) {setnames(y, "CA_t_1", "Invasive Moth")}#"$\\mu_t$")}
 	if ("CAyr_t_1" %in% names(y)) {setnames(y, "CAyr_t_1", "Invasive Moth")}
 	if ("CH_t_1" %in% names(y)) {setnames(y, "CH_t_1", "Native Bug")}
 	if ("CHyr_t_1" %in% names(y)) {setnames(y, "CHyr_t_1", "Native Bug")}
 	if ("DA_t_1" %in% names(y)) {setnames(y, "DA_t_1", "Native Scale")}
 	if ("DAyr_t_1" %in% names(y)) {setnames(y, "DAyr_t_1", "Native Scale")}
-	if ("ME_t_1" %in% names(y)) {setnames(y, "ME_t_1", "$\\nu_t$")}
+	if ("ME_t_1" %in% names(y)) {setnames(y, "ME_t_1", "Native Moth")} # "$\\nu_t$")}
 	if ("MEyr_t_1" %in% names(y)) {setnames(y, "MEyr_t_1", "Native Moth")}
 	if ("NatInsect_t_1" %in% names(y)) {
 		setnames(y, "NatInsect_t_1", "Native Insects")

@@ -14,19 +14,31 @@ randeffects_model_results_function <- function(
 	covariance.parms.estimates, 
 	conditional.fit.statistics, 
 	fit.statistics,
-	parms.estimates
+	parms.estimates,
+	fit.statistic="AIC"
 )
 {	
 	conditional.fit.statistics %<>% 
 		convertShorttoLong %>%
 		.[, -(2:3)]
 	fit.statistics %<>% 
-		convertShorttoLong %>%
-		dplyr::select(
-			modelVars,    
-			`-2 Log Likelihood`,
-			`BIC  (smaller is better)`
-		)
+		convertShorttoLong
+	if (fit.statistic == "AIC") {
+		fit.statistics %<>%
+			dplyr::select(
+				modelVars,    
+				`-2 Log Likelihood`,
+				`AIC  (smaller is better)`
+			)
+	}
+	if (fit.statistic == "BIC") {
+		fit.statistics %<>%
+			dplyr::select(
+				modelVars,    
+				`-2 Log Likelihood`,
+				`BIC  (smaller is better)`
+			)
+	}
 	parms.estimates %<>% 
 		filter(!is.na(StdErr)) %>%
 		reshape2::dcast(modelVars~Effect, value.var="Estimate")
@@ -75,8 +87,13 @@ randeffects_model_results_function <- function(
 		setnames("probLRLower", 			"Prob(Lower LR)") %>%
 		setnames("UpperLRCL", 				"Upper LR CL") %>%
 		setnames("probLRUpper", 			"Prob(Upper LR)") %>%
-		setnames("BIC  (smaller is better)","BIC") %>%
 		setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%
 		setnames("-2 Log Likelihood",		"-2 Log Lik")
+	if (fit.statistic == "AIC") {
+		modelresults %<>% setnames("AIC  (smaller is better)","AIC")
+	}
+	if (fit.statistic == "BIC") {
+		modelresults %<>% setnames("BIC  (smaller is better)","BIC")
+	}
 	return(modelresults)
 }

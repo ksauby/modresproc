@@ -6,7 +6,7 @@
 \usage{
 randeffects_model_results_function(covariance.parms.test, convergence.status,
   covariance.parms.estimates, conditional.fit.statistics, fit.statistics,
-  parms.estimates)
+  parms.estimates, fit.statistic = "AIC")
 }
 \arguments{
 \item{fit.statistics}{}

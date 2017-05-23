@@ -1,28 +1,3 @@
-21.4*.813
-21.4 -21.4*.813
-library(lubridaste)
-library(lubrida=te)
-library(lubridate)
--v
-install.packages("rgeos", repos="http://R-Forge.R-project.org")#
-require(rgeos)
-library(rgeos)
-require(rgeos)
-library(rgeos)
-install.packages("rgdal", repos="http://R-Forge.R-project.org")#
-require(rgdal)
-R CMD INSTALL ~/Downloads/rgdal_0.9-1.tar.gz --configure-args='--with-gdal-config=/Library/Frameworks/GDAL.framework/Programs/gdal-config#
- --with-proj-include=/Library/Frameworks/PROJ.framework/Headers#
- --with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib'
-R CMD INSTALL ~/Downloads/rgdal_0.9-1.tar.gz --configure-args='--with-gdal-config=/Library/Frameworks/GDAL.framework/Programs/gdal-config--with-proj-include=/Library/Frameworks/PROJ.framework/Headers--with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib'
-library(lme3)
-library(lme4)
-300/241
-.244*30
-1.25*300
-1.25*240
-7*12
-7849-7527
 322/1353
 8028-7527
 501/1353
@@ -127,546 +102,392 @@ devtools::install(pkg="/Users/KSauby/Documents/Projects/ACSampling/code/Restrict
 install.packages("~/Documents/Projects/ACSampling/code/Restricted_ACS_Simulations/ACSampling_0.0.0.9000.tar.gz")
 ??limit
 37-13
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
-reload.project()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series')
+24/37
+37-13
+26/37
+25/37
+23/37
+29/37
+30/37
+22/37
+30/37
+29/37
+28/37
+27/37
+35/37
+30/37
+29/37
+26/37
+26/37 - .6757
+28/37
+30/37
+29/37
+37-12
+25/37
+219*.8
+219*.8 - 17
+26/3
+17/900
+42/900
+49/900
+29/40
+1/25
+8/25
+10/25
+(7.5 + 3.75)/15
+12*0.75
+11 * 0.75
+11/15
+11*0.25
+11/15 * 6
+32/41 +0.03.5
+32/41 + 0.035
+(32/41 + 0.035)*100
+100/41
+23/40 * 100
+(23/40 * 100)+5
+(164 + 13.5 + 6)
+(164 + 13.5 + 6)/365
+(164 + 13.5 + 6 + (50))/365
+(164 + 13.5 + 6 + (60))/365
+(164 + 13.5 + 6 + (70))/365
+(164 + 13.5 + 6 + (75))/365
+102/40
+102/41
+?table
+9.49/2
+12.75+8.25
+(10.5 + 6.5)/(12.75+8.25)
+.25^2 * 2
+(.25^2 * 2)^0.5
+(.25^2 * 2)^0.5 * 2
+3/8
+5/8
+6/8
+30*1.5
+40*15
+40*1.5
+13.25 - 4.5
+(276.29+8.75)/365
+16*3
+16*4
+84/12
+9/12
+9/12*14
+22+60+78+80+88+98
+22+38+18+2+8+10
+239/785
+(239+53)/785
+.492+.139
+.412+.166+.002
+.412/.58
+.166/.58
+.412*.58
+.71*.58
+98-54
+22+49+43+33+36+44
+60-11
+78-26
+80-35
+88-47
+98-52
+22+49+52+45+41+46
+library(RMark)
+?test_ddl
+data(dipper)    dipper.processed=process.data(dipper,groups=("sex"))    release.gof(dipper.processed)
+4+19+7+12
+4+17.83+7+12
+40.83/42
+40.83/42*14
+14
+(11.25+5)/(25.5 + 10.25 - 14)
+365*0.6666
+365*0.6666 - 75.89
+5/6 * 2
+5/6 * 2 + 75.89
+365*0.6666 -77.55667
+365*0.6666 -77.55667 - 6 - 13 - 1
+145.7523/2
+15*3
+11*5
+8/12*14
+4+15.33+5.5+12
+(4+15.33+5.5+12)
+(4+15.33+5.5+12)/(4+19+7+12)
+(4+19+7+12)
+(4+15.33+5.5+12)/(4+19+7+12)*14
+2.5+17.5+12
+32/42
+32/42 * 14
+4+12+6.5+12
+(4+12+6.5+12)/42 * 14
+5/6*2
+5/6*2 + 0.25
+5/6*2 + 0.5
+2577.77/12
+15/20
+15/20*6
+300 - 4*50
+300 - 4*40
+4.5/12*14
+9+9+7+9
+33.5/34 * 14
+32/34 * 14
+32/34*14
+7+8.5+7+7
+(7+8.5+7+7)/34 * 14
+(7+5.5+5.5+8.5)/34 * 14
+(7+5.5+5.5+8.5)/(9+7+9+9) * 14
+9+7+9+9
+(14.25+7.25)/(24.75+10.25-9)
+(16.5+7.75)/(24.75+10.25)
+(16.5+7.75)/(24.75+10.25)*6
+(5.25+5.5)/(22.5+10.5)
+(5.25+5.5)/(22.5+10.5)*6
+(9.75+5.5)/(24.7+10.25-5)*6
+(9.75+5.5)/(24.7+10.25-5)
+3.98/6
+(9.75+5.5)/(24.7+10.25-10)
+(9.75+5.5)/(24.7+10.25-10)*6
+5/6*2
+1.83-5/6*2
+1.83-4/6*2
+5/6*2 + 0.5
+4/6*2 + 0.5
+4/6*2
+4/6 + 0.5
+4/6*2 + 0.5
+33/34 * 14
+17.5*4
+24*4 + 1.75*4
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis')
 library(ProjectTemplate)#
-setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
+#
+# when working on a Windows computer#
+# setwd("C:/Users/KSauby/Dropbox/gradschool/Research/Projects/sampling")#
+#
 # load project#
 load.project()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-parm.est <- fruit.STRICTA.parameter.estimates %>% round_df(2)#
-models <- data.frame(modelVars=paste("MOD", c(1:10), sep=""))#
-y <- merge(parm.est, models)#
-#
-#y <- merge(random.effects, parm.est)#
-y$Lower %<>% as.numeric#
-y$Upper %<>% as.numeric#
-y$tValue %<>% as.numeric#
-y %<>% round_df(2)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-#' @title Build table of candidate models#
-#' #
-#' @param covariance.parameter.estimates#
-#' @param models.dimensions#
-#' @param convergence.status#
-#' @param parameter.estimates#
-#' @param conditional.fit.statistics#
-#' #
-#' @importFrom reshape2 dcast#
-#' @importFrom dplyr mutate#
-#' @export#
-#
-nlmixed_table_function <- function(models.dimensions, convergence.status, parameter.estimates, round.n=2) {#
-	models.dimensions %<>%#
-		dcast(modelVars~Descr, value.var="Value") %>%#
-		dplyr::select(modelVars, Parameters)#
-	parameter.estimates$Estimate %<>% round(., round.n)	#
-	parameter.estimates$Lower %<>% round(., round.n)	#
-	parameter.estimates$Upper %<>% round(., round.n)	#
-	parameter.estimates %<>% mutate(Estimate.CF = paste(#
-		Estimate,#
-		" [",#
-		Lower,#
-		", ",#
-		Upper,#
-		"]",#
-		sep=""#
-	))#
-	convergence.status %<>% #
-		dplyr::select(modelVars, Status) %>%#
-		filter(Status==0)#
-	y = parameter.estimates %>%#
-		mutate(#
-			ModelType = "Count Model",#
-			ModelType = replace(#
-				ModelType, #
-				grep("a", parameter.estimates$Parameter), #
-				"Zero Model"#
-			),#
-			ModelType = replace(#
-				ModelType, #
-				grep("sigma2_Loc", parameter.estimates$Parameter), #
-				"Zero Model"#
-			),#
-			ModelType = replace(#
-				ModelType, #
-				grep("sigma2_Yr", parameter.estimates$Parameter), #
-				"Count Model"#
-			)#
-		) %>%#
-		mutate(#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a0" | Parameter=="b0"), #
-				"Intercept"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a1" | Parameter=="b1"), #
-				"C_t"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a2" | Parameter=="b2"), #
-				"Native Bug Presence"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a3" | Parameter=="b3"), #
-				"Native Scale Presence"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a4" | Parameter=="b4"), #
-				"Native Moth Presence"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a5" | Parameter=="b5"), #
-				"T1, F/W"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a6" | Parameter=="b6"), #
-				"E1, S/S"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a7" | Parameter=="b7"), #
-				"F, S/S"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a8" | Parameter=="b8"), #
-				"P1, S/S"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a9" | Parameter=="b9"), #
-				"P2, S/S"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a10" | Parameter=="b10"), #
-				"P1 F/W"),#
-			Parameter = replace(#
-				Parameter, #
-				which(Parameter=="a11" | Parameter=="b11"), #
-				"P2 F/W")#
-		) %>%#
-		# change effects to columns#
-		dcast(modelVars + ModelType ~ Parameter, value.var="Estimate.CF") %>%#
-		merge(models.dimensions) %>%#
-		merge(convergence.status) %>%#
-		dplyr::select(-Status)#
-	return(y)#
-}#
-#
-#' @title Replace Parameter Names for NLMIXED Output#
-#' #
-#' @param y Parameter estimates output#
-#' #
-#' @export#
-replaceNLMIXEDnames <- function(y) {#
-	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	#
-	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"#
-	y[y$Parameter == "A2" | y$Parameter == "B2", ]$Parameter <- "Native Bug"#
-	y[y$Parameter == "A3" | y$Parameter == "B3", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"#
-	y[y$Parameter == "B4", ]$Parameter 			<- "Mean Degree Day (Spring/Summer)"#
-	y[y$Parameter == "B5", ]$Parameter 			<- "P1 (Fall/Winter)"#
-	return(y)#
-}#
-#
-#' @title Replace Parameter Names for NLMIXED Output for O. stricta#
-#' #
-#' @param y Parameter estimates output#
-#' #
-#' @export#
-replaceNLMIXEDnamesOstricta <- function(y) {#
-	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	#
-	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"#
-	y[y$Parameter == "B2", ]$Parameter <- "Invasive Moth"#
-	return(y)#
-}#
-#
-#' @title Replace Parameter Names for NLMIXED Output#
-#' #
-#' @param y Parameter estimates output#
-#' #
-#' @export#
-replaceGENMODRowNames <- function(y) {#
-	if ("Ln_size_max_t_1_st" %in% y$Parameter) {#
-		y[y$Parameter == "Ln_size_max_t_1_st", ]$Parameter <- "$C_t$"	#
-	}#
-	if ("CH_t_1" %in% y$Parameter) {#
-		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"#
-	}#
-	if ("DA_t_1" %in% y$Parameter) {#
-		y[y$Parameter == "DA_t_1", ]$Parameter 		<- "Native Scale"#
-	}#
-	if ("ME_t_1" %in% y$Parameter) {#
-		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth"#
-	}#
-	if ("T1_FW" %in% y$Parameter) {#
-		y[y$Parameter == "T1_FW", ]$Parameter 		<- "T1 (Fall/Winter)"#
-	}#
-	if ("E1_SS_st" %in% y$Parameter) {#
-		y[y$Parameter == "E1_SS_st", ]$Parameter 	<- "Mean Maximum Daily Temperature (Spring/Summer)"#
-	}#
-	if ("F_SS_st" %in% y$Parameter) {#
-		y[y$Parameter == "F_SS_st", ]$Parameter 	<- "Mean Degree Day (Spring/Summer)"#
-	}#
-	if ("P1_SS" %in% y$Parameter) {#
-		y[y$Parameter == "P1_SS", ]$Parameter 		<- "P1 (Spring/Summer)"#
-	}#
-	if ("P2_SS" %in% y$Parameter) {#
-		y[y$Parameter == "P2_SS", ]$Parameter 		<- "P2 (Spring/Summer)"#
-	}#
-	if ("P1_FW" %in% y$Parameter) {#
-		y[y$Parameter == "P1_FW", ]$Parameter 		<- "P1 (Fall/Winter)"#
-	}#
-	if ("P2_FW" %in% y$Parameter) {#
-		y[y$Parameter == "P2_FW", ]$Parameter 		<- "P2 (Fall/Winter)"#
-	}#
-	return(y)#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-parm.est <- fruit.STRICTA.parameter.estimates %>% round_df(2)#
-models <- data.frame(modelVars=paste("MOD", c(1:10), sep=""))#
-y <- merge(parm.est, models)#
-#
-#y <- merge(random.effects, parm.est)#
-y$Lower %<>% as.numeric#
-y$Upper %<>% as.numeric#
-y$tValue %<>% as.numeric#
-y %<>% round_df(2)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-y %<>%#
-	constructConfInt %>%#
-	addVitalRateColumn %>%#
-	replaceNLMIXEDnamesOstricta %>%#
-	constructConfIntforRandomEffects#
-#
-# go from long to short format         #
-y %<>% dcast(modelVars + `Vital Rate` ~ Parameter, value.var="Estimate.CF")
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-y %<>% #merge(random.effects) %>%#
-	merge(fruit.STRICTA.fit.statistics %>% filter(Descr=="AIC (smaller is better)")) %>%#
-	arrange(Value) %>%#
-	dplyr::select(#
-		modelVars,#
-		`Vital Rate`,#
-		Intercept,#
-		C_t,#
-		everything()#
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+Fruit_by_Species <- Plant_Surveys_by_Year %>%#
+	group_by(PlantID, Species) %>%#
+	filter(!is.na(Species)) %>%#
+	summarise(#
+		Fruit_Present = ifelse(#
+			sum(FruitFlowerPres_t, na.rm=T) > 0,#
+			1,#
+			0#
+		)#
+	) %>%#
+	group_by(Species) %>%#
+	summarise(#
+		`Number of Plants` = length(Fruit_Present),#
+		`Number of Plants with Fruit` = sum(Fruit_Present, na.rm=T),#
+		`Percentage of Plants with Fruit` = round(#
+			sum(Fruit_Present)/length(Fruit_Present)*100, 2#
+		)#
 	)#
-y[which(y$`Vital Rate`=="Fruit Abundance"), ]$Value <- NA
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-y[is.na(y)] <- ""	#
-# create a single random effects column#
-y %<>% mutate(#
-	`$\\gamma$` = paste(#
-		abLoc, #
-		abYr, #
-		s2_aLoc, #
-		s2_aLocYr, #
-		s2_aYr, #
-		s2_bLoc, #
-		s2_bLocYr, #
-		s2_bYr, #
-		sep=""#
-	),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Location (Fecundity Year) = 1 [-0.07, 2.08]Fecundity Year = 0 [NA, NA]"),#
-		"Location (Fecundity Year) = 1 [-0.07, 2.08], Fecundity Year = 0 [NA, NA]"),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Location = 0 [NA, NA]Location = 0 [NA, NA]"),#
-		"Location = 0 [NA, NA], Location = 0 [NA, NA]"),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Fecundity Year = 0 [NA, NA]Fecundity Year = 0.54 [-3.55, 4.64]"),#
-		"Fecundity Year = 0 [NA, NA], Fecundity Year = 0.54 [-3.55, 4.64]"),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Location (Fecundity Year) = 0 [NA, NA]Fecundity Year = 0.56 [-1.58, 2.7]"),#
-		"Location (Fecundity Year) = 0 [NA, NA], Fecundity Year = 0.56 [-1.58, 2.7]")#
-)#
-y %<>% dplyr::select(-c(abLoc, abYr,  s2_aLoc, s2_aLocYr, s2_aYr, s2_bLoc, s2_bLocYr, s2_bYr ))
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-# add AIC model selection	#
-y$Value %<>% as.numeric#
-y %<>% setnames("Value", "AIC")#
-y %<>% #
-	AIC_function %>%#
-	arrange(modelVars)#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`delta AIC` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`delta AIC`#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Model Lik` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Model Lik`#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Prob(Model)` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Prob(Model)`#
-# rename Vital Rates#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Vital Rate` <- "Zero"#
-y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Vital Rate` <- "Count"#
-# give Model Number	#
-for (i in 1:length(unique(y$modelVars))) {#
-	y[which(y$modelVars==unique(y$modelVars)[i]), ]$modelVars <- i#
-}
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-y %<>% cleanAICModelSelectionZIP
-y
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-y[is.na(y)] <- ""#
-y %<>%#
-	processColumnNames %>%#
-	processModSelectionColumnNames#
 #
-y %<>% dplyr::select(#
-	Model,#
-	`Vital Rate`,#
-	`$\\gamma$`,#
-	`$\\beta_{0}$`,#
-	`$C_t$`,#
-	`Invasive Moth`,#
-	`$\\Delta$AIC`,#
-	`Model $\\Lagr$`,#
-	`$P$(Model)`#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-# give Model Number	#
-y$Model %<>% as.numeric#
-y$Model <- rep(1:10, each=2)#
-y %>% pandoc.table(split.tables=500)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-# give Model Number	#
-y$Model %<>% as.numeric#
-y$Model <- rep(1:9, each=2)#
-y %>% pandoc.table(split.tables=500)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-x <- fruit.humifusa.GLIMMIX.covariance.parameters %>%#
-dplyr::select(-modelVars) %>%#
-setnames("CovParm", "Covariance Parameter") %>%#
-setnames("StdErr", "Standard Error") %>%#
-setnames("LowerLRCL", "Lower Bound") %>%#
-setnames("probLRLower", "$P > \\chi^2$") %>%#
-setnames("UpperLRCL", "Upper Bound") %>%#
-setnames("UpperLRCL", "$P > \\chi^2$") %>%#
-as.data.frame
-x
-fruit.humifusa.GLIMMIX.covariance.parameters
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-x <- fruit.humifusa.GLIMMIX.covariance.parameters %>%#
-dplyr::select(-modelVars) %>%#
-setnames("CovParm", "Covariance Parameter") %>%#
-setnames("StdErr", "Standard Error") %>%#
-setnames("LowerLRCL", "Lower Bound") %>%#
-setnames("probLRLower", "$P > \\chi^2$") %>%#
-setnames("UpperLRCL", "Upper Bound") %>%#
-setnames("probLRUpper", "$P > \\chi^2$") %>%#
-as.data.frame
-x
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-x <- fruit.humifusa.GLIMMIX.covariance.parameters %>%#
-dplyr::select(-modelVars) %>%#
-setnames("CovParm", "Covariance Parameter") %>%#
-setnames("StdErr", "Standard Error") %>%#
-setnames("LowerLRCL", "Lower Bound") %>%#
-setnames("probLRLower", "$P > \\chi^2$") %>%#
-setnames("UpperLRCL", "Upper Bound") %>%#
-setnames("probLRUpper", "$P > \\chi^2$") %>%#
-as.data.frame#
-x$`Covariance Parameter` = c("Location", "Location (Year)", "Year")#
-x %>% pandoc.table(#
-	split.tables=500,#
-	caption = "Estimated Likelihood 95% Confidence Bounds."#
-)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-parm.est <- fruit.humifusa.parameter.estimates %>% round_df(2)#
-models <- data.frame(modelVars=paste("MOD", c(0:10), sep=""))#
-y <- merge(parm.est, models)#
-# y <- merge(random.effects, parm.est)#
-y$Lower %<>% as.numeric#
-y$Upper %<>% as.numeric#
-y$tValue %<>% as.numeric#
-y %<>% round_df(2)#
+Fruit_by_Species %>% pandoc.table(#
+	split.tables=800, #
+	emphasize.italics.cells=which(#
+		Fruit_by_Species=="Opuntia stricta" | Fruit_by_Species=="Opuntia pusilla", #
+		arr.ind=T#
+	))#
+```#
+### Relationship Between Plant Size and Fruit Production#
 #
-y %<>%#
-	constructConfInt %>%#
-	addVitalRateColumn %>%#
-	replaceNLMIXEDnames %>%#
-	constructConfIntforRandomEffects %>%#
-	constructConfIntforWeatherData#
-# go from long to short format         #
-y %<>% dcast(modelVars + `Vital Rate` ~ Parameter, value.var="Estimate.CF") #
-# create Temperature Column#
-y$`Mean Degree Day (Spring/Summer)`[which(is.na(y$`Mean Degree Day (Spring/Summer)`))] <- ""#
-y$`Mean Max. Temp (Spring/Summer)`[which(is.na(y$`Mean Max. Temp (Spring/Summer)`))] <- ""#
-y$Temperature <- ifelse(#
-	y$`Mean Degree Day (Spring/Summer)`=="",#
-	y$`Mean Max. Temp (Spring/Summer)`,#
-	paste(y$`Mean Degree Day (Spring/Summer)`, y$`Mean Max. Temp (Spring/Summer)`, sep=", ")#
-)#
-# merge#
-y %<>% #
-	merge(fruit.humifusa.fit.statistics %>% filter(Descr=="AIC (smaller is better)"), all.x=T) %>%#
-	arrange(Value)#
-y[which(y$`Vital Rate`=="Fruit Abundance"), ]$Value <- NA#
-# add AIC model selection	#
-y %<>% setnames("Value", "AIC")#
-y$AIC %<>% as.numeric#
-y %<>% #
-	AIC_function %>%#
-	arrange(modelVars)#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`delta AIC` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`delta AIC`#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Model Lik` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Model Lik`#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Prob(Model)` -> y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Prob(Model)`#
-# rename Vital Rates#
-y[which(y$`Vital Rate`=="Fruit Absence"), ]$`Vital Rate` <- "Zero"#
-y[which(y$`Vital Rate`=="Fruit Abundance"), ]$`Vital Rate` <- "Count"#
-# give Model Number	#
-for (i in 1:length(unique(y$modelVars))) {#
-	y[which(y$modelVars==unique(y$modelVars)[i]), ]$modelVars <- i#
+```{r, , fig.width=8, fig.height=6}#
+temp <- Plant.Surveys.by.Year %>%#
+	arrange(Date) %>%#
+	group_by(PlantID) %>%#
+	mutate(#
+		wFruit = paste(FruitFlowerPres_t, collapse="")#
+	)#
+# categorize fruit as being sometimes, never, or always present#
+temp$Fruitvar <- "NA"#
+for (i in 1:length(temp$`Fruit Production`)) {#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Sometimes"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
+		temp$`Fruit Production`[i] <- "Never"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Always"#
+	}	#
 }#
-# arrange#
-y %<>% cleanAICModelSelectionZIP#
-y[is.na(y)] <- ""#
-y %<>%#
-	abbrInsectNames %>%#
-	processColumnNames %>%#
-	processModSelectionColumnNames#
-y %<>% mutate(#
-	`$\\gamma$` = paste(#
-		abLoc, #
-		abYr, #
-		s2_aLoc, #
-		s2_aLocYr, #
-		s2_aYr, #
-		s2_bLoc, #
-		s2_bLocYr, #
-		s2_bYr, #
-		sep=""#
-	),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Fecundity Year = 0 [NA, NA]Fecundity Year = 0 [NA, NA]"),#
-		"Fecundity Year = 0 [NA, NA], Fecundity Year = 0 [NA, NA]"),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Location (Fecundity Year) = 0 [NA, NA]Fecundity Year = 0 [-0.01, 0.02]"),#
-		"Location (Fecundity Year) = 0 [NA, NA], Fecundity Year = 0 [-0.01, 0.02]"),#
-	`$\\gamma$` = replace(#
-		`$\\gamma$`,#
-		which(`$\\gamma$` == "Location (Fecundity Year) = 0 [NA, NA]Fecundity Year = 0 [NA, NA]"),#
-		"Location (Fecundity Year) = 0 [NA, NA], Fecundity Year = 0 [NA, NA]")#
-)
-u
-y
-ls()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-x = timeseries_all_surveys[which(timeseries_all_surveys$Species=="Opuntia humifusa"), ]$PlantID %>% unique %>% length
-x
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-RGR.humifusa.size.model.selection.models.class.levels
-ls()
-fruit.humifusa.dimensions
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-ls()
-fruit.STRICTA.genmod.number.of.observations
-fruit.humifusa.genmod.model.info
-fruit.humifusa.dimensions
-fruit.humifusa.genmod.model.info
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-rmarkdown::render('Appendix4_Fecundity_model_selection.Rmd')
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.stricta.genmod.zero.parameter.estimates %>%#
-	filter(modelVars=="S_INDIVINSECT") %>%#
-	filter(Level1 == 1 | is.na(Level1)) %>%#
-	filter(Parameter != "Scale") %>%#
-	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
-	processStatisticsColumnNames %>%#
-	replaceGENMODRowNames %>%#
-	pandoc.table(#
-		split.tables=500,#
-		caption = "Zero Component of the Model"#
-	)
-ls()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.STRICTA.genmod.zero.parameter.estimates %>%#
-	filter(modelVars=="S_INDIVINSECT") %>%#
-	filter(Level1 == 1 | is.na(Level1)) %>%#
-	filter(Parameter != "Scale") %>%#
-	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
-	processStatisticsColumnNames %>%#
-	replaceGENMODRowNames %>%#
-	pandoc.table(#
-		split.tables=500,#
-		caption = "Zero Component of the Model"#
-	)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.STRICTA.genmod.zero.parameter.estimates
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.STRICTA.genmod.zero.parameter.estimates %>%#
-	filter(modelVars=="S_FULLMODEL") %>%#
-	filter(Level1 == 1 | is.na(Level1)) %>%#
-	filter(Parameter != "Scale") %>%#
-	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
-	processStatisticsColumnNames %>%#
-	replaceGENMODRowNames %>%#
-	pandoc.table(#
-		split.tables=500,#
-		caption = "Zero Component of the Model"#
-	)
+temp %<>% group_by(PlantID) %>%#
+	summarise(#
+		`Fruit Production` = `Fruit Production`[1],#
+		mean_Size = mean(Size_t, na.rm=T),#
+		Island = Island[1],#
+		Species = Species[1]#
+	)#
+#
+temp$Fruitvar %<>% factor(levels=c("Never", "Sometimes", "Always"))#
+#
+temp %<>% filter(!(is.na(`Fruit Production`)))#
+# occasional production of fruit seems to be tied to plant size, its on average smaller than that of plants that always produce fruit#
+ggplot(temp, aes(factor(`Fruit Production`), mean_Size)) + #
+	geom_boxplot() + facet_wrap(~Species) +#
+	coord_trans(y="log10") +#
+	annotation_logticks(scaled = FALSE, sides="l") +#
+	KEStheme() +#
+	scale_y_continuous(breaks=c(1,10,100))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp$`Fruit Production` <- "NA"#
+for (i in 1:length(temp$`Fruit Production`)) {#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Sometimes"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
+		temp$`Fruit Production`[i] <- "Never"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Always"#
+	}	#
+}
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp <- Plant.Surveys.by.Year %>%#
+	arrange(Date) %>%#
+	group_by(PlantID) %>%#
+	mutate(#
+		wFruit = paste(FruitFlowerPres_t, collapse="")#
+	)#
+# categorize fruit as being sometimes, never, or always present#
+temp$`Fruit Production` <- "NA"#
+for (i in 1:length(temp$`Fruit Production`)) {#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Sometimes"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
+		temp$`Fruit Production`[i] <- "Never"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Always"#
+	}	#
+}
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp %<>% group_by(PlantID) %>%#
+	summarise(#
+		`Fruit Production` = `Fruit Production`[1],#
+		mean_Size = mean(Size_t, na.rm=T),#
+		Island = Island[1],#
+		Species = Species[1]#
+	)#
+#
+temp$Fruitvar %<>% factor(levels=c("Never", "Sometimes", "Always"))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp %<>% group_by(PlantID) %>%#
+	summarise(#
+		`Fruit Production` = `Fruit Production`[1],#
+		mean_Size = mean(Size_t, na.rm=T),#
+		Island = Island[1],#
+		Species = Species[1]#
+	)#
+#
+temp$`Fruit Production` %<>% factor(levels=c("Never", "Sometimes", "Always"))#
+#
+temp %<>% filter(!(is.na(`Fruit Production`)))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp <- Plant.Surveys.by.Year %>%#
+	arrange(Date) %>%#
+	group_by(PlantID) %>%#
+	mutate(#
+		wFruit = paste(FruitFlowerPres_t, collapse="")#
+	)#
+# categorize fruit as being sometimes, never, or always present#
+temp$`Fruit Production` <- "NA"#
+for (i in 1:length(temp$`Fruit Production`)) {#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Sometimes"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
+		temp$`Fruit Production`[i] <- "Never"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Always"#
+	}	#
+}#
+temp %<>% group_by(PlantID) %>%#
+	summarise(#
+		`Fruit Production` = `Fruit Production`[1],#
+		mean_Size = mean(Size_t, na.rm=T),#
+		Island = Island[1],#
+		Species = Species[1]#
+	)#
+#
+temp$`Fruit Production` %<>% factor(levels=c("Never", "Sometimes", "Always"))#
+#
+temp %<>% filter(!(is.na(`Fruit Production`)))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+ggplot(temp, aes(`Fruit Production`, mean_Size)) + #
+	geom_boxplot() + facet_wrap(~Species) +#
+	coord_trans(y="log10") +#
+	annotation_logticks(scaled = FALSE, sides="l") +#
+	KEStheme() +#
+	scale_y_continuous(breaks=c(1,10,100))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp <- Plant.Surveys.by.Year %>%#
+	arrange(Date) %>%#
+	group_by(PlantID) %>%#
+	mutate(#
+		wFruit = paste(FruitFlowerPres_t, collapse="")#
+	)#
+# categorize fruit as being sometimes, never, or always present#
+temp$`Fruit Production` <- "NA"#
+for (i in 1:length(temp$`Fruit Production`)) {#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Sometimes"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
+		temp$`Fruit Production`[i] <- "Never"#
+	} else#
+	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
+		temp$`Fruit Production`[i] <- "Always"#
+	}	#
+}#
+temp %<>% group_by(PlantID) %>%#
+	summarise(#
+		`Fruit Production` = `Fruit Production`[1],#
+		`mean(Size,t)` = mean(Size_t, na.rm=T),#
+		Island = Island[1],#
+		Species = Species[1]#
+	)#
+#
+temp$`Fruit Production` %<>% factor(levels=c("Never", "Sometimes", "Always"))#
+#
+temp %<>% filter(!(is.na(`Fruit Production`)))#
+# occasional production of fruit seems to be tied to plant size, its on average smaller than that of plants that always produce fruit#
+ggplot(temp, aes(`Fruit Production`, `mean(Size,t)`)) + #
+	geom_boxplot() + facet_wrap(~Species) +#
+	coord_trans(y="log10") +#
+	annotation_logticks(scaled = FALSE, sides="l") +#
+	KEStheme() +#
+	scale_y_continuous(breaks=c(1,10,100))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp <- Plant_Surveys_by_Year %>%#
+group_by(PlantID) %>%#
+summarise(#
+	RecruitmentMode = RecruitmentMode[1],#
+	Species = Species[1]#
+	) %>%#
+	with(., table(Species, RecruitmentMode)) %>% #
+	as.data.frame %>%#
+	dcast(.,Species ~ RecruitmentMode)
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
+temp %>% pandoc.table(#
+	split.tables=800, #
+	emphasize.italics.cells=which(#
+		temp=="Opuntia stricta" | temp=="Opuntia pusilla", #
+		arr.ind=T#
+	))#
+```
 setwd('/Users/KSauby/Documents/Projects')
 setwd("./modresproc")#
-#devtools::test()#
-devtools::document()#
-devtools::install()
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.STRICTA.genmod.zero.parameter.estimates %>%#
-	filter(modelVars=="S_FULLMODEL") %>%#
-	filter(Level1 == 1 | is.na(Level1)) %>%#
-	filter(Parameter != "Scale") %>%#
-	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
-	processStatisticsColumnNames %>%#
-	replaceGENMODRowNames %>%#
-	pandoc.table(#
-		split.tables=500,#
-		caption = "Zero Component of the Model"#
-	)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.STRICTA.genmod.zero.parameter.estimates %>%#
-	filter(modelVars=="S_FULLMODEL") %>%#
-	filter(Level1 == 1 | is.na(Level1)) %>%#
-	filter(Parameter != "Scale") %>%#
-	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
-	processStatisticsColumnNames %>%#
-	replaceGENMODRowNames %>%#
-	pandoc.table(#
-		split.tables=500,#
-		caption = "Zero Component of the Model"#
-	)
-library(modresproc)
-setwd('/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series/Manuscript/Appendix')
-fruit.STRICTA.genmod.zero.parameter.estimates %>%#
-	filter(modelVars=="S_FULLMODEL") %>%#
-	filter(Level1 == 1 | is.na(Level1)) %>%#
-	filter(Parameter != "Scale") %>%#
-	dplyr::select(-c(Effect, modelVars, Level1, DF)) %>%#
-	processStatisticsColumnNames %>%#
-	replaceGENMODRowNames %>%#
-	pandoc.table(#
-		split.tables=500,#
-		caption = "Zero Component of the Model"#
-	)
-setwd('/Users/KSauby/Documents/Projects')
-setwd("./modresproc")#
+#setwd("./unmarked")#
+#setwd("./RPresence")#
 #devtools::test()#
 devtools::document()#
 devtools::install()

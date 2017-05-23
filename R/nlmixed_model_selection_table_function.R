@@ -160,10 +160,10 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "Ln_size_max_t_1_st", ]$Parameter <- "$C_t$"	
 	}
 	if ("Ln_Size_t_1_st" %in% y$Parameter) {
-		y[y$Parameter == "Ln_Size_t_1_st", ]$Parameter <- "$C_t$"	
+		y[y$Parameter == "Ln_Size_t_1_st", ]$Parameter <- "Plant Size"	
 	}
 	if ("CA_t_1" %in% y$Parameter) {
-		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "$\\mu_t$"
+		y[y$Parameter == "CA_t_1", ]$Parameter 		<- "Invasive Moth"
 	}
 	if ("CH_t_1" %in% y$Parameter) {
 		y[y$Parameter == "CH_t_1", ]$Parameter 		<- "Native Bug"
@@ -172,7 +172,7 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "DA_t_1", ]$Parameter 		<- "Native Scale"
 	}
 	if ("ME_t_1" %in% y$Parameter) {
-		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "$\\nu_t$"
+		y[y$Parameter == "ME_t_1", ]$Parameter 		<- "Native Moth"
 	}
 	if ("T1_FW" %in% y$Parameter) {
 		y[y$Parameter == "T1_FW", ]$Parameter 		<- "T1 (Fall/Winter)"
@@ -196,7 +196,7 @@ replaceGENMODRowNames <- function(y) {
 		y[y$Parameter == "P2_FW", ]$Parameter 		<- "P2 (Fall/Winter)"
 	}
 	if ("Old_Moth_Evidence_t_" %in% y$Parameter) {
-		y[y$Parameter == "Old_Moth_Evidence_t_", ]$Parameter <- "$\\delta_t$"
+		y[y$Parameter == "Old_Moth_Evidence_t_", ]$Parameter <- "Evidence of Moth Damage"
 	}
 	if ("OldMothPlantPres" %in% y$Parameter) {
 		y[y$Parameter == "OldMothPlantPres", ]$Parameter <- "$\\delta_s$"
@@ -240,9 +240,5 @@ replaceGENMODRowNames <- function(y) {
 	if ("cactus_density_per_p" %in% y$Parameter) {
 		y[y$Parameter == "cactus_density_per_p", ]$Parameter <- "Cactus Density per Plot"
 	}
-	
-	
-	
-	
 	return(y)
 }

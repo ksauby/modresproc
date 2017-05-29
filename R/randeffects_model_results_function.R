@@ -42,7 +42,7 @@ randeffects_model_results_function <- function(
 	parms.estimates %<>% 
 		filter(!is.na(StdErr)) %>%
 		reshape2::dcast(modelVars~Effect, value.var="Estimate")
-	modelresults = merge(parms.estimates, covariance.parms.test,
+	modelresults <- merge(parms.estimates, covariance.parms.test,
 		by="modelVars", all=T) %>%
 		merge(convergence.status, all=T) %>%
 		merge(covariance.parms.estimates, all=T) %>%
@@ -70,7 +70,11 @@ randeffects_model_results_function <- function(
 		.[modelVars == "ISLAND", 					
 			modelVars := "Island"] %>%
 		.[modelVars == "NETWORKISLAND", 					
-			modelVars := "Network X Island"]
+			modelVars := "Network X Island"] %>%
+		.[modelVars == "NETWORK", 					
+			modelVars := "Network"] %>%
+		.[modelVars == "NETWORKHABITATTYPE", 					
+			modelVars := "Network X Habitat Type"]
 	modelresults$pdG %<>% as.character
 	modelresults %<>% as.data.table %>%
 		.[pdG == 0, pdG := "No"] %>%

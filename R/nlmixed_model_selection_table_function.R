@@ -106,24 +106,7 @@ nlmixed_table_function <- function(models.dimensions, convergence.status, parame
 	return(y)
 }
 
-#' @title Replace Parameter Names for NLMIXED Output
-#' 
-#' @param y Parameter estimates output
-#' 
-#' @export
-replaceNLMIXEDnames <- function(y) {
-	y[y$Parameter == "A0" | y$Parameter == "B0", ]$Parameter <- "Intercept"	
-	y[y$Parameter == "A1" | y$Parameter == "B1", ]$Parameter <- "C_t"
-	y[y$Parameter == "A2" | y$Parameter == "B2", ]$Parameter <- "Native Bug"
-	y[y$Parameter == "A3" | y$Parameter == "B3", ]$Parameter <- "Mean Max. Temp (Spring/Summer)"
-	if ("B4" %in% y$Parameter) {
-		y[y$Parameter == "B4", ]$Parameter 	<- "Mean Degree Day (Spring/Summer)"
-	}
-	if ("B5" %in% y$Parameter) {
-		y[y$Parameter == "B5", ]$Parameter 	<- "P1 (Fall/Winter)"
-	}
-	return(y)
-}
+
 
 #' @title Replace Parameter Names for NLMIXED Output for GTMNERR O. stricta
 #' 

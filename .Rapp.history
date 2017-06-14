@@ -1,3 +1,25 @@
+library(lubrida=te)
+library(lubridate)
+-v
+install.packages("rgeos", repos="http://R-Forge.R-project.org")#
+require(rgeos)
+library(rgeos)
+require(rgeos)
+library(rgeos)
+install.packages("rgdal", repos="http://R-Forge.R-project.org")#
+require(rgdal)
+R CMD INSTALL ~/Downloads/rgdal_0.9-1.tar.gz --configure-args='--with-gdal-config=/Library/Frameworks/GDAL.framework/Programs/gdal-config#
+ --with-proj-include=/Library/Frameworks/PROJ.framework/Headers#
+ --with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib'
+R CMD INSTALL ~/Downloads/rgdal_0.9-1.tar.gz --configure-args='--with-gdal-config=/Library/Frameworks/GDAL.framework/Programs/gdal-config--with-proj-include=/Library/Frameworks/PROJ.framework/Headers--with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib'
+library(lme3)
+library(lme4)
+300/241
+.244*30
+1.25*300
+1.25*240
+7*12
+7849-7527
 322/1353
 8028-7527
 501/1353
@@ -260,234 +282,22 @@ data(dipper)    dipper.processed=process.data(dipper,groups=("sex"))    releas
 33/34 * 14
 17.5*4
 24*4 + 1.75*4
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis')
-library(ProjectTemplate)#
-#
-# when working on a Windows computer#
-# setwd("C:/Users/KSauby/Dropbox/gradschool/Research/Projects/sampling")#
-#
-# load project#
-load.project()
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-Fruit_by_Species <- Plant_Surveys_by_Year %>%#
-	group_by(PlantID, Species) %>%#
-	filter(!is.na(Species)) %>%#
-	summarise(#
-		Fruit_Present = ifelse(#
-			sum(FruitFlowerPres_t, na.rm=T) > 0,#
-			1,#
-			0#
-		)#
-	) %>%#
-	group_by(Species) %>%#
-	summarise(#
-		`Number of Plants` = length(Fruit_Present),#
-		`Number of Plants with Fruit` = sum(Fruit_Present, na.rm=T),#
-		`Percentage of Plants with Fruit` = round(#
-			sum(Fruit_Present)/length(Fruit_Present)*100, 2#
-		)#
-	)#
-#
-Fruit_by_Species %>% pandoc.table(#
-	split.tables=800, #
-	emphasize.italics.cells=which(#
-		Fruit_by_Species=="Opuntia stricta" | Fruit_by_Species=="Opuntia pusilla", #
-		arr.ind=T#
-	))#
-```#
-### Relationship Between Plant Size and Fruit Production#
-#
-```{r, , fig.width=8, fig.height=6}#
-temp <- Plant.Surveys.by.Year %>%#
-	arrange(Date) %>%#
-	group_by(PlantID) %>%#
-	mutate(#
-		wFruit = paste(FruitFlowerPres_t, collapse="")#
-	)#
-# categorize fruit as being sometimes, never, or always present#
-temp$Fruitvar <- "NA"#
-for (i in 1:length(temp$`Fruit Production`)) {#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Sometimes"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
-		temp$`Fruit Production`[i] <- "Never"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Always"#
-	}	#
-}#
-temp %<>% group_by(PlantID) %>%#
-	summarise(#
-		`Fruit Production` = `Fruit Production`[1],#
-		mean_Size = mean(Size_t, na.rm=T),#
-		Island = Island[1],#
-		Species = Species[1]#
-	)#
-#
-temp$Fruitvar %<>% factor(levels=c("Never", "Sometimes", "Always"))#
-#
-temp %<>% filter(!(is.na(`Fruit Production`)))#
-# occasional production of fruit seems to be tied to plant size, its on average smaller than that of plants that always produce fruit#
-ggplot(temp, aes(factor(`Fruit Production`), mean_Size)) + #
-	geom_boxplot() + facet_wrap(~Species) +#
-	coord_trans(y="log10") +#
-	annotation_logticks(scaled = FALSE, sides="l") +#
-	KEStheme() +#
-	scale_y_continuous(breaks=c(1,10,100))
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp$`Fruit Production` <- "NA"#
-for (i in 1:length(temp$`Fruit Production`)) {#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Sometimes"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
-		temp$`Fruit Production`[i] <- "Never"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Always"#
-	}	#
-}
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp <- Plant.Surveys.by.Year %>%#
-	arrange(Date) %>%#
-	group_by(PlantID) %>%#
-	mutate(#
-		wFruit = paste(FruitFlowerPres_t, collapse="")#
-	)#
-# categorize fruit as being sometimes, never, or always present#
-temp$`Fruit Production` <- "NA"#
-for (i in 1:length(temp$`Fruit Production`)) {#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Sometimes"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
-		temp$`Fruit Production`[i] <- "Never"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Always"#
-	}	#
-}
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp %<>% group_by(PlantID) %>%#
-	summarise(#
-		`Fruit Production` = `Fruit Production`[1],#
-		mean_Size = mean(Size_t, na.rm=T),#
-		Island = Island[1],#
-		Species = Species[1]#
-	)#
-#
-temp$Fruitvar %<>% factor(levels=c("Never", "Sometimes", "Always"))
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp %<>% group_by(PlantID) %>%#
-	summarise(#
-		`Fruit Production` = `Fruit Production`[1],#
-		mean_Size = mean(Size_t, na.rm=T),#
-		Island = Island[1],#
-		Species = Species[1]#
-	)#
-#
-temp$`Fruit Production` %<>% factor(levels=c("Never", "Sometimes", "Always"))#
-#
-temp %<>% filter(!(is.na(`Fruit Production`)))
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp <- Plant.Surveys.by.Year %>%#
-	arrange(Date) %>%#
-	group_by(PlantID) %>%#
-	mutate(#
-		wFruit = paste(FruitFlowerPres_t, collapse="")#
-	)#
-# categorize fruit as being sometimes, never, or always present#
-temp$`Fruit Production` <- "NA"#
-for (i in 1:length(temp$`Fruit Production`)) {#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Sometimes"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
-		temp$`Fruit Production`[i] <- "Never"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Always"#
-	}	#
-}#
-temp %<>% group_by(PlantID) %>%#
-	summarise(#
-		`Fruit Production` = `Fruit Production`[1],#
-		mean_Size = mean(Size_t, na.rm=T),#
-		Island = Island[1],#
-		Species = Species[1]#
-	)#
-#
-temp$`Fruit Production` %<>% factor(levels=c("Never", "Sometimes", "Always"))#
-#
-temp %<>% filter(!(is.na(`Fruit Production`)))
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-ggplot(temp, aes(`Fruit Production`, mean_Size)) + #
-	geom_boxplot() + facet_wrap(~Species) +#
-	coord_trans(y="log10") +#
-	annotation_logticks(scaled = FALSE, sides="l") +#
-	KEStheme() +#
-	scale_y_continuous(breaks=c(1,10,100))
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp <- Plant.Surveys.by.Year %>%#
-	arrange(Date) %>%#
-	group_by(PlantID) %>%#
-	mutate(#
-		wFruit = paste(FruitFlowerPres_t, collapse="")#
-	)#
-# categorize fruit as being sometimes, never, or always present#
-temp$`Fruit Production` <- "NA"#
-for (i in 1:length(temp$`Fruit Production`)) {#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Sometimes"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==T & grepl(1, temp$wFruit[i])==F) {#
-		temp$`Fruit Production`[i] <- "Never"#
-	} else#
-	if (grepl(0, temp$wFruit[i])==F & grepl(1, temp$wFruit[i])==T) {#
-		temp$`Fruit Production`[i] <- "Always"#
-	}	#
-}#
-temp %<>% group_by(PlantID) %>%#
-	summarise(#
-		`Fruit Production` = `Fruit Production`[1],#
-		`mean(Size,t)` = mean(Size_t, na.rm=T),#
-		Island = Island[1],#
-		Species = Species[1]#
-	)#
-#
-temp$`Fruit Production` %<>% factor(levels=c("Never", "Sometimes", "Always"))#
-#
-temp %<>% filter(!(is.na(`Fruit Production`)))#
-# occasional production of fruit seems to be tied to plant size, its on average smaller than that of plants that always produce fruit#
-ggplot(temp, aes(`Fruit Production`, `mean(Size,t)`)) + #
-	geom_boxplot() + facet_wrap(~Species) +#
-	coord_trans(y="log10") +#
-	annotation_logticks(scaled = FALSE, sides="l") +#
-	KEStheme() +#
-	scale_y_continuous(breaks=c(1,10,100))
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp <- Plant_Surveys_by_Year %>%#
-group_by(PlantID) %>%#
-summarise(#
-	RecruitmentMode = RecruitmentMode[1],#
-	Species = Species[1]#
-	) %>%#
-	with(., table(Species, RecruitmentMode)) %>% #
-	as.data.frame %>%#
-	dcast(.,Species ~ RecruitmentMode)
-setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/Fruit_Production')
-temp %>% pandoc.table(#
-	split.tables=800, #
-	emphasize.italics.cells=which(#
-		temp=="Opuntia stricta" | temp=="Opuntia pusilla", #
-		arr.ind=T#
-	))#
-```
+library(dplyr)
+library(plyr)
+setwd('/Users/KSauby/Documents/Projects')
+setwd("./Panhandleproc")#
+#setwd("./GTMNERRproc")#
+#setwd("./dataproc")#
+#setwd("./modresproc")#
+#setwd("./unmarked")#
+#setwd("./RPresence")#
+#devtools::test()#
+devtools::document()#
+devtools::install(upgrade_dependencies=F)
 setwd('/Users/KSauby/Documents/Projects')
 setwd("./modresproc")#
 #setwd("./unmarked")#
 #setwd("./RPresence")#
 #devtools::test()#
 devtools::document()#
-devtools::install()
+devtools::install(upgrade_dependencies=F)

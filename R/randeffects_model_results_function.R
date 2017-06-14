@@ -74,7 +74,9 @@ randeffects_model_results_function <- function(
 		.[modelVars == "NETWORK", 					
 			modelVars := "Network"] %>%
 		.[modelVars == "NETWORKHABITATTYPE", 					
-			modelVars := "Network X Habitat Type"]
+			modelVars := "Network X Habitat Type"] %>%
+		.[modelVars == "HABITATTYPE", 					
+			modelVars := "Habitat Type"]
 	modelresults$pdG %<>% as.character
 	modelresults %<>% as.data.table %>%
 		.[pdG == 0, pdG := "No"] %>%

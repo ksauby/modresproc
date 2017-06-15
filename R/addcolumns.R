@@ -186,12 +186,12 @@ addInsectWeatherCol <- function(y) {
 				`Insect x Weather`
 			),
 			`Insect x Weather` = ifelse(
-				!is.na(`P1*CA_t_1*CH_t`),
+				!is.na(`P1*CA_t_1*CH_t_1`),
 				"Invasive Moth x Native Bug x P",
 				`Insect x Weather`
 			),
 			`Insect x Weather` = ifelse(
-				!is.na(`T1*CA_t_1*CH_t`),
+				!is.na(`T1*CA_t_1*CH_t_1`),
 				"Invasive Moth x Native Bug x T",
 				`Insect x Weather`
 			)

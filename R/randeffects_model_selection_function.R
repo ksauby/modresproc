@@ -9,7 +9,7 @@ randeffects_model_selection_function <- function(modelresults){
 	x = modelresults %>%
 		dplyr::filter(`Positive Definite G-Matrix?`=="Yes") %>%
 		dplyr::select(-Label, -Objective) %>%
-		dplyr::select(-(Note:Subject)) %>%
+		dplyr::select(-(Note:`Positive Definite G-Matrix?`)) %>%
 		dplyr::group_by(`Random Effects`) %>%
 		dplyr::filter(row_number(DF)==1) %>%
 		as.data.frame %>%

@@ -39,9 +39,14 @@ randeffects_model_results_function <- function(
 				`BIC  (smaller is better)`
 			)
 	}
-	parms.estimates %<>% 
-		filter(!is.na(StdErr)) %>%
-		reshape2::dcast(modelVars~Effect, value.var="Estimate")
+	if ("StdErr" %in% names(parms.estimates)) {
+		parms.estimates %<>% 
+			filter(!is.na(StdErr)) %>%
+			reshape2::dcast(modelVars~Effect, value.var="Estimate")		
+	} else {
+		parms.estimates %<>% 
+			reshape2::dcast(modelVars~Effect, value.var="Estimate")
+	}
 	modelresults <- merge(parms.estimates, covariance.parms.test,
 		by="modelVars", all=T) %>%
 		merge(convergence.status, all=T) %>%

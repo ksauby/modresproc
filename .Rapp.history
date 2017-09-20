@@ -1,54 +1,3 @@
-1.25*240
-7*12
-7849-7527
-322/1353
-8028-7527
-501/1353
-8028-7957
-1353-501
-852/71
-7956-7878
-8176-8029
-8176-8092
-250*.75
-250*.25
-42*2 + 17*2
-118/19
-21/6.2
-59.5*.75
-59.5*.5 + 59.5
-71/12
-597/80
-597/8
-432/8
-15*8 + 9*3
-?seq_len
-7.25/3
-7.25/4
-for(i in 0:9){x=cos(2*pi/10*i);y=x+1;z=(y-2)*22;pie(c(y,8-y),col=c(0,7),init.angl=135-z,bo=F,la=NA)}
-install.packages("ProjectTemplate")
-install.packages("dplyr")
-install.packages("ggplot2")
-install.packages("data.table")
-install.packages("corrgram")
-install.packages("survival")
-install.packages("shapefiles")
-install.packages("rgdal")
-install.packages("PBSmapping")
-install.packages("sp")
-install.packages("gdistance")
-install.packages("chron")
-install.packages("unmarked")
-install.packages("lme4")
-install.packages("rgeos", repos="http://R-Forge.R-project.org", type="source")#
-require(rgeos)
-install.packages('rgdal',repos="http://www.stats.ox.ac.uk/pub/RWin")
-library(rgdal)
-install.packages("http://cran.r-project.org/src/contrib/rgdal_0.9-1.tar.gz", repos = NULL, type="source", configure.args = "--with-gdal-config=/Library/Frameworks/GDAL.framework/Versions/1.10/unix/bin/gdal-config --with-proj-include=/Library/Frameworks/PROJ.framework/unix/include --with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib")
-18/1.618
-189+114
-library(lubridate)
-library(magrittr)
 seasons <- data.frame(#
 	   SE = as.POSIXct(c("2009-3-20", "2010-3-20", "2011-3-20", "2012-3-20", #
             "2013-3-20", "2014-3-20"), format="%Y-%m-%d"),#
@@ -266,110 +215,791 @@ data(dipper)    dipper.processed=process.data(dipper,groups=("sex"))    releas
 library(dplyr)
 library(plyr)
 600*.22
-setwd('/Users/KSauby/Documents/Projects/marsico-time-series')
+library(Mage)
+??prepDataTransitionMatrix
+??projection.matrix
+1/0.167
+0.167*3
+library(purrr)
+?map
+setwd('/Users/KSauby/Documents/Projects/Dissertation')
 library(ProjectTemplate)#
-#setwd("/Users/KSauby/Documents/Dropbox/gradschool/Research/Projects/marsico-time-series")#
-# load project#
-load.project()
-setwd('/Users/KSauby/Documents/Projects/marsico-time-series/Manuscript/Appendix/RGR')
-covariance.parms.estimates = 	RGR.humifusa.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.model.selection.models.dimensions#
-convergence.status = #
-	RGR.humifusa.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.model.selection.models.parameter.estimates#
-conditional.fit.statistics = #
-	RGR.humifusa.model.selection.models.conditional.fit.statistics#
+load.project()#
 #
-select_list = c(#
-	"Intercept",#
-	"C_t",#
-	"Native Bug",#
-	"Native Scale",#
-	"Native Moth",#
-	"Native Insects",#
-	"P",#
-	"T", #
-	"P x T",#
-	"Insect x Weather",#
-	"Location (Year)",#
-	"PlantID",#
-	"pdG",#
-	"Number of Parameters",#
-	"delta cAIC",#
-	"Prob(Model)"#
-)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("Subject" %in% names(covariance.parameter.estimates)) {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm, Subject)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	} else {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	}#
-	# what is this code for?#
-	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
-	conditional.fit.statistics %<>% #
-		convertShorttoLong %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		convertShorttoLong %>%#
-		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y <- standardized.coefficients %>% constructConfInt
-setwd('/Users/KSauby/Documents/Projects/marsico-time-series/Manuscript/Appendix/RGR')
-covariance.parameter.estimates = covariance.parms.estimates
-setwd('/Users/KSauby/Documents/Projects/marsico-time-series/Manuscript/Appendix/RGR')
-createModelSelectionTable(#
-	covariance.parameter.estimates = covariance.parms.estimates, #
-	models.dimensions = models.dimensions, #
-	convergence.status = convergence.status, #
-	parameter.estimates = parameter.estimates, #
-	conditional.fit.statistics = conditional.fit.statistics#
-)
-setwd('/Users/KSauby/Documents/Projects/modresproc/R')
-if ("Subject" %in% names(covariance.parameter.estimates)) {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm, Subject)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	} else {#
-		covariance.parameter.estimates %<>% #
-			mutate(CovParm = paste(CovParm)) %>%#
-			dcast(modelVars~CovParm, value.var="Estimate")#
-	}#
-	# what is this code for?#
-	# names(covariance.parameter.estimates) <- str_replace_all(names(covariance.parameter.estimates), fixed(" "), "")#
-	conditional.fit.statistics %<>% #
-		convertShorttoLong %>%#
-		.[, -3]#
-	models.dimensions %<>%#
-		convertShorttoLong %>%#
-		select(modelVars, `Columns in X`, starts_with("Columns in Z"))#
-	y <- standardized.coefficients %>% constructConfInt
-setwd('/Users/KSauby/Documents/Projects/marsico-time-series/Manuscript/Appendix/RGR')
-covariance.parms.estimates = 	RGR.humifusa.model.selection.models.covariance.parameter.estimates#
-models.dimensions = #
-	RGR.humifusa.model.selection.models.dimensions#
+# load GTMNERR#
+#
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis')#
+load.project()#
+#
+# load ACSampling#
+#
+setwd('/Users/KSauby/Documents/Projects/ACSampling_project')#
+load.project()#
+#
+# load marsico project#
+#
+setwd('/Users/KSauby/Documents/Projects/marsico-time-series')#
+load.project()
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+# RANDOM EFFECTS SELECTION - SIZE#
+# Size#
+#
+covariance.parms.test = #
+	Survival.stricta.random.effects.models.covariance.parameters.test#
 convergence.status = #
-	RGR.humifusa.model.selection.models.convergence.status#
-parameter.estimates = #
-	RGR.humifusa.model.selection.models.parameter.estimates#
+	Survival.stricta.random.effects.models.convergence.status %>%#
+	filter(!(modelVars %in% c("DF1","DF2","DF3")))#
+covariance.parms.estimates = #
+	Survival.stricta.random.effects.models.covariance.parameter.estimates#
 conditional.fit.statistics = #
-	RGR.humifusa.model.selection.models.conditional.fit.statistics
-setwd('/Users/KSauby/Documents/Projects/marsico-time-series/Manuscript/Appendix/RGR')
-createModelSelectionTable(#
-	covariance.parameter.estimates = covariance.parms.estimates, #
-	models.dimensions = models.dimensions, #
-	convergence.status = convergence.status, #
-	parameter.estimates = parameter.estimates, #
-	conditional.fit.statistics = conditional.fit.statistics#
+	Survival.stricta.random.effects.models.conditional.fit.statistics#
+fit.statistics = #
+	Survival.stricta.random.effects.models.fit.statistics %>%#
+	filter(!(modelVars %in% c("DF1","DF2","DF3")))#
+#
+conditional.fit.statistics %<>% #
+	convertShorttoLong %>%#
+	.[, -(2:3)]#
+fit.statistics %<>% #
+	#dplyr::select(-Criterion) %>%#
+	dcast(modelVars ~ Descr, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`-2 Log Likelihood`,#
+		`BIC  (smaller is better)`#
+	)#
+#
+parms.estimates = #
+	Survival.stricta.random.effects.models.parameter.estimates %>%#
+	filter(!is.na(Lower)) %>%#
+	round_df(2)
+head(parms.estimates)
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+parms.estimates = #
+	Survival.stricta.random.effects.models.parameter.estimates %>%#
+	filter(!is.na(Lower)) %>%#
+	round_df(2) %>%#
+	roundpValues %>%#
+	constructConfIntpValue(round_n=3) %>%#
+	dplyr::select(-Estimate) %>%#
+	setnames("Estimate.CF", "Estimate") %>%#
+	filter(!(is.na(DF)))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+parms.estimates %<>% #
+	filter(!is.na(StdErr)) %>%#
+	reshape2::dcast(modelVars~Effect, value.var="Estimate")#
+modelresults <- merge(parms.estimates, covariance.parms.test,#
+	by="modelVars", all=T) %>%#
+	merge(convergence.status, all=T) %>%#
+	merge(covariance.parms.estimates, all=T) %>%#
+	merge(conditional.fit.statistics, all=T) %>%#
+	merge(filter(fit.statistics), all=T) %>%#
+	as.data.table %>%#
+	.[modelVars == "YEARPLANTID", 			#
+		modelVars := "Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONWITHINYEAR", 	#
+		modelVars := "Location X Year"] %>%#
+	.[modelVars == "PLANTID", 				#
+		modelVars := "Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONYEARPLANTID", 	#
+		modelVars := "Location, Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONYEAR", 			#
+		modelVars := "Location, Year"] %>%#
+	.[modelVars == "LOCATION", 				#
+		modelVars := "Location"] %>%#
+	.[modelVars == "LOCATIONPLANTID", 		#
+		modelVars := "Location, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONWYEARPLANTID", 	#
+		modelVars := "Location X Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "YEAR", 					#
+		modelVars := "Year"] %>%#
+	.[modelVars == "ISLAND", 					#
+		modelVars := "Island"] %>%#
+	.[modelVars == "NETWORKISLAND", 					#
+		modelVars := "Network X Island"] %>%#
+	.[modelVars == "NETWORK", 					#
+		modelVars := "Network"] %>%#
+	.[modelVars == "NETWORKHABITATTYPE", 					#
+		modelVars := "Network X Habitat Type"] %>%#
+	.[modelVars == "HABITATTYPE", 					#
+		modelVars := "Habitat Type"]#
+modelresults$pdG %<>% as.character#
+modelresults %<>% as.data.table %>%#
+	.[pdG == 0, pdG := "No"] %>%#
+	.[pdG == 1, pdG := "Yes"] %>%#
+	setnames("modelVars", 				"Random Effects") %>%#
+	setnames("pdG", 					"Positive Definite G-Matrix?") %>%#
+	setnames("ChiSq", 					"Chi-Squared") %>%#
+	setnames("ProbChiSq", 				"Prob(Chi-Squared)") %>%#
+	setnames("CovParm", 				"Covariance Parameter") %>%#
+	setnames("StdErr", 					"Standard Error") %>%#
+#	setnames("tValue", 					"t-Value") %>%#
+#	setnames("Probt", 					"Prob(t)") %>%#
+	setnames("LowerLRCL", 				"Lower LR CL") %>%#
+	setnames("probLRLower", 			"Prob(Lower LR)") %>%#
+	setnames("UpperLRCL", 				"Upper LR CL") %>%#
+	setnames("probLRUpper", 			"Prob(Upper LR)") %>%#
+	setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%#
+	setnames("-2 Log Likelihood",		"-2 Log Lik")#
+stricta.size.model.results <- modelresults %>% setnames("BIC  (smaller is better)","BIC")
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+stricta.size.converg.status = #
+	randeffects_converg_status_function(modelresults=stricta.size.model.results)#
+stricta.size.covar.results = #
+	randeffects_G_side_effects_test_function(stricta.size.model.results)#
+stricta.size.covar.parms = #
+	randeffects_covar_parms_estimates_function(stricta.size.model.results)#
+stricta.size.rand.model.selection = stricta.size.model.results %>% #
+	dplyr::filter(`Positive Definite G-Matrix?` == "Yes") %>% #
+	dplyr::select(-Label, -Objective) %>% #
+	dplyr::select(-(Note:`Prob(Upper LR)`)) %>% #
+	dplyr::group_by(`Random Effects`) %>% #
+	dplyr::filter(row_number(DF) == 1) %>% #
+	as.data.frame %>% #
+	dplyr::arrange(`BIC`) %>%#
+	filter(!is.na(Intercept))#
+stricta.size.rand.model.selection %<>% BIC_function
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+stricta.size.rand.model.selection[which(stricta.size.rand.model.selection$`Random Effects`=="Network"), ]$`Random Effects` <- "Plot Neighborhood"#
+y <- stricta.size.rand.model.selection %>%#
+	processColumnNames %>%#
+	processModSelectionColumnNames %>%#
+	dplyr::select(-c(#
+		`Chi-Squared`,#
+		`Prob(Chi-Squared)`,#
+		`Pearson Chi-Square/DF`,#
+		`-2 Log Lik`#
+	)) %>%#
+	setnames("cactus_density_per_p", "Cactus Density per Plot") %>%#
+	#setnames("NSegLosttoClones_t_s", "# Segments Lost to Clones") %>%#
+	setnames("C_t", "$C_t$") %>%#
+	setnames("delta BIC", "$\\Delta$ BIC") %>%#
+	setnames("Moth_Evidence_t_1", "Moth Evidence") %>%#
+	dplyr::select(#
+		`Random Effects`,#
+		`$\\beta_{0}$`,#
+		`$C_t$`,#
+		Clonal,#
+		`Cactus Density per Plot`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		`$\\Delta$ BIC`,#
+		`Model $\\Lagr$`,#
+		`$P$(Model)`#
+	) %>%#
+	as.data.frame %>%#
+	setnames("Model $\\Lagr$", "M $\\Lagr$") %>%#
+	setnames("$P$(Model)", "$P$(M)")
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+GTMNERR_survival_GLMM_models <- y
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+GTMNERR_survival_GLMM_models
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+# --------------------------------------------------------------------------- ##
+# PROPORTIONAL HAZARDS MODELS#
+# --------------------------------------------------------------------------- ##
+#
+fit.statistics <- Survival.stricta.icphreg.fit.statistics #
+#
+fit.statistics %<>% #
+	dcast(modelVars ~ Criterion, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`BIC (Smaller is Better)`#
+	)#
+type.3.tests <- Survival.stricta.icphreg.type.3.tests #
+#
+type.3.tests %<>% #
+	dcast(modelVars ~ Effect, value.var = "ProbChiSq")#
+#
+type.3.tests %<>% #
+	merge(fit.statistics, by="modelVars") %>%#
+	setnames("modelVars", "Cubic Splines DF") %>%#
+	setnames("CAPlantPres","Invasive Moth") %>%#
+	setnames("MEPlantPres","Native Moth") %>%#
+	setnames("OldMothPlantPres","Moth Evidence") %>%#
+	setnames("BIC (Smaller is Better)","BIC") %>%#
+	dplyr::select(#
+		`Cubic Splines DF`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		Clonal,#
+		Network,#
+		BIC#
+	) %>%#
+	BIC_function %>%#
+	setnames("delta BIC", "$\\Delta$BIC") %>%#
+	setnames("Model Lik", "M $\\Lagr$") %>%#
+	setnames("Prob(Model)", "$P$(M)")#
+type.3.tests[,c(#
+	"Invasive Moth",#
+	"Native Moth"#
+)] %<>% apply(2, as.numeric)#
+type.3.tests %<>%#
+	round_df(2)#
+#
+GTMNERR_survival_prop_haz_models <- type.3.tests	#
+#
+# --------------------------------------------------------------------------- ##
+# GENERALIZED LINEAR MIXED MODELS#
+# --------------------------------------------------------------------------- ##
+#
+# RANDOM EFFECTS SELECTION - SIZE#
+# Size#
+#
+covariance.parms.test = #
+	Survival.stricta.random.effects.models.covariance.parameters.test#
+convergence.status = #
+	Survival.stricta.random.effects.models.convergence.status %>%#
+	filter(!(modelVars %in% c("DF1","DF2","DF3")))#
+covariance.parms.estimates = #
+	Survival.stricta.random.effects.models.covariance.parameter.estimates#
+conditional.fit.statistics = #
+	Survival.stricta.random.effects.models.conditional.fit.statistics#
+fit.statistics = #
+	Survival.stricta.random.effects.models.fit.statistics %>%#
+	filter(!(modelVars %in% c("DF1","DF2","DF3")))#
+#
+conditional.fit.statistics %<>% #
+	convertShorttoLong %>%#
+	.[, -(2:3)]#
+fit.statistics %<>% #
+	#dplyr::select(-Criterion) %>%#
+	dcast(modelVars ~ Descr, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`-2 Log Likelihood`,#
+		`BIC  (smaller is better)`#
+	)#
+#
+parms.estimates = #
+	Survival.stricta.random.effects.models.parameter.estimates %>%#
+	filter(!is.na(Lower)) %>%#
+	round_df(2) %>%#
+	roundpValues %>%#
+	constructConfIntpValue(round_n=3) %>%#
+	dplyr::select(-Estimate) %>%#
+	setnames("Estimate.CF", "Estimate") %>%#
+	filter(!(is.na(DF)))#
+parms.estimates %<>% #
+	filter(!is.na(StdErr)) %>%#
+	reshape2::dcast(modelVars~Effect, value.var="Estimate")#
+modelresults <- merge(parms.estimates, covariance.parms.test,#
+	by="modelVars", all=T) %>%#
+	merge(convergence.status, all=T) %>%#
+	merge(covariance.parms.estimates, all=T) %>%#
+	merge(conditional.fit.statistics, all=T) %>%#
+	merge(filter(fit.statistics), all=T) %>%#
+	as.data.table %>%#
+	.[modelVars == "YEARPLANTID", 			#
+		modelVars := "Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONWITHINYEAR", 	#
+		modelVars := "Location X Year"] %>%#
+	.[modelVars == "PLANTID", 				#
+		modelVars := "Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONYEARPLANTID", 	#
+		modelVars := "Location, Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONYEAR", 			#
+		modelVars := "Location, Year"] %>%#
+	.[modelVars == "LOCATION", 				#
+		modelVars := "Location"] %>%#
+	.[modelVars == "LOCATIONPLANTID", 		#
+		modelVars := "Location, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONWYEARPLANTID", 	#
+		modelVars := "Location X Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "YEAR", 					#
+		modelVars := "Year"] %>%#
+	.[modelVars == "ISLAND", 					#
+		modelVars := "Island"] %>%#
+	.[modelVars == "NETWORKISLAND", 					#
+		modelVars := "Network X Island"] %>%#
+	.[modelVars == "NETWORK", 					#
+		modelVars := "Network"] %>%#
+	.[modelVars == "NETWORKHABITATTYPE", 					#
+		modelVars := "Network X Habitat Type"] %>%#
+	.[modelVars == "HABITATTYPE", 					#
+		modelVars := "Habitat Type"]#
+modelresults$pdG %<>% as.character#
+modelresults %<>% as.data.table %>%#
+	.[pdG == 0, pdG := "No"] %>%#
+	.[pdG == 1, pdG := "Yes"] %>%#
+	setnames("modelVars", 				"Random Effects") %>%#
+	setnames("pdG", 					"Positive Definite G-Matrix?") %>%#
+	setnames("ChiSq", 					"Chi-Squared") %>%#
+	setnames("ProbChiSq", 				"Prob(Chi-Squared)") %>%#
+	setnames("CovParm", 				"Covariance Parameter") %>%#
+	setnames("StdErr", 					"Standard Error") %>%#
+#	setnames("tValue", 					"t-Value") %>%#
+#	setnames("Probt", 					"Prob(t)") %>%#
+	setnames("LowerLRCL", 				"Lower LR CL") %>%#
+	setnames("probLRLower", 			"Prob(Lower LR)") %>%#
+	setnames("UpperLRCL", 				"Upper LR CL") %>%#
+	setnames("probLRUpper", 			"Prob(Upper LR)") %>%#
+	setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%#
+	setnames("-2 Log Likelihood",		"-2 Log Lik")#
+stricta.size.model.results <- modelresults %>% setnames("BIC  (smaller is better)","BIC")#
+stricta.size.converg.status = #
+	randeffects_converg_status_function(modelresults=stricta.size.model.results)#
+stricta.size.covar.results = #
+	randeffects_G_side_effects_test_function(stricta.size.model.results)#
+stricta.size.covar.parms = #
+	randeffects_covar_parms_estimates_function(stricta.size.model.results)#
+stricta.size.rand.model.selection = stricta.size.model.results %>% #
+	dplyr::filter(`Positive Definite G-Matrix?` == "Yes") %>% #
+	dplyr::select(-Label, -Objective) %>% #
+	dplyr::select(-(Note:`Prob(Upper LR)`)) %>% #
+	dplyr::group_by(`Random Effects`) %>% #
+	dplyr::filter(row_number(DF) == 1) %>% #
+	as.data.frame %>% #
+	dplyr::arrange(`BIC`) %>%#
+	filter(!is.na(Intercept))#
+stricta.size.rand.model.selection %<>% BIC_function#
+#
+stricta.size.rand.model.selection[which(stricta.size.rand.model.selection$`Random Effects`=="Network"), ]$`Random Effects` <- "Plot Neighborhood"#
+y <- stricta.size.rand.model.selection %>%#
+	processColumnNames %>%#
+	processModSelectionColumnNames %>%#
+	dplyr::select(-c(#
+		`Chi-Squared`,#
+		`Prob(Chi-Squared)`,#
+		`Pearson Chi-Square/DF`,#
+		`-2 Log Lik`#
+	)) %>%#
+	setnames("cactus_density_per_p", "Cactus Density per Plot") %>%#
+	#setnames("NSegLosttoClones_t_s", "# Segments Lost to Clones") %>%#
+	setnames("C_t", "$C_t$") %>%#
+	setnames("delta BIC", "$\\Delta$ BIC") %>%#
+	setnames("Moth_Evidence_t_1", "Moth Evidence") %>%#
+	dplyr::select(#
+		`Random Effects`,#
+		`$\\beta_{0}$`,#
+		`$C_t$`,#
+		Clonal,#
+		`Cactus Density per Plot`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		`$\\Delta$ BIC`,#
+		`Model $\\Lagr$`,#
+		`$P$(Model)`#
+	) %>%#
+	as.data.frame %>%#
+	setnames("Model $\\Lagr$", "M $\\Lagr$") %>%#
+	setnames("$P$(Model)", "$P$(M)")#
+GTMNERR_best_stricta_survival_GLMM_model <- y[1,]#
+#
+GTMNERR_survival_GLMM_models <- y#
+# --------------------------------------------------------------------------- ##
+setwd("/Users/KSauby/Documents/Projects/GTMNERR_analysis")#
+cache("GTMNERR_survival_prop_haz_models")#
+cache("GTMNERR_survival_GLMM_models")#
+cache("GTMNERR_best_stricta_survival_GLMM_model")
+roundpValues
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+GTMNERR_survival_GLMM_models
+dim(GTMNERR_survival_GLMM_models)
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/tables')
+GTMNERR_survival_GLMM_models
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+stricta.size.rand.model.selection[which(stricta.size.rand.model.selection$`Random Effects`=="Network"), ]$`Random Effects` <- "Plot Neighborhood"#
+y <- stricta.size.rand.model.selection %>%#
+	processColumnNames %>%#
+	processModSelectionColumnNames %>%#
+	dplyr::select(-c(#
+		`Chi-Squared`,#
+		`Prob(Chi-Squared)`,#
+		`Pearson Chi-Square/DF`,#
+		`-2 Log Lik`#
+	)) %>%#
+	setnames("cactus_density_per_p", "Cactus Density") %>%#
+	#setnames("NSegLosttoClones_t_s", "# Segments Lost to Clones") %>%#
+	setnames("C_t", "$C_t$") %>%#
+	setnames("delta BIC", "$\\Delta$ BIC") %>%#
+	setnames("Moth_Evidence_t_1", "Moth Evidence") %>%#
+	dplyr::select(#
+		`Random Effects`,#
+		`$\\beta_{0}$`,#
+		`$C_t$`,#
+		Clonal,#
+		`Cactus Density`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		`$\\Delta$ BIC`,#
+		`Model $\\Lagr$`,#
+		`$P$(Model)`#
+	) %>%#
+	as.data.frame %>%#
+	setnames("Model $\\Lagr$", "M $\\Lagr$") %>%#
+	setnames("$P$(Model)", "$P$(M)")#
+GTMNERR_best_stricta_survival_GLMM_model <- y[1,]#
+#
+GTMNERR_survival_GLMM_models <- y
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+covariance.parms.test = #
+	Survival.stricta.random.effects.models.covariance.parameters.test#
+convergence.status = #
+	Survival.stricta.random.effects.models.convergence.status %>%#
+	filter(!(modelVars %in% c("DF1","DF2","DF3")))#
+covariance.parms.estimates = #
+	Survival.stricta.random.effects.models.covariance.parameter.estimates#
+conditional.fit.statistics = #
+	Survival.stricta.random.effects.models.conditional.fit.statistics#
+fit.statistics = #
+	Survival.stricta.random.effects.models.fit.statistics %>%#
+	filter(!(modelVars %in% c("DF1","DF2","DF3")))#
+#
+conditional.fit.statistics %<>% #
+	convertShorttoLong %>%#
+	.[, -(2:3)]#
+fit.statistics %<>% #
+	#dplyr::select(-Criterion) %>%#
+	dcast(modelVars ~ Descr, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`-2 Log Likelihood`,#
+		`BIC  (smaller is better)`#
+	)#
+#
+parms.estimates = #
+	Survival.stricta.random.effects.models.parameter.estimates %>%#
+	filter(!is.na(Lower)) %>%#
+	round_df(2) %>%#
+	roundpValues %>%#
+	constructConfIntpValue(round_n=3) %>%#
+	dplyr::select(-Estimate) %>%#
+	setnames("Estimate.CF", "Estimate") %>%#
+	filter(!(is.na(DF)))#
+parms.estimates %<>% #
+	filter(!is.na(StdErr)) %>%#
+	reshape2::dcast(modelVars~Effect, value.var="Estimate")#
+modelresults <- merge(parms.estimates, covariance.parms.test,#
+	by="modelVars", all=T) %>%#
+	merge(convergence.status, all=T) %>%#
+	merge(covariance.parms.estimates, all=T) %>%#
+	merge(conditional.fit.statistics, all=T) %>%#
+	merge(filter(fit.statistics), all=T) %>%#
+	as.data.table %>%#
+	.[modelVars == "YEARPLANTID", 			#
+		modelVars := "Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONWITHINYEAR", 	#
+		modelVars := "Location X Year"] %>%#
+	.[modelVars == "PLANTID", 				#
+		modelVars := "Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONYEARPLANTID", 	#
+		modelVars := "Location, Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONYEAR", 			#
+		modelVars := "Location, Year"] %>%#
+	.[modelVars == "LOCATION", 				#
+		modelVars := "Location"] %>%#
+	.[modelVars == "LOCATIONPLANTID", 		#
+		modelVars := "Location, Plant ID (Intercept)"] %>%#
+	.[modelVars == "LOCATIONWYEARPLANTID", 	#
+		modelVars := "Location X Year, Plant ID (Intercept)"] %>%#
+	.[modelVars == "YEAR", 					#
+		modelVars := "Year"] %>%#
+	.[modelVars == "ISLAND", 					#
+		modelVars := "Island"] %>%#
+	.[modelVars == "NETWORKISLAND", 					#
+		modelVars := "Network X Island"] %>%#
+	.[modelVars == "NETWORK", 					#
+		modelVars := "Network"] %>%#
+	.[modelVars == "NETWORKHABITATTYPE", 					#
+		modelVars := "Network X Habitat Type"] %>%#
+	.[modelVars == "HABITATTYPE", 					#
+		modelVars := "Habitat Type"]#
+modelresults$pdG %<>% as.character#
+modelresults %<>% as.data.table %>%#
+	.[pdG == 0, pdG := "No"] %>%#
+	.[pdG == 1, pdG := "Yes"] %>%#
+	setnames("modelVars", 				"Random Effects") %>%#
+	setnames("pdG", 					"Positive Definite G-Matrix?") %>%#
+	setnames("ChiSq", 					"Chi-Squared") %>%#
+	setnames("ProbChiSq", 				"Prob(Chi-Squared)") %>%#
+	setnames("CovParm", 				"Covariance Parameter") %>%#
+	setnames("StdErr", 					"Standard Error") %>%#
+#	setnames("tValue", 					"t-Value") %>%#
+#	setnames("Probt", 					"Prob(t)") %>%#
+	setnames("LowerLRCL", 				"Lower LR CL") %>%#
+	setnames("probLRLower", 			"Prob(Lower LR)") %>%#
+	setnames("UpperLRCL", 				"Upper LR CL") %>%#
+	setnames("probLRUpper", 			"Prob(Upper LR)") %>%#
+	setnames("Pearson Chi-Square / DF",	"Pearson Chi-Square/DF") %>%#
+	setnames("-2 Log Likelihood",		"-2 Log Lik")#
+stricta.size.model.results <- modelresults %>% setnames("BIC  (smaller is better)","BIC")#
+stricta.size.converg.status = #
+	randeffects_converg_status_function(modelresults=stricta.size.model.results)#
+stricta.size.covar.results = #
+	randeffects_G_side_effects_test_function(stricta.size.model.results)#
+stricta.size.covar.parms = #
+	randeffects_covar_parms_estimates_function(stricta.size.model.results)#
+stricta.size.rand.model.selection = stricta.size.model.results %>% #
+	dplyr::filter(`Positive Definite G-Matrix?` == "Yes") %>% #
+	dplyr::select(-Label, -Objective) %>% #
+	dplyr::select(-(Note:`Prob(Upper LR)`)) %>% #
+	dplyr::group_by(`Random Effects`) %>% #
+	dplyr::filter(row_number(DF) == 1) %>% #
+	as.data.frame %>% #
+	dplyr::arrange(`BIC`) %>%#
+	filter(!is.na(Intercept))#
+stricta.size.rand.model.selection %<>% BIC_function#
+#
+stricta.size.rand.model.selection[which(stricta.size.rand.model.selection$`Random Effects`=="Network"), ]$`Random Effects` <- "Plot Neighborhood"#
+y <- stricta.size.rand.model.selection %>%#
+	processColumnNames %>%#
+	processModSelectionColumnNames %>%#
+	dplyr::select(-c(#
+		`Chi-Squared`,#
+		`Prob(Chi-Squared)`,#
+		`Pearson Chi-Square/DF`,#
+		`-2 Log Lik`#
+	)) %>%#
+	setnames("cactus_density_per_p", "Cactus Density") %>%#
+	#setnames("NSegLosttoClones_t_s", "# Segments Lost to Clones") %>%#
+	setnames("C_t", "$C_t$") %>%#
+	setnames("delta BIC", "$\\Delta$ BIC") %>%#
+	setnames("Moth_Evidence_t_1", "Moth Evidence") %>%#
+	dplyr::select(#
+		`Random Effects`,#
+		`$\\beta_{0}$`,#
+		`$C_t$`,#
+		Clonal,#
+		`Cactus Density`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		`$\\Delta$ BIC`,#
+		`Model $\\Lagr$`,#
+		`$P$(Model)`#
+	) %>%#
+	as.data.frame %>%#
+	setnames("Model $\\Lagr$", "M $\\Lagr$") %>%#
+	setnames("$P$(Model)", "$P$(M)")#
+GTMNERR_best_stricta_survival_GLMM_model <- y[1,]#
+#
+GTMNERR_survival_GLMM_models <- y
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+GTMNERR_survival_GLMM_models
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/tables')
+print(#
+	xtable(#
+		GTMNERR_survival_GLMM_models, #
+		digits=0,#
+		caption="Ranking of GLMMs explaining variation in *O. stricta* survival at GTMNERR.",#
+		align=c(#
+			rep("p{1cm}",2),#
+			"p{3.7cm}",#
+			rep("p{1.35cm}",6),#
+			"p{0.9cm}",#
+			"p{0.9cm}",#
+			"p{0.8cm}"#
+		)#
+	),#
+	caption.placement = "top",#
+	sanitize.text.function = function(x) {x},#
+	tabular.environment = "longtable",#
+    include.rownames = FALSE,  # because addtorow will substitute the default row names #
+         add.to.row = addtorow,     # this is where you actually make the substitution#
+         hline.after=c(-1),#
+		 floating=F       #
 )
+setwd('/Users/KSauby/Documents/Projects/Dissertation')
+# for plotting of xtables that span multiple pages#
+addtorow          <- list()#
+addtorow$pos      <- list()#
+addtorow$pos[[1]] <- c(0)#
+addtorow$command  <- c(paste("\\hline \n",#
+                             "\\endhead \n",#
+                             "\\hline \n",#
+                             #"{\\footnotesize Continued on next page} \n",#
+                             "\\endfoot \n",#
+                             "\\endlastfoot \n",sep=""))
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/tables')
+print(#
+	xtable(#
+		GTMNERR_survival_GLMM_models, #
+		digits=0,#
+		caption="Ranking of GLMMs explaining variation in *O. stricta* survival at GTMNERR.",#
+		align=c(#
+			rep("p{1cm}",2),#
+			"p{3.7cm}",#
+			rep("p{1.35cm}",6),#
+			"p{0.9cm}",#
+			"p{0.9cm}",#
+			"p{0.8cm}"#
+		)#
+	),#
+	caption.placement = "top",#
+	sanitize.text.function = function(x) {x},#
+	tabular.environment = "longtable",#
+    include.rownames = FALSE,  # because addtorow will substitute the default row names #
+         add.to.row = addtorow,     # this is where you actually make the substitution#
+         hline.after=c(-1),#
+		 floating=F       #
+)
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/tables')
+GTMNERR_survival_prop_haz_models
+dim(GTMNERR_survival_prop_haz_models)
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/tables')
+print(#
+	xtable(#
+		GTMNERR_survival_prop_haz_models, #
+		digits=0,#
+		caption="Ranking of Proportional Hazards Regression Models explaining variation in *O. stricta* survival at GTMNERR.",#
+		align=c(#
+			rep("p{1cm}",1),#
+			"p{3.7cm}",#
+			rep("p{1.35cm}",6),#
+			"p{0.9cm}",#
+			"p{0.9cm}",#
+			"p{0.8cm}"#
+		)#
+	),#
+	caption.placement = "top",#
+	sanitize.text.function = function(x) {x},#
+	tabular.environment = "longtable",#
+    include.rownames = FALSE,  # because addtorow will substitute the default row names #
+         add.to.row = addtorow,     # this is where you actually make the substitution#
+         hline.after=c(-1),#
+		 floating=F       #
+)
+setwd('/Users/KSauby/Documents/Projects/Dissertation')
+bookdown::render_book('index.Rmd')
+setwd('/Users/KSauby/Documents/Projects/Dissertation')
+bookdown::render_book('index.Rmd')
+dim(GTMNERR_survival_GLMM_models)
+setwd('/Users/KSauby/Documents/Projects/Dissertation')
+bookdown::render_book('index.Rmd')
+setwd('/Users/KSauby/Documents/Projects/Dissertation')
+bookdown::render_book('index.Rmd')
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+# --------------------------------------------------------------------------- ##
+# PROPORTIONAL HAZARDS MODELS#
+# --------------------------------------------------------------------------- ##
+#
+fit.statistics <- Survival.stricta.icphreg.fit.statistics #
+#
+fit.statistics %<>% #
+	dcast(modelVars ~ Criterion, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`BIC (Smaller is Better)`#
+	)#
+type.3.tests <- Survival.stricta.icphreg.type.3.tests #
+#
+type.3.tests %<>% #
+	dcast(modelVars ~ Effect, value.var = "ProbChiSq")#
+#
+type.3.tests %<>% #
+	merge(fit.statistics, by="modelVars") %>%#
+	setnames("modelVars", "Cubic Splines DF") %>%#
+	setnames("CAPlantPres","Invasive Moth") %>%#
+	setnames("MEPlantPres","Native Moth") %>%#
+	setnames("OldMothPlantPres","Moth Evidence") %>%#
+	setnames("BIC (Smaller is Better)","BIC") %>%#
+	dplyr::select(#
+		`Cubic Splines DF`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		Clonal,#
+		Network,#
+		BIC#
+	) %>%#
+	BIC_function %>%#
+	setnames("delta BIC", "$\\Delta$BIC") %>%#
+	setnames("Model Lik", "M $\\Lagr$") %>%#
+	setnames("Prob(Model)", "$P$(M)")#
+type.3.tests[,c(#
+	"Invasive Moth",#
+	"Native Moth"#
+)] %<>% apply(2, as.numeric)#
+type.3.tests %<>%#
+	round_df(2)#
+#
+GTMNERR_survival_prop_haz_models <- type.3.tests
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+GTMNERR_survival_prop_haz_models
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+# --------------------------------------------------------------------------- ##
+# PROPORTIONAL HAZARDS MODELS#
+# --------------------------------------------------------------------------- ##
+#
+fit.statistics <- Survival.stricta.icphreg.fit.statistics #
+#
+fit.statistics %<>% #
+	dcast(modelVars ~ Criterion, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`BIC (Smaller is Better)`#
+	)#
+type.3.tests <- Survival.stricta.icphreg.type.3.tests #
+#
+type.3.tests %<>% #
+	dcast(modelVars ~ Effect, value.var = "ProbChiSq")#
+#
+type.3.tests %<>% #
+	roundpValues %>%#
+	merge(fit.statistics, by="modelVars") %>%#
+	setnames("modelVars", "Cubic Splines DF") %>%#
+	setnames("CAPlantPres","Invasive Moth") %>%#
+	setnames("MEPlantPres","Native Moth") %>%#
+	setnames("OldMothPlantPres","Moth Evidence") %>%#
+	setnames("BIC (Smaller is Better)","BIC") %>%#
+	dplyr::select(#
+		`Cubic Splines DF`,#
+		`Invasive Moth`,#
+		`Native Moth`,#
+		`Moth Evidence`,#
+		Clonal,#
+		Network,#
+		BIC#
+	) %>%#
+	BIC_function %>%#
+	setnames("delta BIC", "$\\Delta$BIC") %>%#
+	setnames("Model Lik", "M $\\Lagr$") %>%#
+	setnames("Prob(Model)", "$P$(M)")#
+type.3.tests[,c(#
+	"Invasive Moth",#
+	"Native Moth"#
+)] %<>% apply(2, as.numeric)#
+type.3.tests %<>%#
+	round_df(2)#
+#
+GTMNERR_survival_prop_haz_models <- type.3.tests
+setwd('/Users/KSauby/Documents/Projects/GTMNERR_analysis/Manuscript/Demography/Vital_Rate_ Appendix/R')
+# --------------------------------------------------------------------------- ##
+# PROPORTIONAL HAZARDS MODELS#
+# --------------------------------------------------------------------------- ##
+#
+fit.statistics <- Survival.stricta.icphreg.fit.statistics #
+#
+fit.statistics %<>% #
+	dcast(modelVars ~ Criterion, value.var = "Value")#
+fit.statistics %<>%#
+	dplyr::select(#
+		modelVars,    #
+		`BIC (Smaller is Better)`#
+	)#
+type.3.tests <- Survival.stricta.icphreg.type.3.tests #
+#
+type.3.tests %<>% #
+	dcast(modelVars ~ Effect, value.var = "ProbChiSq")#
+#
+type.3.tests %<>% #
+	roundpValues
 setwd('/Users/KSauby/Documents/Projects')
 setwd("./modresproc")#
 #setwd("./unmarked")#
 #setwd("./RPresence")#
 #devtools::test()#
 devtools::document()#
-devtools::install(upgrade_dependencies=F)
+devtools::install()

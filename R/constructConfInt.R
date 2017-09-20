@@ -1,7 +1,45 @@
-#' Construct Conf. Intervals the Hard Way
-#' @param parm.est parameter.estimate output from SAS
+#' Round the p-values before constructing confidence intervals
+#' @param y data frame
+#' @param pvalue_name column name containing p-values. Default value is "Probt".
 #' 
 #' @export
+
+
+roundpValues <- function(y, pvalue_name = "Probt") {
+	colnames(y)[which(names(y) == pvalue_name)] <- "pval"
+	y %<>% 
+		mutate(
+			pval = replace(
+				pval,
+				which(pval == "<.0001"),
+				777
+			)
+		)
+	y$pval %<>% as.numeric
+	y %<>% rowwise() %>% mutate(
+		pval = replace(
+			pval,
+			which(pval < 0.005),
+			777
+		)
+	)
+	y$pval %<>% round(2)
+	y$pval %<>% as.character
+	y %<>% 
+		as.data.frame %>% 
+		dplyr::mutate(
+			pval = replace(
+				pval,
+				which(pval == "777"),
+				"$<$0.01"
+			)
+		)
+	colnames(y)[which(names(y) == "pval")] <- pvalue_name
+	return(y)
+}
+
+
+
 
 constructConfInt2 <- function(parm.est, round.n=2) {
 	if ("T1" %in% Data$Effect & "T2" %in% Data$Effect) {

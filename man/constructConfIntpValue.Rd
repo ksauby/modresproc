@@ -4,7 +4,7 @@
 \alias{constructConfIntpValue}
 \title{Construct Conf. Intervals with p-values}
 \usage{
-constructConfIntpValue(parameter.estimates, round_n = 3)
+constructConfIntpValue(parameter.estimates, round_n = 3, conf.int = FALSE)
 }
 \arguments{
 \item{parameter.estimates}{Table of parameter.estimate output from SAS}

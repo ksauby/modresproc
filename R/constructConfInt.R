@@ -272,20 +272,31 @@ constructConfInt <- function(parameter.estimates, round_n=3) {
 #' 
 #' @export
 
-constructConfIntpValue <- function(parameter.estimates, round_n=3) {
+constructConfIntpValue <- function(parameter.estimates, round_n=3, conf.int = FALSE) {
 	parameter.estimates %<>% round_df(round_n)
-	parameter.estimates %>% mutate(Estimate.CF = paste(
-		Estimate,
-		" [",
-		Lower,
-		", ",
-		Upper,
-		"]",
-		" (",
-		Probt,
-		")",
-		sep=""
-	))
+	parameter.estimates %<>% round_df(round_n)
+	if (conf.int == FALSE) {
+		parameter.estimates %>% mutate(Estimate.CF = paste(
+			Estimate,
+			" (",
+			Probt,
+			")",
+			sep=""
+		))
+	} else {
+		parameter.estimates %>% mutate(Estimate.CF = paste(
+			Estimate,
+			" [",
+			Lower,
+			", ",
+			Upper,
+			"]",
+			" (",
+			Probt,
+			")",
+			sep=""
+		))
+	}
 }
 
 

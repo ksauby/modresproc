@@ -30,7 +30,6 @@ cAIC_function <- function(y) {
 	y$`Model Lik` %<>% round(digits=2)
 	y %<>% dplyr::select(-c(
 		cAIC, 
-		`Model Lik`, 
 		`-2 LogLik`, 
 		`Columns in Z`
 	)) %>%

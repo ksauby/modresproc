@@ -82,12 +82,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				str_sub(Variable, -3, -1)=="125",
-				paste(Factor1,  " (", Factor1sq, ") ", "[^1.25]", sep=""),
+				paste(Factor1,  " (", Factor1sq, ") ", "[\\^{}1.25]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				str_sub(Variable, -3, -1)=="125",
-				paste(Factor2,  " (", Factor2sq, ") ", "[^1.25]", sep=""),
+				paste(Factor2,  " (", Factor2sq, ") ", "[\\^{}1.25]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
@@ -101,12 +101,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				str_sub(Variable, -3, -1)=="075",
-				paste(Factor1,  " (", Factor1sq, ") ", "[^0.75]", sep=""),
+				paste(Factor1,  " (", Factor1sq, ") ", "[\\^{}0.75]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				str_sub(Variable, -3, -1)=="075",
-				paste(Factor2,  " (", Factor2sq, ") ", "[^0.75]", sep=""),
+				paste(Factor2,  " (", Factor2sq, ") ", "[\\^{}0.75]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
@@ -137,12 +137,12 @@ sas_PCA_table_function <- function(eigens, factors, rfactors, dataset_type="all"
 		mutate(
 			Factor1 = ifelse(
 				substrRight(Variable,3)=="sqr",
-				paste(Factor1,  " (", Factor1sq, ") ", "[^2]", sep=""),
+				paste(Factor1,  " (", Factor1sq, ") ", "[\\^{}2]", sep=""),
 				Factor1
 			),
 			Factor2 = ifelse(
 				substrRight(Variable,3)=="sqr",
-				paste(Factor2,  " (", Factor2sq, ") ", "[^2]", sep=""),
+				paste(Factor2,  " (", Factor2sq, ") ", "[\\^{}2]", sep=""),
 				Factor2
 			),
 			Variable = ifelse(
